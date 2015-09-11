@@ -3,7 +3,7 @@
 
 # Package Files - except for lib folder#
 *.jar
-!/lib
+!/lib/*.jar
 *.war
 *.ear
 
