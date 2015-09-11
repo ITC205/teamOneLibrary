@@ -1,8 +1,9 @@
 # Java
 *.class
 
-# Package Files #
+# Package Files - except for lib folder#
 *.jar
+!/lib
 *.war
 *.ear
 
