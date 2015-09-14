@@ -12,7 +12,7 @@ public class Member
                      String emailAddress, int id) 
                      throws IllegalArgumentException
   {
-    if (!isValid(firstName) && !isValid(lastName) && !isValid(contactPhone) && !isValid(emailAddress))
+    if (!isValid(firstName) || !isValid(lastName) || !isValid(contactPhone) || !isValid(emailAddress))
     {
       throw new IllegalArgumentException("Fields cannot be blank or null");
     }
@@ -31,7 +31,7 @@ public class Member
   
   private boolean isValid(String memberDetails)
   {
-    if (memberDetails.length() > 0)
+    if (memberDetails != null && memberDetails.length() > 0)
     {
       return true;
     }
@@ -39,5 +39,40 @@ public class Member
     {
       return false;
     }
+  }
+  
+  
+  
+  public String getFirstName()
+  {
+    return firstName_;
+  }
+
+
+
+  public String getLastName()
+  {
+    return lastName_;
+  }
+
+
+
+  public String getContactPhone()
+  {
+    return contactPhone_;
+  }
+
+
+
+  public String getEmailAddress()
+  {
+    return emailAddress_;
+  }
+
+
+
+  public int getId()
+  {
+    return id_;
   }
 }
