@@ -240,12 +240,19 @@ public class Book implements IBook
   
   private boolean isStringNullOrEmpty(String input) 
   {
-    return (input.isEmpty() || input.equals(null));
+    // Check null first to avoid NullPointException 
+    if(input == null) {
+      return true;
+    }
+    if(input.isEmpty()) {
+      return true;
+    }
+
+    return false;
   }
   
   
   
-  // Add logic to check if ID is unique?
   private boolean isBookIdValid(int id) 
   {
     return id > 0;
