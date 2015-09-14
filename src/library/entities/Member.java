@@ -98,6 +98,20 @@ public class Member
   
   
   
+  public void payFine(float amount) throws IllegalArgumentException
+  {
+    if ((amount >= 0) && (amount <= fineAmount_))
+    {
+      fineAmount_ -= amount;
+    }
+    else
+    {
+      throw new IllegalArgumentException("Payment cannot be negative and " +
+                                     "must not exceed total fines owing");
+    }
+  }
+  
+  
   private boolean isValid(String memberDetails)
   {
     if (memberDetails != null && memberDetails.length() > 0)

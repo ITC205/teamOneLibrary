@@ -88,7 +88,6 @@ public class TestMember extends TestCase
       exception = ex;
     }
     assertTrue(exception instanceof IllegalArgumentException);
-    exception = null;
   }
   
   
@@ -108,6 +107,48 @@ public class TestMember extends TestCase
     validMember.addFine(20.0f);
     assertTrue(validMember.hasReachedFineLimit());
   }
+  
+  
+  
+  public void testPayFine()
+  {
+    validMember.addFine(15.0f);
+    validMember.payFine(10.0f);
+    assertEquals(5.0f, validMember.getFineAmount());
+    validMember.payFine(5.0f);
+    assertEquals(0.0f, validMember.getFineAmount());
+    validMember.addFine(5.0f);
+    
+    try
+    {
+    validMember.payFine(6.0f);
+    }
+    
+    catch (Throwable ex)
+    {
+      exception = ex;
+    }
+    assertTrue(exception instanceof IllegalArgumentException);
+    exception = null;
+    
+    try
+    {
+    validMember.payFine(-6.0f);
+    }
+    
+    catch (Throwable ex)
+    {
+      exception = ex;
+    }
+    assertTrue(exception instanceof IllegalArgumentException);
+  }
+  
+  
+  
+  
+  
+  
+  
   
   public void testAddLoan()
   {
