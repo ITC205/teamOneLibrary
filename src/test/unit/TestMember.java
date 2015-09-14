@@ -93,6 +93,22 @@ public class TestMember extends TestCase
   
   
   
+  public void testHasFinesPayable()
+  {
+    assertFalse(validMember.hasFinesPayable());
+    validMember.addFine(5.0f);
+    assertTrue(validMember.hasFinesPayable());
+  }
+  
+  
+  
+  public void testHasReachedFineLimit()
+  {
+    assertFalse(validMember.hasReachedFineLimit());
+    validMember.addFine(20.0f);
+    assertTrue(validMember.hasReachedFineLimit());
+  }
+  
   public void testAddLoan()
   {
     

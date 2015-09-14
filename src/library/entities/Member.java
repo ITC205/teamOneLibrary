@@ -17,7 +17,9 @@ public class Member
   private float fineAmount_ = 0.0f;
   
   //Check value of LOAN_LIMIT
-  private final int LOAN_LIMIT = 10;
+  private final int LOAN_LIMIT_ = 10;
+  //Check value of FINE_MAX
+  private final float FINE_MAX_ = 20.0f;
 
   public Member(String firstName, String lastName, String contactPhone,
                      String emailAddress, int id) 
@@ -63,6 +65,34 @@ public class Member
     else
     {
       throw new IllegalArgumentException("Fines cannot be negative");
+    }
+  }
+  
+  
+  
+  public boolean hasFinesPayable()
+  {
+    if (fineAmount_ > 0)
+    {
+      return true;
+    }
+    else
+    {
+      return false;
+    }
+  }
+  
+  
+  
+  public boolean hasReachedFineLimit()
+  {
+    if (fineAmount_ >= FINE_MAX_)
+    {
+      return true;
+    }
+    else
+    {
+      return false;
     }
   }
   
