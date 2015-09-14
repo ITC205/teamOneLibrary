@@ -1,5 +1,6 @@
 package library.daos;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,8 +72,9 @@ public class BookMapDAO implements IBookDAO
   @Override
   public IBook getBookByID(int id)
   {
-    // TODO Auto-generated method stub
-    return null;
+    // get method of HashMap returns the value associated with the given key
+    // or null if there is no value associated with the given key (by default)
+    return bookMap_.get(id);
   }
 
 
@@ -80,8 +82,7 @@ public class BookMapDAO implements IBookDAO
   @Override
   public List<IBook> listBooks()
   {
-    // TODO Auto-generated method stub
-    return null;
+    return new ArrayList<IBook>(bookMap_.values());
   }
 
 
@@ -89,8 +90,14 @@ public class BookMapDAO implements IBookDAO
   @Override
   public List<IBook> findBooksByAuthor(String author)
   {
-    // TODO Auto-generated method stub
-    return null;
+    ArrayList<IBook> booksByAuthor = new ArrayList<>();
+    
+    for(IBook book: bookMap_.values()) {
+      if(book.getAuthor().equals(author)) {
+        booksByAuthor.add(book);
+      }
+    }
+    return booksByAuthor;
   }
 
 
@@ -98,8 +105,14 @@ public class BookMapDAO implements IBookDAO
   @Override
   public List<IBook> findBooksByTitle(String title)
   {
-    // TODO Auto-generated method stub
-    return null;
+    ArrayList<IBook> booksByTitle = new ArrayList<>();
+    
+    for(IBook book: bookMap_.values()) {
+      if(book.getTitle().equals(title)) {
+        booksByTitle.add(book);
+      }
+    }
+    return booksByTitle;
   }
 
 
@@ -107,8 +120,14 @@ public class BookMapDAO implements IBookDAO
   @Override
   public List<IBook> findBooksByAuthorTitle(String author, String title)
   {
-    // TODO Auto-generated method stub
-    return null;
+    ArrayList<IBook> booksByTitleAndAuthor = new ArrayList<>();
+    
+    for(IBook book: bookMap_.values()) {
+      if(book.getAuthor().equals(author) && book.getTitle().equals(title)) {
+        booksByTitleAndAuthor.add(book);
+      }
+    }
+    return booksByTitleAndAuthor;
   }
   
   
