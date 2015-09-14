@@ -14,7 +14,7 @@ public class Member
   private int id_;
   private ArrayList<ILoan> loanList_ = new ArrayList<>();
   private EMemberState memberState_ = EMemberState.BORROWING_ALLOWED;
-  private float finesOwing_ = 0.0f;
+  private float fineAmount_ = 0.0f;
   
   //Check value of LOAN_LIMIT
   private final int LOAN_LIMIT = 10;
@@ -58,7 +58,7 @@ public class Member
   {
     if (amount >= 0)
     {
-      finesOwing_ += amount;
+      fineAmount_ += amount;
     }
     else
     {
@@ -133,6 +133,6 @@ public class Member
   
   public float getFineAmount()
   {
-    return finesOwing_;
+    return fineAmount_;
   }
 }

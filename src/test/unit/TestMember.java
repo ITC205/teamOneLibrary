@@ -6,6 +6,17 @@ import library.entities.Member;
 public class TestMember extends TestCase
 {
   
+  String validFirstName = "TestFirstName";
+  String validLastName = "TestLastName";
+  String validContactPhone = "01234567";
+  String validEmailAddress = "abc@gef.com";
+  int validId = 1;
+  Throwable exception = null;
+  
+  Member validMember = new Member(validFirstName, validLastName, validContactPhone, validEmailAddress, validId);
+  
+  
+  
   public TestMember(String name) 
   { 
     super(name);
@@ -15,56 +26,77 @@ public class TestMember extends TestCase
   
   public void testMember()
   {
-    String firstName = "TestFirstName";
-    String lastName = "TestLastName";
-    String contactPhone = "01234567";
-    String emailAddress = "abc@gef.com";
-    Throwable exception = null;
     String nullFirstName = null;
-    int id = 1;
     String nullContactPhone = null;
-    int zeroMemberId = 0;
+    int zeroMemberId = 0;    
     
-    Member testMember = new Member(firstName, lastName, contactPhone, emailAddress, id);
-    assertEquals(firstName, testMember.getFirstName());
-    assertEquals(lastName, testMember.getLastName());
-    assertEquals(contactPhone, testMember.getContactPhone());
-    assertEquals(id, testMember.getId());
+    
+    assertEquals(validFirstName, validMember.getFirstName());
+    assertEquals(validLastName, validMember.getLastName());
+    assertEquals(validContactPhone, validMember.getContactPhone());
+    assertEquals(validId, validMember.getId());
     
     try
     {
-    Member memberFirstNameNull = new Member(nullFirstName, lastName, contactPhone, emailAddress, id);
+    Member memberFirstNameNull = new Member(nullFirstName, validLastName, validContactPhone, validEmailAddress, validId);
     }
     catch (Throwable ex)
     {
       exception = ex;
     }
     assertTrue(exception instanceof IllegalArgumentException);
+    exception = null;
     
     try
     {
-    Member memberContactPhoneNull = new Member(firstName, lastName, nullContactPhone, emailAddress, id);
+    Member memberContactPhoneNull = new Member(validFirstName, validLastName, nullContactPhone, validEmailAddress, validId);
     }
     catch (Throwable ex)
     {
       exception = ex;
     }
     assertTrue(exception instanceof IllegalArgumentException);
+    exception = null;
     
     try
     {
-    Member memberZeroId = new Member(firstName, lastName, contactPhone, emailAddress, zeroMemberId);
+    Member memberZeroId = new Member(validFirstName, validLastName, validContactPhone, validEmailAddress, zeroMemberId);
     }
     catch (Throwable ex)
     {
       exception = ex;
     }
     assertTrue(exception instanceof IllegalArgumentException);
+    exception = null;
   }
   
   
   
+  public void testAddFine()
+  {
+    validMember.addFine(1.0f);
+    assertEquals(1.0f, validMember.getFineAmount());
+    
+
+    try
+    {
+    validMember.addFine(-1.0f);
+    }
+    
+    catch (Throwable ex)
+    {
+      exception = ex;
+    }
+    assertTrue(exception instanceof IllegalArgumentException);
+    exception = null;
+  }
   
+  
+  
+  public void testAddLoan()
+  {
+    
+  }
   
   
   
