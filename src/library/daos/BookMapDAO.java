@@ -5,6 +5,11 @@ import java.util.List;
 import library.interfaces.daos.IBookDAO;
 import library.interfaces.entities.IBook;
 
+/**
+ * BookMapDAO class
+ * @author Josh Kent
+ *
+ */
 public class BookMapDAO implements IBookDAO
 {
 
