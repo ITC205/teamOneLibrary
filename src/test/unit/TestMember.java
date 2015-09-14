@@ -2,6 +2,10 @@ package test.unit;
 
 import junit.framework.*;
 import library.entities.Member;
+import library.interfaces.entities.*;
+
+import org.mockito.Mockito;
+import org.mockito.Mockito.*;
 
 public class TestMember extends TestCase
 {
@@ -145,12 +149,28 @@ public class TestMember extends TestCase
   
   
   
-  
-  
-  
-  
-  
   public void testAddLoan()
+  {
+    ILoan loan = Mockito.mock(ILoan.class);
+    validMember.addLoan(loan);
+    assertTrue(validMember.getLoans().size() > 0);
+
+    loan = null;
+    try
+    {
+      validMember.addLoan(loan);
+    }
+    catch (Throwable ex)
+    {
+      exception = ex;
+    }
+    assertTrue(exception instanceof IllegalArgumentException);
+  }
+
+  
+  
+  
+  public void testHasReachedLoanLimit()
   {
     
   }

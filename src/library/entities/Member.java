@@ -112,6 +112,21 @@ public class Member
   }
   
   
+  
+  public boolean hasReachedLoanLimit()
+  {
+    if (getLoans().size() >= LOAN_LIMIT_)
+    {
+      return true;
+    }
+    else
+    {
+      return false;
+    }
+  }
+  
+  
+  
   private boolean isValid(String memberDetails)
   {
     if (memberDetails != null && memberDetails.length() > 0)
