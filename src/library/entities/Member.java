@@ -8,24 +8,36 @@ public class Member
   private String emailAddress_;
   private int id_;
 
-  public void Member(String firstName, String lastName, String contactPhone,
+  public Member(String firstName, String lastName, String contactPhone,
                      String emailAddress, int id) 
                      throws IllegalArgumentException
   {
-    if ((firstName.length() >= 1) && (lastName.length() >= 1) && (contactPhone.length() >= 1) && 
-
-        (emailAddress.length() >= 1) && 
-        (id >= 1))
+    if (!isValid(firstName) && !isValid(lastName) && !isValid(contactPhone) && !isValid(emailAddress))
     {
+      throw new IllegalArgumentException("Fields cannot be blank or null");
+    }
+    if (id <= 0)
+    {
+      throw new IllegalArgumentException("Member ID must be greater than or equal to 1");
+    }
       firstName_ = firstName;
       lastName_ = lastName;
       contactPhone_ = contactPhone;
       emailAddress_ = emailAddress;
       id_ = id;
+  }
+  
+  
+  
+  private boolean isValid(String memberDetails)
+  {
+    if (memberDetails.length() > 0)
+    {
+      return true;
     }
     else
     {
-      throw new IllegalArgumentException("Fields cannot be blank or null. ID cannot be zero or less");
+      return false;
     }
   }
 }
