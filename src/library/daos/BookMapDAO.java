@@ -1,5 +1,6 @@
 package library.daos;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,6 +39,8 @@ public class BookMapDAO implements IBookDAO
                                          + "'helper' cannot be null");
     }
     helper_ = helper;
+    nextId_ = 1;
+    bookMap_ = new HashMap<Integer, IBook>();
   }
   
   
@@ -51,8 +54,10 @@ public class BookMapDAO implements IBookDAO
   @Override
   public IBook addBook(String author, String title, String callNo)
   {
-    // TODO Auto-generated method stub
-    return null;
+    IBook newBook = helper_.makeBook(author, title, callNo, getNextId());
+    bookMap_.put(newBook.getID(), newBook);
+    updateNextId();
+    return newBook;
   }
 
   
@@ -105,5 +110,25 @@ public class BookMapDAO implements IBookDAO
     // TODO Auto-generated method stub
     return null;
   }
-
+  
+  
+  
+  // ==========================================================================
+  // Helper Methods
+  // ==========================================================================
+  
+  
+  
+  private int getNextId()
+  {
+    return nextId_;
+  }
+  
+  
+  
+  private void updateNextId() 
+  {
+    nextId_++;
+  }
+  
 }
