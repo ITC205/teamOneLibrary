@@ -1,5 +1,7 @@
 package test.unit;
 
+import java.lang.reflect.Field;
+
 import junit.framework.TestCase;
 import library.entities.Book;
 import library.interfaces.entities.EBookState;
@@ -216,17 +218,494 @@ public class TestBook extends TestCase
   }
   
   public void testGetDefaultState() {
+    // Default state for new Book should be EBookState.AVAILABLE
     Book book = new Book("author", "title", "callNumber", 1);
     assertEquals(EBookState.AVAILABLE, book.getState());
   }
   
   public void testGetDefaultLoan() {
+    // Default loan for a new Book should be null
     Book book = new Book("author", "title", "callNumber", 1);
     assertNull(book.getLoan());
   }
   
-  // TODO Get each state (damaged, lost, etc.)
+  // ==========================================================================
+  // Testing lose() method
+  // ==========================================================================
   
+  // TODO Get each state (damaged, lost, etc.)
+  public void testLoseDefault() {
+    // Create test Book object
+    Book book = new Book("author", "title", "callNumber", 1);
+    
+    try {
+      // Using Reflection to directly set private field 'state_' to
+      // EBookState.ON_LOAN in order to satisfy lose() pre-condition
+      
+      Class<?> bookClass = book.getClass();
+      Field state = bookClass.getDeclaredField("state_");
+      
+      // Enable direct modification of private field
+      if(!state.isAccessible()) {
+        state.setAccessible(true);
+      }
+      
+      // Set book state
+      state.set(book, EBookState.ON_LOAN);
+    }
+    catch (NoSuchFieldException e) {
+      fail("NoSuchFieldException should not occur");
+    }
+    catch (SecurityException e) {
+      fail("SecurityException should not occur");
+    }
+    catch (IllegalArgumentException e) {
+      fail("IllegalArgumentException should not occur");
+    }
+    catch (IllegalAccessException e) {
+      fail("IllegalAccessException should not occur");
+    }
+    
+    // Confirm EBookState.ON_LOAN state
+    assertEquals(book.getState(), EBookState.ON_LOAN);
+    
+    // Call method under test
+    book.lose();
+    
+    // Confirm state change to EBookStae.LOST
+    assertEquals(book.getState(), EBookState.LOST);
+  }
+  
+  public void testLoseFromAvailable() {
+    // Create test Book object
+    Book book = new Book("author", "title", "callNumber", 1);
+    
+    try {
+      // Using Reflection to directly set private field 'state_' to
+      // EBookState.AVAILABLE
+      
+      Class<?> bookClass = book.getClass();
+      Field state = bookClass.getDeclaredField("state_");
+      
+      // Enable direct modification of private field
+      if(!state.isAccessible()) {
+        state.setAccessible(true);
+      }
+      
+      // Set book state
+      state.set(book, EBookState.AVAILABLE);
+    }
+    catch (NoSuchFieldException e) {
+      fail("NoSuchFieldException should not occur");
+    }
+    catch (SecurityException e) {
+      fail("SecurityException should not occur");
+    }
+    catch (IllegalArgumentException e) {
+      fail("IllegalArgumentException should not occur");
+    }
+    catch (IllegalAccessException e) {
+      fail("IllegalAccessException should not occur");
+    }
+    
+    // Confirm EBookState.AVAILABLE state
+    assertEquals(book.getState(), EBookState.AVAILABLE);
+    
+    // Call method under test
+    try {
+      book.lose();
+      fail("Should have thrown RuntimeException");
+    }
+    catch(RuntimeException re) {
+      assertTrue(true);
+    }
+    
+    // Confirm state unchanged
+    assertEquals(book.getState(), EBookState.AVAILABLE);
+  }
+  
+  public void testLoseFromLost() {
+    // Create test Book object
+    Book book = new Book("author", "title", "callNumber", 1);
+    
+    try {
+      // Using Reflection to directly set private field 'state_' to
+      // EBookState.LOST
+      
+      Class<?> bookClass = book.getClass();
+      Field state = bookClass.getDeclaredField("state_");
+      
+      // Enable direct modification of private field
+      if(!state.isAccessible()) {
+        state.setAccessible(true);
+      }
+      
+      // Set book state
+      state.set(book, EBookState.LOST);
+    }
+    catch (NoSuchFieldException e) {
+      fail("NoSuchFieldException should not occur");
+    }
+    catch (SecurityException e) {
+      fail("SecurityException should not occur");
+    }
+    catch (IllegalArgumentException e) {
+      fail("IllegalArgumentException should not occur");
+    }
+    catch (IllegalAccessException e) {
+      fail("IllegalAccessException should not occur");
+    }
+    
+    // Confirm EBookState.LOST state
+    assertEquals(book.getState(), EBookState.LOST);
+    
+    // Call method under test
+    try {
+      book.lose();
+      fail("Should have thrown RuntimeException");
+    }
+    catch(RuntimeException re) {
+      assertTrue(true);
+    }
+    
+    // Confirm state unchanged
+    assertEquals(book.getState(), EBookState.LOST);
+  }
+  
+  public void testLoseFromDamaged() {
+    // Create test Book object
+    Book book = new Book("author", "title", "callNumber", 1);
+    
+    try {
+      // Using Reflection to directly set private field 'state_' to
+      // EBookState.DAMAGED
+      
+      Class<?> bookClass = book.getClass();
+      Field state = bookClass.getDeclaredField("state_");
+      
+      // Enable direct modification of private field
+      if(!state.isAccessible()) {
+        state.setAccessible(true);
+      }
+      
+      // Set book state
+      state.set(book, EBookState.DAMAGED);
+    }
+    catch (NoSuchFieldException e) {
+      fail("NoSuchFieldException should not occur");
+    }
+    catch (SecurityException e) {
+      fail("SecurityException should not occur");
+    }
+    catch (IllegalArgumentException e) {
+      fail("IllegalArgumentException should not occur");
+    }
+    catch (IllegalAccessException e) {
+      fail("IllegalAccessException should not occur");
+    }
+    
+    // Confirm EBookState.DAMAGED state
+    assertEquals(book.getState(), EBookState.DAMAGED);
+    
+    // Call method under test
+    try {
+      book.lose();
+      fail("Should have thrown RuntimeException");
+    }
+    catch(RuntimeException re) {
+      assertTrue(true);
+    }
+    
+    // Confirm state unchanged
+    assertEquals(book.getState(), EBookState.DAMAGED);
+  }
+  
+  public void testLoseFromDisposed() {
+    // Create test Book object
+    Book book = new Book("author", "title", "callNumber", 1);
+    
+    try {
+      // Using Reflection to directly set private field 'state_' to
+      // EBookState.DISPOSED
+      
+      Class<?> bookClass = book.getClass();
+      Field state = bookClass.getDeclaredField("state_");
+      
+      // Enable direct modification of private field
+      if(!state.isAccessible()) {
+        state.setAccessible(true);
+      }
+      
+      // Set book state
+      state.set(book, EBookState.DISPOSED);
+    }
+    catch (NoSuchFieldException e) {
+      fail("NoSuchFieldException should not occur");
+    }
+    catch (SecurityException e) {
+      fail("SecurityException should not occur");
+    }
+    catch (IllegalArgumentException e) {
+      fail("IllegalArgumentException should not occur");
+    }
+    catch (IllegalAccessException e) {
+      fail("IllegalAccessException should not occur");
+    }
+    
+    // Confirm EBookState.DISPOSED state
+    assertEquals(book.getState(), EBookState.DISPOSED);
+    
+    // Call method under test
+    try {
+      book.lose();
+      fail("Should have thrown RuntimeException");
+    }
+    catch(RuntimeException re) {
+      assertTrue(true);
+    }
+    
+    // Confirm state unchanged
+    assertEquals(book.getState(), EBookState.DISPOSED);
+  }
+  
+  
+  // ==========================================================================
+  // Testing repair() method
+  // ==========================================================================
+  
+  public void testRepairDefault() {
+    // Create test Book object
+    Book book = new Book("author", "title", "callNumber", 1);
+    
+    try {
+      // Using Reflection to directly set private field 'state_' to
+      // EBookState.DAMAGED in order to satisfy repair() pre-condition
+      
+      Class<?> bookClass = book.getClass();
+      Field state = bookClass.getDeclaredField("state_");
+      
+      // Enable direct modification of private field
+      if(!state.isAccessible()) {
+        state.setAccessible(true);
+      }
+      
+      // Set book state
+      state.set(book, EBookState.DAMAGED);
+    }
+    catch (NoSuchFieldException e) {
+      fail("NoSuchFieldException should not occur");
+    }
+    catch (SecurityException e) {
+      fail("SecurityException should not occur");
+    }
+    catch (IllegalArgumentException e) {
+      fail("IllegalArgumentException should not occur");
+    }
+    catch (IllegalAccessException e) {
+      fail("IllegalAccessException should not occur");
+    }
+    
+    // Confirm EBookState.DAMAGED state
+    assertEquals(book.getState(), EBookState.DAMAGED);
+    
+    // Call method under test
+    book.repair();
+    
+    // Confirm state change to EBookStae.LOST
+    assertEquals(book.getState(), EBookState.AVAILABLE);
+  }
+  
+  public void testRepairFromAvailable() {
+    // Create test Book object
+    Book book = new Book("author", "title", "callNumber", 1);
+    
+    try {
+      // Using Reflection to directly set private field 'state_' to
+      // EBookState.AVAILABLE
+      
+      Class<?> bookClass = book.getClass();
+      Field state = bookClass.getDeclaredField("state_");
+      
+      // Enable direct modification of private field
+      if(!state.isAccessible()) {
+        state.setAccessible(true);
+      }
+      
+      // Set book state
+      state.set(book, EBookState.AVAILABLE);
+    }
+    catch (NoSuchFieldException e) {
+      fail("NoSuchFieldException should not occur");
+    }
+    catch (SecurityException e) {
+      fail("SecurityException should not occur");
+    }
+    catch (IllegalArgumentException e) {
+      fail("IllegalArgumentException should not occur");
+    }
+    catch (IllegalAccessException e) {
+      fail("IllegalAccessException should not occur");
+    }
+    
+    // Confirm EBookState.AVAILABLE state
+    assertEquals(book.getState(), EBookState.AVAILABLE);
+    
+    // Call method under test
+    try {
+      book.repair();
+      fail("Should have thrown RuntimeException");
+    }
+    catch(RuntimeException re) {
+      assertTrue(true);
+    }
+    
+    // Confirm state unchanged
+    assertEquals(book.getState(), EBookState.AVAILABLE);
+  }
+  
+  public void testRepairFromOnLoan() {
+    // Create test Book object
+    Book book = new Book("author", "title", "callNumber", 1);
+    
+    try {
+      // Using Reflection to directly set private field 'state_' to
+      // EBookState.ON_LOAN
+      
+      Class<?> bookClass = book.getClass();
+      Field state = bookClass.getDeclaredField("state_");
+      
+      // Enable direct modification of private field
+      if(!state.isAccessible()) {
+        state.setAccessible(true);
+      }
+      
+      // Set book state
+      state.set(book, EBookState.ON_LOAN);
+    }
+    catch (NoSuchFieldException e) {
+      fail("NoSuchFieldException should not occur");
+    }
+    catch (SecurityException e) {
+      fail("SecurityException should not occur");
+    }
+    catch (IllegalArgumentException e) {
+      fail("IllegalArgumentException should not occur");
+    }
+    catch (IllegalAccessException e) {
+      fail("IllegalAccessException should not occur");
+    }
+    
+    // Confirm EBookState.AVAILABLE state
+    assertEquals(book.getState(), EBookState.ON_LOAN);
+    
+    // Call method under test
+    try {
+      book.repair();
+      fail("Should have thrown RuntimeException");
+    }
+    catch(RuntimeException re) {
+      assertTrue(true);
+    }
+    
+    // Confirm state unchanged
+    assertEquals(book.getState(), EBookState.ON_LOAN);
+  }
+  
+  public void testRepairFromLost() {
+    // Create test Book object
+    Book book = new Book("author", "title", "callNumber", 1);
+    
+    try {
+      // Using Reflection to directly set private field 'state_' to
+      // EBookState.LOST
+      
+      Class<?> bookClass = book.getClass();
+      Field state = bookClass.getDeclaredField("state_");
+      
+      // Enable direct modification of private field
+      if(!state.isAccessible()) {
+        state.setAccessible(true);
+      }
+      
+      // Set book state
+      state.set(book, EBookState.LOST);
+    }
+    catch (NoSuchFieldException e) {
+      fail("NoSuchFieldException should not occur");
+    }
+    catch (SecurityException e) {
+      fail("SecurityException should not occur");
+    }
+    catch (IllegalArgumentException e) {
+      fail("IllegalArgumentException should not occur");
+    }
+    catch (IllegalAccessException e) {
+      fail("IllegalAccessException should not occur");
+    }
+    
+    // Confirm EBookState.AVAILABLE state
+    assertEquals(book.getState(), EBookState.LOST);
+    
+    // Call method under test
+    try {
+      book.repair();
+      fail("Should have thrown RuntimeException");
+    }
+    catch(RuntimeException re) {
+      assertTrue(true);
+    }
+    
+    // Confirm state unchanged
+    assertEquals(book.getState(), EBookState.LOST);
+  }
+  
+  public void testRepairFromDisposed() {
+    // Create test Book object
+    Book book = new Book("author", "title", "callNumber", 1);
+    
+    try {
+      // Using Reflection to directly set private field 'state_' to
+      // EBookState.DISPOSED
+      
+      Class<?> bookClass = book.getClass();
+      Field state = bookClass.getDeclaredField("state_");
+      
+      // Enable direct modification of private field
+      if(!state.isAccessible()) {
+        state.setAccessible(true);
+      }
+      
+      // Set book state
+      state.set(book, EBookState.DISPOSED);
+    }
+    catch (NoSuchFieldException e) {
+      fail("NoSuchFieldException should not occur");
+    }
+    catch (SecurityException e) {
+      fail("SecurityException should not occur");
+    }
+    catch (IllegalArgumentException e) {
+      fail("IllegalArgumentException should not occur");
+    }
+    catch (IllegalAccessException e) {
+      fail("IllegalAccessException should not occur");
+    }
+    
+    // Confirm EBookState.AVAILABLE state
+    assertEquals(book.getState(), EBookState.DISPOSED);
+    
+    // Call method under test
+    try {
+      book.repair();
+      fail("Should have thrown RuntimeException");
+    }
+    catch(RuntimeException re) {
+      assertTrue(true);
+    }
+    
+    // Confirm state unchanged
+    assertEquals(book.getState(), EBookState.DISPOSED);
+  }
   // TODO get loan with mock object
   
   

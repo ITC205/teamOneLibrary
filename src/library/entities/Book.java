@@ -23,10 +23,8 @@ public class Book implements IBook
   
   private int id_;
   
-  //Default value? Available?
   private EBookState state_ = EBookState.AVAILABLE; 
   
-  // Default value? Null? Set in constructor?
   private ILoan loan_ = null;
 
   
