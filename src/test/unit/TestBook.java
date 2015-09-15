@@ -227,7 +227,7 @@ public class TestBook extends TestCase
 
 
 
-  public void testGetDefaultState()
+  public void testGetStateDefault()
   {
     // Default state for new Book should be EBookState.AVAILABLE
     Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
@@ -236,13 +236,19 @@ public class TestBook extends TestCase
 
 
 
-  public void testGetDefaultLoan()
+  public void testGetLoanDefault()
   {
     // Default loan for a new Book should be null
     Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
     assertNull(book.getLoan());
   }
 
+  
+  
+  public void testGetLoanMock() {
+    
+  }
+  
   // ==========================================================================
   // Testing lose() method
   // ==========================================================================
