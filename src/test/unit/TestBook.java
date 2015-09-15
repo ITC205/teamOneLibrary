@@ -310,7 +310,115 @@ public class TestBook extends TestCase
   // ==========================================================================
   
   public void testBorrowFromAvailable() {
+    Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
+    ILoan mockedLoan = mock(ILoan.class);
     
+    // Set some behaviour for mockedLoan
+    when(mockedLoan.getBook()).thenReturn(book);
+    when(mockedLoan.isOverDue()).thenReturn(true);
+    
+    try {
+      // Using Reflection to directly set private field 'state_' to
+      // EBookState.AVAILABLE in order to satisfy borrow() pre-condition
+
+      Class<?> bookClass = book.getClass();
+      Field state = bookClass.getDeclaredField("state_");
+
+      // Enable direct modification of private field
+      if (!state.isAccessible()) {
+        state.setAccessible(true);
+      }
+
+      // Set book state
+      state.set(book, EBookState.AVAILABLE);
+    }
+    catch (NoSuchFieldException e) {
+      fail("NoSuchFieldException should not occur");
+    }
+    catch (SecurityException e) {
+      fail("SecurityException should not occur");
+    }
+    catch (IllegalArgumentException e) {
+      fail("IllegalArgumentException should not occur");
+    }
+    catch (IllegalAccessException e) {
+      fail("IllegalAccessException should not occur");
+    }
+
+    // Confirm EBookState.AVAILABLE state
+    assertEquals(book.getState(), EBookState.AVAILABLE);
+    
+    // Confirm loan_ field is initially null
+    assertNull(book.getLoan());
+
+    // Call method under test
+    book.borrow(mockedLoan);
+    
+    // Confirm loan_ field contains mockedLoan
+    ILoan returnedLoan = book.getLoan();
+    assertEquals(book, returnedLoan.getBook());
+    assertTrue(returnedLoan.isOverDue());
+
+    // Confirm state change to EBookState.ON_LOAN
+    assertEquals(book.getState(), EBookState.ON_LOAN);
+  }
+  
+  public void testBorrowFromOnLoan() {
+    Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
+    ILoan mockedLoan = mock(ILoan.class);
+    
+    // Set some behaviour for mockedLoan
+    when(mockedLoan.getBook()).thenReturn(book);
+    when(mockedLoan.isOverDue()).thenReturn(true);
+    
+    try {
+      // Using Reflection to directly set private field 'state_' to
+      // EBookState.ON_LOAN
+
+      Class<?> bookClass = book.getClass();
+      Field state = bookClass.getDeclaredField("state_");
+
+      // Enable direct modification of private field
+      if (!state.isAccessible()) {
+        state.setAccessible(true);
+      }
+
+      // Set book state
+      state.set(book, EBookState.ON_LOAN);
+    }
+    catch (NoSuchFieldException e) {
+      fail("NoSuchFieldException should not occur");
+    }
+    catch (SecurityException e) {
+      fail("SecurityException should not occur");
+    }
+    catch (IllegalArgumentException e) {
+      fail("IllegalArgumentException should not occur");
+    }
+    catch (IllegalAccessException e) {
+      fail("IllegalAccessException should not occur");
+    }
+
+    // Confirm EBookState.ON_LOAN state
+    assertEquals(book.getState(), EBookState.ON_LOAN);
+    
+    // Confirm loan_ field is initially null
+    assertNull(book.getLoan());
+
+    // Call method under test
+    try {
+      book.borrow(mockedLoan);
+      fail("Should have thrown RuntimeException");
+    }
+    catch(RuntimeException re) {
+      assertTrue(true);
+    }
+    
+    // Confirm loan_ field is still null
+    assertNull(book.getLoan());
+
+    // Confirm state unchanged
+    assertEquals(book.getState(), EBookState.ON_LOAN);
   }
   
   // ==========================================================================
