@@ -4,8 +4,10 @@ import java.util.ArrayList;
 
 import library.interfaces.entities.EMemberState;
 import library.interfaces.entities.ILoan;
+import library.interfaces.entities.IMember;
 
 public class Member 
+  implements IMember
 {
   private String firstName_;
   private String lastName_;
@@ -16,10 +18,6 @@ public class Member
   private EMemberState memberState_ = EMemberState.BORROWING_ALLOWED;
   private float fineAmount_ = 0.0f;
   
-  //Check value of LOAN_LIMIT
-  private final int LOAN_LIMIT_ = 10;
-  //Check value of FINE_MAX
-  private final float FINE_MAX_ = 20.0f;
 
   public Member(String firstName, String lastName, String contactPhone,
                      String emailAddress, int id) 
@@ -86,7 +84,7 @@ public class Member
   
   public boolean hasReachedFineLimit()
   {
-    if (fineAmount_ >= FINE_MAX_)
+    if (fineAmount_ >= IMember.FINE_LIMIT)
     {
       return true;
     }
@@ -115,7 +113,7 @@ public class Member
   
   public boolean hasReachedLoanLimit()
   {
-    if (getLoans().size() >= LOAN_LIMIT_)
+    if (getLoans().size() >= IMember.LOAN_LIMIT)
     {
       return true;
     }
@@ -193,5 +191,21 @@ public class Member
   public float getFineAmount()
   {
     return fineAmount_;
+  }
+
+
+
+  @Override
+  public boolean hasOverDueLoans() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+
+
+  @Override
+  public void removeLoan(ILoan loan) {
+    // TODO Auto-generated method stub
+    
   }
 }

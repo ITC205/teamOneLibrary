@@ -39,7 +39,7 @@ public interface IMember {
 	
 	public String  getEmailAddress();
 	
-	public int     getID();
+	public int     getId();
 	
 
 }
