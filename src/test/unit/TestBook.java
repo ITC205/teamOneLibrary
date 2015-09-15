@@ -143,7 +143,8 @@ public class TestBook extends TestCase
 
   public void testGetID()
   {
-    Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
+    Book book = new Book("Charles Dickens", "Great Expectations",
+            "82.023 275 [2011]", 1);
     assertEquals(1, book.getID());
 
     book = new Book("author", "title", "callNumber", 500);
@@ -157,7 +158,8 @@ public class TestBook extends TestCase
 
   public void testGetAuthor()
   {
-    Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
+    Book book = new Book("Charles Dickens", "Great Expectations",
+            "82.023 275 [2011]", 1);
     assertEquals("Charles Dickens", book.getAuthor());
 
     book = new Book("Josh Kent", "title", "callNumber", 1);
@@ -182,7 +184,8 @@ public class TestBook extends TestCase
 
   public void testGetTitle()
   {
-    Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
+    Book book = new Book("Charles Dickens", "Great Expectations",
+            "82.023 275 [2011]", 1);
     assertEquals("Great Expectations", book.getTitle());
 
     book = new Book("author", "A Typical Book Title", "callNumber", 1);
@@ -207,7 +210,8 @@ public class TestBook extends TestCase
 
   public void testGetCallNumber()
   {
-    Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
+    Book book = new Book("Charles Dickens", "Great Expectations",
+            "82.023 275 [2011]", 1);
     assertEquals("82.023 275 [2011]", book.getCallNumber());
 
     book = new Book("author", "title", "516.375", 1);
@@ -233,7 +237,8 @@ public class TestBook extends TestCase
   public void testGetStateDefault()
   {
     // Default state for new Book should be EBookState.AVAILABLE
-    Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
+    Book book = new Book("Charles Dickens", "Great Expectations",
+            "82.023 275 [2011]", 1);
     assertEquals(EBookState.AVAILABLE, book.getState());
   }
 
@@ -242,18 +247,23 @@ public class TestBook extends TestCase
   public void testGetLoanDefault()
   {
     // Default loan for a new Book should be null
-    Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
+    Book book = new Book("Charles Dickens", "Great Expectations",
+            "82.023 275 [2011]", 1);
     assertNull(book.getLoan());
   }
-  
-  public void testGetLoanWithMock() {
-    Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
+
+
+
+  public void testGetLoanWithMock()
+  {
+    Book book = new Book("Charles Dickens", "Great Expectations",
+            "82.023 275 [2011]", 1);
     ILoan mockedLoan = mock(ILoan.class);
-    
+
     // Set some behaviour for mockedLoan
     when(mockedLoan.getBook()).thenReturn(book);
     when(mockedLoan.isOverDue()).thenReturn(false);
-    
+
     try {
       // Using Reflection to directly set private field 'state_' to
       // EBookState.ON_LOAN in order to satisfy getLoan() pre-condition
@@ -266,17 +276,17 @@ public class TestBook extends TestCase
       if (!state.isAccessible()) {
         state.setAccessible(true);
       }
-      
-      if(!loan.isAccessible()) {
+
+      if (!loan.isAccessible()) {
         loan.setAccessible(true);
       }
 
       // Set book state
       state.set(book, EBookState.ON_LOAN);
-      
+
       // Set book loan
       loan.set(book, mockedLoan);
-      
+
     }
     catch (NoSuchFieldException e) {
       fail("NoSuchFieldException should not occur");
@@ -290,33 +300,39 @@ public class TestBook extends TestCase
     catch (IllegalAccessException e) {
       fail("IllegalAccessException should not occur");
     }
-    
+
     // Confirm EBookState.ON_LOAN state
     assertEquals(book.getState(), EBookState.ON_LOAN);
-    
+
     // Call method under test
     ILoan returnedLoan = book.getLoan();
-    
+
     // Confirm returnedLoan is mock
     assertEquals(returnedLoan.getBook(), book);
     assertFalse(returnedLoan.isOverDue());
-    
+
     // Confirm state unchanged
     assertEquals(book.getState(), EBookState.ON_LOAN);
   }
 
+
+
   // ==========================================================================
   // Testing borrow() method (Uses ILoan mock)
   // ==========================================================================
+
   
-  public void testBorrowFromAvailableLoanNotNull() {
-    Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
+  
+  public void testBorrowFromAvailableLoanNotNull()
+  {
+    Book book = new Book("Charles Dickens", "Great Expectations",
+            "82.023 275 [2011]", 1);
     ILoan mockedLoan = mock(ILoan.class);
-    
+
     // Set some behaviour for mockedLoan
     when(mockedLoan.getBook()).thenReturn(book);
     when(mockedLoan.isOverDue()).thenReturn(true);
-    
+
     try {
       // Using Reflection to directly set private field 'state_' to
       // EBookState.AVAILABLE in order to satisfy borrow() pre-condition
@@ -347,13 +363,13 @@ public class TestBook extends TestCase
 
     // Confirm EBookState.AVAILABLE state
     assertEquals(book.getState(), EBookState.AVAILABLE);
-    
+
     // Confirm loan_ field is initially null
     assertNull(book.getLoan());
 
     // Call method under test
     book.borrow(mockedLoan);
-    
+
     // Confirm loan_ field contains mockedLoan
     ILoan returnedLoan = book.getLoan();
     assertEquals(book, returnedLoan.getBook());
@@ -362,10 +378,14 @@ public class TestBook extends TestCase
     // Confirm state change to EBookState.ON_LOAN
     assertEquals(book.getState(), EBookState.ON_LOAN);
   }
-  
-  public void testBorrowFromAvailableLoanIsNull() {
-    Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
-    
+
+
+
+  public void testBorrowFromAvailableLoanIsNull()
+  {
+    Book book = new Book("Charles Dickens", "Great Expectations",
+            "82.023 275 [2011]", 1);
+
     try {
       // Using Reflection to directly set private field 'state_' to
       // EBookState.AVAILABLE in order to satisfy borrow() pre-condition
@@ -396,7 +416,7 @@ public class TestBook extends TestCase
 
     // Confirm EBookState.AVAILABLE state
     assertEquals(book.getState(), EBookState.AVAILABLE);
-    
+
     // Confirm loan_ field is initially null
     assertNull(book.getLoan());
 
@@ -405,25 +425,29 @@ public class TestBook extends TestCase
       book.borrow(null);
       fail("Should have thrown IllegalArgumentException");
     }
-    catch(IllegalArgumentException iae) {
+    catch (IllegalArgumentException iae) {
       assertTrue(true);
     }
-    
+
     // Confirm loan_ field is still null
     assertNull(book.getLoan());
 
     // Confirm state unchanged
     assertEquals(book.getState(), EBookState.AVAILABLE);
   }
-  
-  public void testBorrowFromOnLoan() {
-    Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
+
+
+
+  public void testBorrowFromOnLoan()
+  {
+    Book book = new Book("Charles Dickens", "Great Expectations",
+            "82.023 275 [2011]", 1);
     ILoan mockedLoan = mock(ILoan.class);
-    
+
     // Set some behaviour for mockedLoan
     when(mockedLoan.getBook()).thenReturn(book);
     when(mockedLoan.isOverDue()).thenReturn(true);
-    
+
     try {
       // Using Reflection to directly set private field 'state_' to
       // EBookState.ON_LOAN
@@ -454,7 +478,7 @@ public class TestBook extends TestCase
 
     // Confirm EBookState.ON_LOAN state
     assertEquals(book.getState(), EBookState.ON_LOAN);
-    
+
     // Confirm loan_ field is initially null
     assertNull(book.getLoan());
 
@@ -463,25 +487,29 @@ public class TestBook extends TestCase
       book.borrow(mockedLoan);
       fail("Should have thrown RuntimeException");
     }
-    catch(RuntimeException re) {
+    catch (RuntimeException re) {
       assertTrue(true);
     }
-    
+
     // Confirm loan_ field is still null
     assertNull(book.getLoan());
 
     // Confirm state unchanged
     assertEquals(book.getState(), EBookState.ON_LOAN);
   }
-  
-  public void testBorrowFromDamaged() {
-    Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
+
+
+
+  public void testBorrowFromDamaged()
+  {
+    Book book = new Book("Charles Dickens", "Great Expectations",
+            "82.023 275 [2011]", 1);
     ILoan mockedLoan = mock(ILoan.class);
-    
+
     // Set some behaviour for mockedLoan
     when(mockedLoan.getBook()).thenReturn(book);
     when(mockedLoan.isOverDue()).thenReturn(true);
-    
+
     try {
       // Using Reflection to directly set private field 'state_' to
       // EBookState.DAMAGED
@@ -512,7 +540,7 @@ public class TestBook extends TestCase
 
     // Confirm EBookState.DAMAGED state
     assertEquals(book.getState(), EBookState.DAMAGED);
-    
+
     // Confirm loan_ field is initially null
     assertNull(book.getLoan());
 
@@ -521,25 +549,29 @@ public class TestBook extends TestCase
       book.borrow(mockedLoan);
       fail("Should have thrown RuntimeException");
     }
-    catch(RuntimeException re) {
+    catch (RuntimeException re) {
       assertTrue(true);
     }
-    
+
     // Confirm loan_ field is still null
     assertNull(book.getLoan());
 
     // Confirm state unchanged
     assertEquals(book.getState(), EBookState.DAMAGED);
   }
-  
-  public void testBorrowFromLost() {
-    Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
+
+
+
+  public void testBorrowFromLost()
+  {
+    Book book = new Book("Charles Dickens", "Great Expectations",
+            "82.023 275 [2011]", 1);
     ILoan mockedLoan = mock(ILoan.class);
-    
+
     // Set some behaviour for mockedLoan
     when(mockedLoan.getBook()).thenReturn(book);
     when(mockedLoan.isOverDue()).thenReturn(true);
-    
+
     try {
       // Using Reflection to directly set private field 'state_' to
       // EBookState.LOST
@@ -570,7 +602,7 @@ public class TestBook extends TestCase
 
     // Confirm EBookState.LOST state
     assertEquals(book.getState(), EBookState.LOST);
-    
+
     // Confirm loan_ field is initially null
     assertNull(book.getLoan());
 
@@ -579,25 +611,29 @@ public class TestBook extends TestCase
       book.borrow(mockedLoan);
       fail("Should have thrown RuntimeException");
     }
-    catch(RuntimeException re) {
+    catch (RuntimeException re) {
       assertTrue(true);
     }
-    
+
     // Confirm loan_ field is still null
     assertNull(book.getLoan());
 
     // Confirm state unchanged
     assertEquals(book.getState(), EBookState.LOST);
   }
-  
-  public void testBorrowFromDisposed() {
-    Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
+
+
+
+  public void testBorrowFromDisposed()
+  {
+    Book book = new Book("Charles Dickens", "Great Expectations",
+            "82.023 275 [2011]", 1);
     ILoan mockedLoan = mock(ILoan.class);
-    
+
     // Set some behaviour for mockedLoan
     when(mockedLoan.getBook()).thenReturn(book);
     when(mockedLoan.isOverDue()).thenReturn(true);
-    
+
     try {
       // Using Reflection to directly set private field 'state_' to
       // EBookState.DISPOSED
@@ -628,7 +664,7 @@ public class TestBook extends TestCase
 
     // Confirm EBookState.DISPOSED state
     assertEquals(book.getState(), EBookState.DISPOSED);
-    
+
     // Confirm loan_ field is initially null
     assertNull(book.getLoan());
 
@@ -637,16 +673,18 @@ public class TestBook extends TestCase
       book.borrow(mockedLoan);
       fail("Should have thrown RuntimeException");
     }
-    catch(RuntimeException re) {
+    catch (RuntimeException re) {
       assertTrue(true);
     }
-    
+
     // Confirm loan_ field is still null
     assertNull(book.getLoan());
 
     // Confirm state unchanged
     assertEquals(book.getState(), EBookState.DISPOSED);
   }
+
+  
   
   // ==========================================================================
   // Testing lose() method
@@ -654,11 +692,11 @@ public class TestBook extends TestCase
 
 
 
-  // TODO Get each state (damaged, lost, etc.)
   public void testLoseFromOnLoan()
   {
     // Create test Book object
-    Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
+    Book book = new Book("Charles Dickens", "Great Expectations",
+            "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -703,7 +741,8 @@ public class TestBook extends TestCase
   public void testLoseFromAvailable()
   {
     // Create test Book object
-    Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
+    Book book = new Book("Charles Dickens", "Great Expectations",
+            "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -754,7 +793,8 @@ public class TestBook extends TestCase
   public void testLoseFromLost()
   {
     // Create test Book object
-    Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
+    Book book = new Book("Charles Dickens", "Great Expectations",
+            "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -805,7 +845,8 @@ public class TestBook extends TestCase
   public void testLoseFromDamaged()
   {
     // Create test Book object
-    Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
+    Book book = new Book("Charles Dickens", "Great Expectations",
+            "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -856,7 +897,8 @@ public class TestBook extends TestCase
   public void testLoseFromDisposed()
   {
     // Create test Book object
-    Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
+    Book book = new Book("Charles Dickens", "Great Expectations",
+            "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -908,10 +950,13 @@ public class TestBook extends TestCase
   // Testing repair() method
   // ==========================================================================
 
+  
+  
   public void testRepairFromDamaged()
   {
     // Create test Book object
-    Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
+    Book book = new Book("Charles Dickens", "Great Expectations",
+            "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -956,7 +1001,8 @@ public class TestBook extends TestCase
   public void testRepairFromAvailable()
   {
     // Create test Book object
-    Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
+    Book book = new Book("Charles Dickens", "Great Expectations",
+            "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -1007,7 +1053,8 @@ public class TestBook extends TestCase
   public void testRepairFromOnLoan()
   {
     // Create test Book object
-    Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
+    Book book = new Book("Charles Dickens", "Great Expectations",
+            "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -1058,7 +1105,8 @@ public class TestBook extends TestCase
   public void testRepairFromLost()
   {
     // Create test Book object
-    Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
+    Book book = new Book("Charles Dickens", "Great Expectations",
+            "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -1109,7 +1157,8 @@ public class TestBook extends TestCase
   public void testRepairFromDisposed()
   {
     // Create test Book object
-    Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
+    Book book = new Book("Charles Dickens", "Great Expectations",
+            "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -1161,10 +1210,13 @@ public class TestBook extends TestCase
   // Testing dispose() method
   // ==========================================================================
 
+  
+  
   public void testDisposeFromAvailable()
   {
     // Create test Book object
-    Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
+    Book book = new Book("Charles Dickens", "Great Expectations",
+            "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -1204,11 +1256,14 @@ public class TestBook extends TestCase
     // Confirm state change to EBookState.DISPOSED
     assertEquals(book.getState(), EBookState.DISPOSED);
   }
-  
+
+
+
   public void testDisposeFromDamaged()
   {
     // Create test Book object
-    Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
+    Book book = new Book("Charles Dickens", "Great Expectations",
+            "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -1248,11 +1303,14 @@ public class TestBook extends TestCase
     // Confirm state change to EBookState.DISPOSED
     assertEquals(book.getState(), EBookState.DISPOSED);
   }
-  
+
+
+
   public void testDisposeFromLost()
   {
     // Create test Book object
-    Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
+    Book book = new Book("Charles Dickens", "Great Expectations",
+            "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -1293,10 +1351,13 @@ public class TestBook extends TestCase
     assertEquals(book.getState(), EBookState.DISPOSED);
   }
 
+
+
   public void testDisposeFromOnLoan()
   {
     // Create test Book object
-    Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
+    Book book = new Book("Charles Dickens", "Great Expectations",
+            "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -1341,10 +1402,14 @@ public class TestBook extends TestCase
     // Confirm state unchanged
     assertEquals(book.getState(), EBookState.ON_LOAN);
   }
-  
-  public void testDisposeFromDisposed() {
+
+
+
+  public void testDisposeFromDisposed()
+  {
     // Create test Book object
-    Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
+    Book book = new Book("Charles Dickens", "Great Expectations",
+            "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -1389,14 +1454,20 @@ public class TestBook extends TestCase
     // Confirm state unchanged
     assertEquals(book.getState(), EBookState.DISPOSED);
   }
-  
+
+
+
   // ==========================================================================
   // Testing returnBook(boolean damaged) method
   // ==========================================================================
+
   
-  public void testReturnBookFromOnLoanDamaged() {
+  
+  public void testReturnBookFromOnLoanDamaged()
+  {
     // Create test Book object
-    Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
+    Book book = new Book("Charles Dickens", "Great Expectations",
+            "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -1436,10 +1507,14 @@ public class TestBook extends TestCase
     // Confirm state change to EBookState.DAMAGED
     assertEquals(book.getState(), EBookState.DAMAGED);
   }
-  
-  public void testReturnBookFromOnLoanUndamaged() {
+
+
+
+  public void testReturnBookFromOnLoanUndamaged()
+  {
     // Create test Book object
-    Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
+    Book book = new Book("Charles Dickens", "Great Expectations",
+            "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -1479,10 +1554,14 @@ public class TestBook extends TestCase
     // Confirm state change to EBookState.AVAILABLE
     assertEquals(book.getState(), EBookState.AVAILABLE);
   }
-  
-  public void testReturnBookFromLostDamaged() {
+
+
+
+  public void testReturnBookFromLostDamaged()
+  {
     // Create test Book object
-    Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
+    Book book = new Book("Charles Dickens", "Great Expectations",
+            "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -1522,10 +1601,14 @@ public class TestBook extends TestCase
     // Confirm state change to EBookState.DAMAGED
     assertEquals(book.getState(), EBookState.DAMAGED);
   }
-  
-  public void testReturnBookFromLostUndamaged() {
+
+
+
+  public void testReturnBookFromLostUndamaged()
+  {
     // Create test Book object
-    Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
+    Book book = new Book("Charles Dickens", "Great Expectations",
+            "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -1565,10 +1648,14 @@ public class TestBook extends TestCase
     // Confirm state change to EBookState.AVAILABLE
     assertEquals(book.getState(), EBookState.AVAILABLE);
   }
-  
-  public void testReturnBookFromAvailableDamaged() {
+
+
+
+  public void testReturnBookFromAvailableDamaged()
+  {
     // Create test Book object
-    Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
+    Book book = new Book("Charles Dickens", "Great Expectations",
+            "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -1613,10 +1700,14 @@ public class TestBook extends TestCase
     // Confirm state unchanged
     assertEquals(book.getState(), EBookState.AVAILABLE);
   }
-  
-  public void testReturnBookFromAvailableUndamaged() {
+
+
+
+  public void testReturnBookFromAvailableUndamaged()
+  {
     // Create test Book object
-    Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
+    Book book = new Book("Charles Dickens", "Great Expectations",
+            "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -1661,10 +1752,14 @@ public class TestBook extends TestCase
     // Confirm state unchanged
     assertEquals(book.getState(), EBookState.AVAILABLE);
   }
-  
-  public void testReturnBookFromDamagedDamaged() {
+
+
+
+  public void testReturnBookFromDamagedDamaged()
+  {
     // Create test Book object
-    Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
+    Book book = new Book("Charles Dickens", "Great Expectations",
+            "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -1709,10 +1804,14 @@ public class TestBook extends TestCase
     // Confirm state unchanged
     assertEquals(book.getState(), EBookState.DAMAGED);
   }
-  
-  public void testReturnBookFromDamagedUndamaged() {
+
+
+
+  public void testReturnBookFromDamagedUndamaged()
+  {
     // Create test Book object
-    Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
+    Book book = new Book("Charles Dickens", "Great Expectations",
+            "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -1757,10 +1856,14 @@ public class TestBook extends TestCase
     // Confirm state unchanged
     assertEquals(book.getState(), EBookState.DAMAGED);
   }
-  
-  public void testReturnBookFromDisposedDamaged() {
+
+
+
+  public void testReturnBookFromDisposedDamaged()
+  {
     // Create test Book object
-    Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
+    Book book = new Book("Charles Dickens", "Great Expectations",
+            "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -1805,10 +1908,14 @@ public class TestBook extends TestCase
     // Confirm state unchanged
     assertEquals(book.getState(), EBookState.DISPOSED);
   }
-  
-  public void testReturnBookFromDisposedUndamaged() {
+
+
+
+  public void testReturnBookFromDisposedUndamaged()
+  {
     // Create test Book object
-    Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
+    Book book = new Book("Charles Dickens", "Great Expectations",
+            "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -1853,25 +1960,23 @@ public class TestBook extends TestCase
     // Confirm state unchanged
     assertEquals(book.getState(), EBookState.DISPOSED);
   }
+
 
 
   // ==========================================================================
   // Testing toString() method
   // ==========================================================================
+
   
-  public void testToString() {
-    Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
-    String expectedString = "ID: 1\n"
-                          + "Author: Charles Dickens\n"
-                          + "Title: Great Expectations\n"
-                          + "Call Number: 82.023 275 [2011]";
-    
+  
+  public void testToString()
+  {
+    Book book = new Book("Charles Dickens", "Great Expectations",
+            "82.023 275 [2011]", 1);
+    String expectedString = "ID: 1\n" + "Author: Charles Dickens\n"
+            + "Title: Great Expectations\n" + "Call Number: 82.023 275 [2011]";
+
     assertEquals(expectedString, book.toString());
   }
-  
-  
-  
-  
-  
-  // TODO get loan with mock object
+
 }
