@@ -5,6 +5,9 @@ import java.lang.reflect.Field;
 import junit.framework.TestCase;
 import library.entities.Book;
 import library.interfaces.entities.EBookState;
+import library.interfaces.entities.ILoan;
+
+import static org.mockito.Mockito.*;
 
 public class TestBook extends TestCase
 {
@@ -242,10 +245,71 @@ public class TestBook extends TestCase
     Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
     assertNull(book.getLoan());
   }
+  
+  public void testGetLoanWithMock() {
+    Book book = new Book("Charles Dickens", "Great Expectations", "82.023 275 [2011]", 1);
+    ILoan mockedLoan = mock(ILoan.class);
+    
+    // Set some behaviour for mockedLoan
+    when(mockedLoan.getBook()).thenReturn(book);
+    when(mockedLoan.isOverDue()).thenReturn(false);
+    
+    try {
+      // Using Reflection to directly set private field 'state_' to
+      // EBookState.ON_LOAN in order to satisfy getLoan() pre-condition
 
+      Class<?> bookClass = book.getClass();
+      Field state = bookClass.getDeclaredField("state_");
+      Field loan = bookClass.getDeclaredField("loan_");
+
+      // Enable direct modification of private fields
+      if (!state.isAccessible()) {
+        state.setAccessible(true);
+      }
+      
+      if(!loan.isAccessible()) {
+        loan.setAccessible(true);
+      }
+
+      // Set book state
+      state.set(book, EBookState.ON_LOAN);
+      
+      // Set book loan
+      loan.set(book, mockedLoan);
+      
+    }
+    catch (NoSuchFieldException e) {
+      fail("NoSuchFieldException should not occur");
+    }
+    catch (SecurityException e) {
+      fail("SecurityException should not occur");
+    }
+    catch (IllegalArgumentException e) {
+      fail("IllegalArgumentException should not occur");
+    }
+    catch (IllegalAccessException e) {
+      fail("IllegalAccessException should not occur");
+    }
+    
+    // Confirm EBookState.ON_LOAN state
+    assertEquals(book.getState(), EBookState.ON_LOAN);
+    
+    // Call method under test
+    ILoan returnedLoan = book.getLoan();
+    
+    // Confirm returnedLoan is mock
+    assertEquals(returnedLoan.getBook(), book);
+    assertFalse(returnedLoan.isOverDue());
+    
+    // Confirm state unchanged
+    assertEquals(book.getState(), EBookState.ON_LOAN);
+  }
+
+  // ==========================================================================
+  // Testing borrow() method (Uses ILoan mock)
+  // ==========================================================================
   
-  
-  public void testGetLoanMock() {
+  public void testBorrowFromAvailable() {
     
   }
   
