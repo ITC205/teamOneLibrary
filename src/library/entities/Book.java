@@ -82,6 +82,10 @@ public class Book implements IBook
                                  + " > " 
                                  + EBookState.ON_LOAN + "]");
     }
+    if(loan == null) {
+      throw new IllegalArgumentException("Book: borrow: value for 'loan cannot"
+                                         + " be null");
+    }
     loan_ = loan;
     setState(EBookState.ON_LOAN);
   }
