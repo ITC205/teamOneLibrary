@@ -20,13 +20,32 @@ import org.junit.Test;
 import org.junit.After;
 
 import static org.junit.Assert.*;
-
+import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for Loan entity.
  */
 public class TestLoan
 {
+  // ==========================================================================
+  // Stub helper
+  // ==========================================================================
+
+
+
+  /**
+   * Create stub items with Mockito, but explicitly name method to show that
+   * stubs are being used (not mocks or other fakes/doubles) :-)
+   * @param classToMock Class to be stubbed
+   * @return stub of class
+   */
+  public static <T> T stub(Class<T> classToMock)
+  {
+    return mock(classToMock);
+  }
+
+
+
   // ==========================================================================
   // Constructor Testing
   // ==========================================================================
@@ -36,9 +55,9 @@ public class TestLoan
   @Test
   public void constructNewLoan()
   {
-    // Given a valid member and book
-    IMember fakeBorrower = new FakeMember();
-    IBook fakeBook = new FakeBook();
+    // given stubs for member and book
+    IMember fakeBorrower = stub(IMember.class);
+    IBook fakeBook = stub(IBook.class);
     // With dates (valid dates to check later)
     Date borrowDate = new Date();
     Date returnDate = new Date();
@@ -50,75 +69,5 @@ public class TestLoan
     assertTrue(loan instanceof ILoan);
   }
 
-
-  //===========================================================================
-  // Stubs
-  //===========================================================================
-
-
-
-  public class FakeBook
-    implements IBook
-  {
-    public void borrow(ILoan loan) {}
-
-    public ILoan getLoan() {return null;}
-
-    public void returnBook(boolean damaged) {}
-
-    public void lose() {}
-
-    public void repair() {}
-
-    public void dispose() {}
-
-    public EBookState getState() {return EBookState.AVAILABLE;}
-
-    public String getAuthor() {return "Charles Dickens";}
-
-    public String getTitle() {return "Great Expectations";}
-
-    public String getCallNumber() {return "82.023 275 [2011]";}
-
-    public int getID() {return 1;}
-  }
-
-
-
-  public class FakeMember
-    implements IMember
-  {
-    public boolean hasOverDueLoans() {return false;}
-
-    public boolean hasReachedLoanLimit() {return false;}
-
-    public boolean hasFinesPayable() {return false;}
-
-    public boolean hasReachedFineLimit() {return false;}
-
-    public float getFineAmount()  {return 0;}
-
-    public void addFine(float fine) {}
-
-    public void payFine(float payment) {}
-
-    public void addLoan(ILoan loan) {}
-
-    public List<ILoan> getLoans() {return null;}
-
-    public void removeLoan(ILoan loan) {}
-
-    public EMemberState getState() {return EMemberState.BORROWING_ALLOWED;}
-
-    public String getFirstName() {return "John";}
-
-    public String getLastName() {return "Smith";}
-
-    public String getContactPhone() {return "0414414414";}
-
-    public String getEmailAddress() {return "johnsmith@uni.edu.au";}
-
-    public int getID() {return 1;}
-  }
 
 }
