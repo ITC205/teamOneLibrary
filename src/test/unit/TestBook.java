@@ -144,7 +144,7 @@ public class TestBook extends TestCase
   public void testGetID()
   {
     Book book = new Book("Charles Dickens", "Great Expectations",
-            "82.023 275 [2011]", 1);
+                         "82.023 275 [2011]", 1);
     assertEquals(1, book.getID());
 
     book = new Book("author", "title", "callNumber", 500);
@@ -159,7 +159,7 @@ public class TestBook extends TestCase
   public void testGetAuthor()
   {
     Book book = new Book("Charles Dickens", "Great Expectations",
-            "82.023 275 [2011]", 1);
+                         "82.023 275 [2011]", 1);
     assertEquals("Charles Dickens", book.getAuthor());
 
     book = new Book("Josh Kent", "title", "callNumber", 1);
@@ -175,9 +175,9 @@ public class TestBook extends TestCase
     assertEquals(" ", book.getAuthor());
 
     book = new Book("A very long string that never ever ever ever ever ever "
-            + "ever ever ends", "title", "callNumber", 1);
+                    + "ever ever ends", "title", "callNumber", 1);
     assertEquals("A very long string that never ever ever ever ever ever ever"
-            + " ever ends", book.getAuthor());
+                 + " ever ends", book.getAuthor());
   }
 
 
@@ -185,7 +185,7 @@ public class TestBook extends TestCase
   public void testGetTitle()
   {
     Book book = new Book("Charles Dickens", "Great Expectations",
-            "82.023 275 [2011]", 1);
+                         "82.023 275 [2011]", 1);
     assertEquals("Great Expectations", book.getTitle());
 
     book = new Book("author", "A Typical Book Title", "callNumber", 1);
@@ -201,9 +201,9 @@ public class TestBook extends TestCase
     assertEquals(" ", book.getTitle());
 
     book = new Book("author", "A very long book title that is too long to fit "
-            + "on the front cover of any book", "callNumber", 1);
+                    + "on the front cover of any book", "callNumber", 1);
     assertEquals("A very long book title that is too long to fit on"
-            + " the front cover of any book", book.getTitle());
+                 + " the front cover of any book", book.getTitle());
   }
 
 
@@ -211,7 +211,7 @@ public class TestBook extends TestCase
   public void testGetCallNumber()
   {
     Book book = new Book("Charles Dickens", "Great Expectations",
-            "82.023 275 [2011]", 1);
+                         "82.023 275 [2011]", 1);
     assertEquals("82.023 275 [2011]", book.getCallNumber());
 
     book = new Book("author", "title", "516.375", 1);
@@ -227,7 +227,7 @@ public class TestBook extends TestCase
     assertEquals(" ", book.getCallNumber());
 
     book = new Book("author", "title",
-            "1728492399232432.12353218712783299129" + "21321321121", 1);
+                    "1728492399232432.12353218712783299129" + "21321321121", 1);
     assertEquals("1728492399232432.1235321871278329912921321321121",
             book.getCallNumber());
   }
@@ -238,7 +238,7 @@ public class TestBook extends TestCase
   {
     // Default state for new Book should be EBookState.AVAILABLE
     Book book = new Book("Charles Dickens", "Great Expectations",
-            "82.023 275 [2011]", 1);
+                         "82.023 275 [2011]", 1);
     assertEquals(EBookState.AVAILABLE, book.getState());
   }
 
@@ -248,7 +248,7 @@ public class TestBook extends TestCase
   {
     // Default loan for a new Book should be null
     Book book = new Book("Charles Dickens", "Great Expectations",
-            "82.023 275 [2011]", 1);
+                         "82.023 275 [2011]", 1);
     assertNull(book.getLoan());
   }
 
@@ -257,7 +257,7 @@ public class TestBook extends TestCase
   public void testGetLoanWithMock()
   {
     Book book = new Book("Charles Dickens", "Great Expectations",
-            "82.023 275 [2011]", 1);
+                         "82.023 275 [2011]", 1);
     ILoan mockedLoan = mock(ILoan.class);
 
     // Set some behaviour for mockedLoan
@@ -326,7 +326,7 @@ public class TestBook extends TestCase
   public void testBorrowFromAvailableLoanNotNull()
   {
     Book book = new Book("Charles Dickens", "Great Expectations",
-            "82.023 275 [2011]", 1);
+                         "82.023 275 [2011]", 1);
     ILoan mockedLoan = mock(ILoan.class);
 
     // Set some behaviour for mockedLoan
@@ -364,13 +364,13 @@ public class TestBook extends TestCase
     // Confirm EBookState.AVAILABLE state
     assertEquals(book.getState(), EBookState.AVAILABLE);
 
-    // Confirm loan_ field is initially null
+    // Confirm 'loan_' field is initially null
     assertNull(book.getLoan());
 
     // Call method under test
     book.borrow(mockedLoan);
 
-    // Confirm loan_ field contains mockedLoan
+    // Confirm 'loan_' field contains mockedLoan
     ILoan returnedLoan = book.getLoan();
     assertEquals(book, returnedLoan.getBook());
     assertTrue(returnedLoan.isOverDue());
@@ -384,7 +384,7 @@ public class TestBook extends TestCase
   public void testBorrowFromAvailableLoanIsNull()
   {
     Book book = new Book("Charles Dickens", "Great Expectations",
-            "82.023 275 [2011]", 1);
+                         "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -417,7 +417,7 @@ public class TestBook extends TestCase
     // Confirm EBookState.AVAILABLE state
     assertEquals(book.getState(), EBookState.AVAILABLE);
 
-    // Confirm loan_ field is initially null
+    // Confirm 'loan_' field is initially null
     assertNull(book.getLoan());
 
     // Call method under test
@@ -429,7 +429,7 @@ public class TestBook extends TestCase
       assertTrue(true);
     }
 
-    // Confirm loan_ field is still null
+    // Confirm 'loan_' field is still null
     assertNull(book.getLoan());
 
     // Confirm state unchanged
@@ -441,7 +441,7 @@ public class TestBook extends TestCase
   public void testBorrowFromOnLoan()
   {
     Book book = new Book("Charles Dickens", "Great Expectations",
-            "82.023 275 [2011]", 1);
+                         "82.023 275 [2011]", 1);
     ILoan mockedLoan = mock(ILoan.class);
 
     // Set some behaviour for mockedLoan
@@ -479,7 +479,7 @@ public class TestBook extends TestCase
     // Confirm EBookState.ON_LOAN state
     assertEquals(book.getState(), EBookState.ON_LOAN);
 
-    // Confirm loan_ field is initially null
+    // Confirm 'loan_' field is initially null
     assertNull(book.getLoan());
 
     // Call method under test
@@ -491,7 +491,7 @@ public class TestBook extends TestCase
       assertTrue(true);
     }
 
-    // Confirm loan_ field is still null
+    // Confirm 'loan_' field is still null
     assertNull(book.getLoan());
 
     // Confirm state unchanged
@@ -503,7 +503,7 @@ public class TestBook extends TestCase
   public void testBorrowFromDamaged()
   {
     Book book = new Book("Charles Dickens", "Great Expectations",
-            "82.023 275 [2011]", 1);
+                         "82.023 275 [2011]", 1);
     ILoan mockedLoan = mock(ILoan.class);
 
     // Set some behaviour for mockedLoan
@@ -541,7 +541,7 @@ public class TestBook extends TestCase
     // Confirm EBookState.DAMAGED state
     assertEquals(book.getState(), EBookState.DAMAGED);
 
-    // Confirm loan_ field is initially null
+    // Confirm 'loan_' field is initially null
     assertNull(book.getLoan());
 
     // Call method under test
@@ -553,7 +553,7 @@ public class TestBook extends TestCase
       assertTrue(true);
     }
 
-    // Confirm loan_ field is still null
+    // Confirm 'loan_' field is still null
     assertNull(book.getLoan());
 
     // Confirm state unchanged
@@ -565,7 +565,7 @@ public class TestBook extends TestCase
   public void testBorrowFromLost()
   {
     Book book = new Book("Charles Dickens", "Great Expectations",
-            "82.023 275 [2011]", 1);
+                         "82.023 275 [2011]", 1);
     ILoan mockedLoan = mock(ILoan.class);
 
     // Set some behaviour for mockedLoan
@@ -603,7 +603,7 @@ public class TestBook extends TestCase
     // Confirm EBookState.LOST state
     assertEquals(book.getState(), EBookState.LOST);
 
-    // Confirm loan_ field is initially null
+    // Confirm 'loan_' field is initially null
     assertNull(book.getLoan());
 
     // Call method under test
@@ -615,7 +615,7 @@ public class TestBook extends TestCase
       assertTrue(true);
     }
 
-    // Confirm loan_ field is still null
+    // Confirm 'loan_' field is still null
     assertNull(book.getLoan());
 
     // Confirm state unchanged
@@ -627,7 +627,7 @@ public class TestBook extends TestCase
   public void testBorrowFromDisposed()
   {
     Book book = new Book("Charles Dickens", "Great Expectations",
-            "82.023 275 [2011]", 1);
+                         "82.023 275 [2011]", 1);
     ILoan mockedLoan = mock(ILoan.class);
 
     // Set some behaviour for mockedLoan
@@ -665,7 +665,7 @@ public class TestBook extends TestCase
     // Confirm EBookState.DISPOSED state
     assertEquals(book.getState(), EBookState.DISPOSED);
 
-    // Confirm loan_ field is initially null
+    // Confirm 'loan_' field is initially null
     assertNull(book.getLoan());
 
     // Call method under test
@@ -677,7 +677,7 @@ public class TestBook extends TestCase
       assertTrue(true);
     }
 
-    // Confirm loan_ field is still null
+    // Confirm 'loan_' field is still null
     assertNull(book.getLoan());
 
     // Confirm state unchanged
@@ -696,7 +696,7 @@ public class TestBook extends TestCase
   {
     // Create test Book object
     Book book = new Book("Charles Dickens", "Great Expectations",
-            "82.023 275 [2011]", 1);
+                         "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -742,7 +742,7 @@ public class TestBook extends TestCase
   {
     // Create test Book object
     Book book = new Book("Charles Dickens", "Great Expectations",
-            "82.023 275 [2011]", 1);
+                         "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -794,7 +794,7 @@ public class TestBook extends TestCase
   {
     // Create test Book object
     Book book = new Book("Charles Dickens", "Great Expectations",
-            "82.023 275 [2011]", 1);
+                         "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -846,7 +846,7 @@ public class TestBook extends TestCase
   {
     // Create test Book object
     Book book = new Book("Charles Dickens", "Great Expectations",
-            "82.023 275 [2011]", 1);
+                         "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -898,7 +898,7 @@ public class TestBook extends TestCase
   {
     // Create test Book object
     Book book = new Book("Charles Dickens", "Great Expectations",
-            "82.023 275 [2011]", 1);
+                         "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -956,7 +956,7 @@ public class TestBook extends TestCase
   {
     // Create test Book object
     Book book = new Book("Charles Dickens", "Great Expectations",
-            "82.023 275 [2011]", 1);
+                         "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -1002,7 +1002,7 @@ public class TestBook extends TestCase
   {
     // Create test Book object
     Book book = new Book("Charles Dickens", "Great Expectations",
-            "82.023 275 [2011]", 1);
+                         "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -1054,7 +1054,7 @@ public class TestBook extends TestCase
   {
     // Create test Book object
     Book book = new Book("Charles Dickens", "Great Expectations",
-            "82.023 275 [2011]", 1);
+                         "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -1106,7 +1106,7 @@ public class TestBook extends TestCase
   {
     // Create test Book object
     Book book = new Book("Charles Dickens", "Great Expectations",
-            "82.023 275 [2011]", 1);
+                         "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -1158,7 +1158,7 @@ public class TestBook extends TestCase
   {
     // Create test Book object
     Book book = new Book("Charles Dickens", "Great Expectations",
-            "82.023 275 [2011]", 1);
+                         "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -1216,7 +1216,7 @@ public class TestBook extends TestCase
   {
     // Create test Book object
     Book book = new Book("Charles Dickens", "Great Expectations",
-            "82.023 275 [2011]", 1);
+                         "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -1263,7 +1263,7 @@ public class TestBook extends TestCase
   {
     // Create test Book object
     Book book = new Book("Charles Dickens", "Great Expectations",
-            "82.023 275 [2011]", 1);
+                         "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -1310,7 +1310,7 @@ public class TestBook extends TestCase
   {
     // Create test Book object
     Book book = new Book("Charles Dickens", "Great Expectations",
-            "82.023 275 [2011]", 1);
+                         "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -1357,7 +1357,7 @@ public class TestBook extends TestCase
   {
     // Create test Book object
     Book book = new Book("Charles Dickens", "Great Expectations",
-            "82.023 275 [2011]", 1);
+                         "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -1409,7 +1409,7 @@ public class TestBook extends TestCase
   {
     // Create test Book object
     Book book = new Book("Charles Dickens", "Great Expectations",
-            "82.023 275 [2011]", 1);
+                         "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -1467,7 +1467,7 @@ public class TestBook extends TestCase
   {
     // Create test Book object
     Book book = new Book("Charles Dickens", "Great Expectations",
-            "82.023 275 [2011]", 1);
+                         "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -1514,7 +1514,7 @@ public class TestBook extends TestCase
   {
     // Create test Book object
     Book book = new Book("Charles Dickens", "Great Expectations",
-            "82.023 275 [2011]", 1);
+                         "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -1561,7 +1561,7 @@ public class TestBook extends TestCase
   {
     // Create test Book object
     Book book = new Book("Charles Dickens", "Great Expectations",
-            "82.023 275 [2011]", 1);
+                         "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -1608,7 +1608,7 @@ public class TestBook extends TestCase
   {
     // Create test Book object
     Book book = new Book("Charles Dickens", "Great Expectations",
-            "82.023 275 [2011]", 1);
+                         "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -1655,7 +1655,7 @@ public class TestBook extends TestCase
   {
     // Create test Book object
     Book book = new Book("Charles Dickens", "Great Expectations",
-            "82.023 275 [2011]", 1);
+                         "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -1707,7 +1707,7 @@ public class TestBook extends TestCase
   {
     // Create test Book object
     Book book = new Book("Charles Dickens", "Great Expectations",
-            "82.023 275 [2011]", 1);
+                         "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -1759,7 +1759,7 @@ public class TestBook extends TestCase
   {
     // Create test Book object
     Book book = new Book("Charles Dickens", "Great Expectations",
-            "82.023 275 [2011]", 1);
+                         "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -1811,7 +1811,7 @@ public class TestBook extends TestCase
   {
     // Create test Book object
     Book book = new Book("Charles Dickens", "Great Expectations",
-            "82.023 275 [2011]", 1);
+                         "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -1863,7 +1863,7 @@ public class TestBook extends TestCase
   {
     // Create test Book object
     Book book = new Book("Charles Dickens", "Great Expectations",
-            "82.023 275 [2011]", 1);
+                         "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -1915,7 +1915,7 @@ public class TestBook extends TestCase
   {
     // Create test Book object
     Book book = new Book("Charles Dickens", "Great Expectations",
-            "82.023 275 [2011]", 1);
+                         "82.023 275 [2011]", 1);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -1972,9 +1972,11 @@ public class TestBook extends TestCase
   public void testToString()
   {
     Book book = new Book("Charles Dickens", "Great Expectations",
-            "82.023 275 [2011]", 1);
-    String expectedString = "ID: 1\n" + "Author: Charles Dickens\n"
-            + "Title: Great Expectations\n" + "Call Number: 82.023 275 [2011]";
+                         "82.023 275 [2011]", 1);
+    String expectedString = "ID: 1\n" 
+                            + "Author: Charles Dickens\n"
+                            + "Title: Great Expectations\n" 
+                            + "Call Number: 82.023 275 [2011]";
 
     assertEquals(expectedString, book.toString());
   }
