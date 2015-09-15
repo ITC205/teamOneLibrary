@@ -79,7 +79,7 @@ public class TestMember extends TestCase
   public void testAddFine()
   {
     validMember.addFine(1.0f);
-    assertEquals(1.0f, validMember.getFineAmount());
+    assertEquals(1.0f, validMember.getTotalFines());
     
 
     try
@@ -118,9 +118,9 @@ public class TestMember extends TestCase
   {
     validMember.addFine(15.0f);
     validMember.payFine(10.0f);
-    assertEquals(5.0f, validMember.getFineAmount());
+    assertEquals(5.0f, validMember.getTotalFines());
     validMember.payFine(5.0f);
-    assertEquals(0.0f, validMember.getFineAmount());
+    assertEquals(0.0f, validMember.getTotalFines());
     validMember.addFine(5.0f);
     
     try

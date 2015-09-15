@@ -1,7 +1,9 @@
 package library.entities;
 
 import java.util.ArrayList;
+import java.util.Date;
 
+import library.interfaces.daos.ILoanDAO;
 import library.interfaces.entities.EMemberState;
 import library.interfaces.entities.ILoan;
 import library.interfaces.entities.IMember;
@@ -16,7 +18,7 @@ public class Member
   private int id_;
   private ArrayList<ILoan> loanList_ = new ArrayList<>();
   private EMemberState memberState_ = EMemberState.BORROWING_ALLOWED;
-  private float fineAmount_ = 0.0f;
+  private float totalFines_ = 0.0f;
   
 
   public Member(String firstName, String lastName, String contactPhone,
@@ -58,7 +60,7 @@ public class Member
   {
     if (amount >= 0)
     {
-      fineAmount_ += amount;
+      totalFines_ += amount;
     }
     else
     {
@@ -70,7 +72,7 @@ public class Member
   
   public boolean hasFinesPayable()
   {
-    if (fineAmount_ > 0)
+    if (totalFines_ > 0)
     {
       return true;
     }
@@ -84,7 +86,7 @@ public class Member
   
   public boolean hasReachedFineLimit()
   {
-    if (fineAmount_ >= IMember.FINE_LIMIT)
+    if (totalFines_ >= IMember.FINE_LIMIT)
     {
       return true;
     }
@@ -98,9 +100,9 @@ public class Member
   
   public void payFine(float amount) throws IllegalArgumentException
   {
-    if ((amount >= 0) && (amount <= fineAmount_))
+    if ((amount >= 0) && (amount <= totalFines_))
     {
-      fineAmount_ -= amount;
+      totalFines_ -= amount;
     }
     else
     {
@@ -113,7 +115,7 @@ public class Member
   
   public boolean hasReachedLoanLimit()
   {
-    if (getLoans().size() >= IMember.LOAN_LIMIT)
+    if (loanList_.size() >= IMember.LOAN_LIMIT)
     {
       return true;
     }
@@ -122,6 +124,16 @@ public class Member
       return false;
     }
   }
+  
+  
+  
+  @Override
+  public String toString()
+  {
+    return this.firstName_ + this.lastName_ + this.contactPhone_ + 
+           this.emailAddress_ + this.id_;
+  }
+
   
   
   
@@ -188,24 +200,33 @@ public class Member
   
   
   
-  public float getFineAmount()
+  public float getTotalFines()
   {
-    return fineAmount_;
+    return totalFines_;
   }
 
 
 
   @Override
-  public boolean hasOverDueLoans() {
-    // TODO Auto-generated method stub
-    return false;
+  public boolean hasOverDueLoans() 
+  {
+    boolean hasOverDueLoans = false;
+    Date currentDate = new Date();
+    for(ILoan loan: loanList_)
+    {
+      if (loan.checkOverDue(currentDate))
+      {
+        hasOverDueLoans = true;
+      }
+    }
+    return hasOverDueLoans;
   }
 
 
 
   @Override
-  public void removeLoan(ILoan loan) {
-    // TODO Auto-generated method stub
-    
+  public void removeLoan(ILoan loan)
+  {
+    loanList_.remove(loan);
   }
 }

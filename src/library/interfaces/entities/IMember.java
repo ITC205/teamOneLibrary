@@ -17,7 +17,7 @@ public interface IMember {
 	
 	public boolean hasReachedFineLimit();
 	
-	public float   getFineAmount();
+	public float   getTotalFines();
 	
 	public void    addFine(float fine);
 
