@@ -283,42 +283,11 @@ public class TestBook extends TestCase
     when(mockedLoan.getBook()).thenReturn(book);
     when(mockedLoan.isOverDue()).thenReturn(false);
 
-    try {
-      // Using Reflection to directly set private field 'state_' to
-      // EBookState.ON_LOAN in order to satisfy getLoan() pre-condition
-
-      Class<?> bookClass = book.getClass();
-      Field state = bookClass.getDeclaredField("state_");
-      Field loan = bookClass.getDeclaredField("loan_");
-
-      // Enable direct modification of private fields
-      if (!state.isAccessible()) {
-        state.setAccessible(true);
-      }
-
-      if (!loan.isAccessible()) {
-        loan.setAccessible(true);
-      }
-
-      // Set book state
-      state.set(book, EBookState.ON_LOAN);
-
-      // Set book loan
-      loan.set(book, mockedLoan);
-
-    }
-    catch (NoSuchFieldException e) {
-      fail("NoSuchFieldException should not occur");
-    }
-    catch (SecurityException e) {
-      fail("SecurityException should not occur");
-    }
-    catch (IllegalArgumentException e) {
-      fail("IllegalArgumentException should not occur");
-    }
-    catch (IllegalAccessException e) {
-      fail("IllegalAccessException should not occur");
-    }
+    // Ensure book state is correct for this test
+    setBookState(book, EBookState.ON_LOAN);
+    
+    // Set mockedLoan as value for 'loan_' field
+    setBookLoan(book, mockedLoan);
 
     // Confirm EBookState.ON_LOAN state
     assertEquals(book.getState(), EBookState.ON_LOAN);
@@ -353,33 +322,8 @@ public class TestBook extends TestCase
     when(mockedLoan.getBook()).thenReturn(book);
     when(mockedLoan.isOverDue()).thenReturn(true);
 
-    try {
-      // Using Reflection to directly set private field 'state_' to
-      // EBookState.AVAILABLE in order to satisfy borrow() pre-condition
-
-      Class<?> bookClass = book.getClass();
-      Field state = bookClass.getDeclaredField("state_");
-
-      // Enable direct modification of private field
-      if (!state.isAccessible()) {
-        state.setAccessible(true);
-      }
-
-      // Set book state
-      state.set(book, EBookState.AVAILABLE);
-    }
-    catch (NoSuchFieldException e) {
-      fail("NoSuchFieldException should not occur");
-    }
-    catch (SecurityException e) {
-      fail("SecurityException should not occur");
-    }
-    catch (IllegalArgumentException e) {
-      fail("IllegalArgumentException should not occur");
-    }
-    catch (IllegalAccessException e) {
-      fail("IllegalAccessException should not occur");
-    }
+    // Ensure book state is correct for this test
+    setBookState(book, EBookState.AVAILABLE);
 
     // Confirm EBookState.AVAILABLE state
     assertEquals(book.getState(), EBookState.AVAILABLE);
@@ -407,33 +351,8 @@ public class TestBook extends TestCase
     Book book = new Book("Charles Dickens", "Great Expectations",
                          "82.023 275 [2011]", 1);
 
-    try {
-      // Using Reflection to directly set private field 'state_' to
-      // EBookState.AVAILABLE in order to satisfy borrow() pre-condition
-
-      Class<?> bookClass = book.getClass();
-      Field state = bookClass.getDeclaredField("state_");
-
-      // Enable direct modification of private field
-      if (!state.isAccessible()) {
-        state.setAccessible(true);
-      }
-
-      // Set book state
-      state.set(book, EBookState.AVAILABLE);
-    }
-    catch (NoSuchFieldException e) {
-      fail("NoSuchFieldException should not occur");
-    }
-    catch (SecurityException e) {
-      fail("SecurityException should not occur");
-    }
-    catch (IllegalArgumentException e) {
-      fail("IllegalArgumentException should not occur");
-    }
-    catch (IllegalAccessException e) {
-      fail("IllegalAccessException should not occur");
-    }
+    // Ensure book state is correct for this test
+    setBookState(book, EBookState.AVAILABLE);
 
     // Confirm EBookState.AVAILABLE state
     assertEquals(book.getState(), EBookState.AVAILABLE);
@@ -470,33 +389,8 @@ public class TestBook extends TestCase
     when(mockedLoan.getBook()).thenReturn(book);
     when(mockedLoan.isOverDue()).thenReturn(true);
 
-    try {
-      // Using Reflection to directly set private field 'state_' to
-      // EBookState.ON_LOAN
-
-      Class<?> bookClass = book.getClass();
-      Field state = bookClass.getDeclaredField("state_");
-
-      // Enable direct modification of private field
-      if (!state.isAccessible()) {
-        state.setAccessible(true);
-      }
-
-      // Set book state
-      state.set(book, EBookState.ON_LOAN);
-    }
-    catch (NoSuchFieldException e) {
-      fail("NoSuchFieldException should not occur");
-    }
-    catch (SecurityException e) {
-      fail("SecurityException should not occur");
-    }
-    catch (IllegalArgumentException e) {
-      fail("IllegalArgumentException should not occur");
-    }
-    catch (IllegalAccessException e) {
-      fail("IllegalAccessException should not occur");
-    }
+    // Ensure book state is correct for this test
+    setBookState(book, EBookState.ON_LOAN);
 
     // Confirm EBookState.ON_LOAN state
     assertEquals(book.getState(), EBookState.ON_LOAN);
@@ -533,33 +427,8 @@ public class TestBook extends TestCase
     when(mockedLoan.getBook()).thenReturn(book);
     when(mockedLoan.isOverDue()).thenReturn(true);
 
-    try {
-      // Using Reflection to directly set private field 'state_' to
-      // EBookState.DAMAGED
-
-      Class<?> bookClass = book.getClass();
-      Field state = bookClass.getDeclaredField("state_");
-
-      // Enable direct modification of private field
-      if (!state.isAccessible()) {
-        state.setAccessible(true);
-      }
-
-      // Set book state
-      state.set(book, EBookState.DAMAGED);
-    }
-    catch (NoSuchFieldException e) {
-      fail("NoSuchFieldException should not occur");
-    }
-    catch (SecurityException e) {
-      fail("SecurityException should not occur");
-    }
-    catch (IllegalArgumentException e) {
-      fail("IllegalArgumentException should not occur");
-    }
-    catch (IllegalAccessException e) {
-      fail("IllegalAccessException should not occur");
-    }
+    // Ensure book state is correct for this test
+    setBookState(book, EBookState.DAMAGED);
 
     // Confirm EBookState.DAMAGED state
     assertEquals(book.getState(), EBookState.DAMAGED);
@@ -596,33 +465,8 @@ public class TestBook extends TestCase
     when(mockedLoan.getBook()).thenReturn(book);
     when(mockedLoan.isOverDue()).thenReturn(true);
 
-    try {
-      // Using Reflection to directly set private field 'state_' to
-      // EBookState.LOST
-
-      Class<?> bookClass = book.getClass();
-      Field state = bookClass.getDeclaredField("state_");
-
-      // Enable direct modification of private field
-      if (!state.isAccessible()) {
-        state.setAccessible(true);
-      }
-
-      // Set book state
-      state.set(book, EBookState.LOST);
-    }
-    catch (NoSuchFieldException e) {
-      fail("NoSuchFieldException should not occur");
-    }
-    catch (SecurityException e) {
-      fail("SecurityException should not occur");
-    }
-    catch (IllegalArgumentException e) {
-      fail("IllegalArgumentException should not occur");
-    }
-    catch (IllegalAccessException e) {
-      fail("IllegalAccessException should not occur");
-    }
+    // Ensure book state is correct for this test
+    setBookState(book, EBookState.LOST);
 
     // Confirm EBookState.LOST state
     assertEquals(book.getState(), EBookState.LOST);
@@ -659,33 +503,8 @@ public class TestBook extends TestCase
     when(mockedLoan.getBook()).thenReturn(book);
     when(mockedLoan.isOverDue()).thenReturn(true);
 
-    try {
-      // Using Reflection to directly set private field 'state_' to
-      // EBookState.DISPOSED
-
-      Class<?> bookClass = book.getClass();
-      Field state = bookClass.getDeclaredField("state_");
-
-      // Enable direct modification of private field
-      if (!state.isAccessible()) {
-        state.setAccessible(true);
-      }
-
-      // Set book state
-      state.set(book, EBookState.DISPOSED);
-    }
-    catch (NoSuchFieldException e) {
-      fail("NoSuchFieldException should not occur");
-    }
-    catch (SecurityException e) {
-      fail("SecurityException should not occur");
-    }
-    catch (IllegalArgumentException e) {
-      fail("IllegalArgumentException should not occur");
-    }
-    catch (IllegalAccessException e) {
-      fail("IllegalAccessException should not occur");
-    }
+    // Ensure book state is correct for this test
+    setBookState(book, EBookState.DISPOSED);
 
     // Confirm EBookState.DISPOSED state
     assertEquals(book.getState(), EBookState.DISPOSED);
@@ -724,33 +543,8 @@ public class TestBook extends TestCase
     Book book = new Book("Charles Dickens", "Great Expectations",
                          "82.023 275 [2011]", 1);
 
-    try {
-      // Using Reflection to directly set private field 'state_' to
-      // EBookState.ON_LOAN in order to satisfy lose() pre-condition
-
-      Class<?> bookClass = book.getClass();
-      Field state = bookClass.getDeclaredField("state_");
-
-      // Enable direct modification of private field
-      if (!state.isAccessible()) {
-        state.setAccessible(true);
-      }
-
-      // Set book state
-      state.set(book, EBookState.ON_LOAN);
-    }
-    catch (NoSuchFieldException e) {
-      fail("NoSuchFieldException should not occur");
-    }
-    catch (SecurityException e) {
-      fail("SecurityException should not occur");
-    }
-    catch (IllegalArgumentException e) {
-      fail("IllegalArgumentException should not occur");
-    }
-    catch (IllegalAccessException e) {
-      fail("IllegalAccessException should not occur");
-    }
+    // Ensure book state is correct for this test
+    setBookState(book, EBookState.ON_LOAN);
 
     // Confirm EBookState.ON_LOAN state
     assertEquals(book.getState(), EBookState.ON_LOAN);
@@ -771,33 +565,8 @@ public class TestBook extends TestCase
     Book book = new Book("Charles Dickens", "Great Expectations",
                          "82.023 275 [2011]", 1);
 
-    try {
-      // Using Reflection to directly set private field 'state_' to
-      // EBookState.AVAILABLE
-
-      Class<?> bookClass = book.getClass();
-      Field state = bookClass.getDeclaredField("state_");
-
-      // Enable direct modification of private field
-      if (!state.isAccessible()) {
-        state.setAccessible(true);
-      }
-
-      // Set book state
-      state.set(book, EBookState.AVAILABLE);
-    }
-    catch (NoSuchFieldException e) {
-      fail("NoSuchFieldException should not occur");
-    }
-    catch (SecurityException e) {
-      fail("SecurityException should not occur");
-    }
-    catch (IllegalArgumentException e) {
-      fail("IllegalArgumentException should not occur");
-    }
-    catch (IllegalAccessException e) {
-      fail("IllegalAccessException should not occur");
-    }
+    // Ensure book state is correct for this test
+    setBookState(book, EBookState.AVAILABLE);
 
     // Confirm EBookState.AVAILABLE state
     assertEquals(book.getState(), EBookState.AVAILABLE);
@@ -824,33 +593,8 @@ public class TestBook extends TestCase
     Book book = new Book("Charles Dickens", "Great Expectations",
                          "82.023 275 [2011]", 1);
 
-    try {
-      // Using Reflection to directly set private field 'state_' to
-      // EBookState.LOST
-
-      Class<?> bookClass = book.getClass();
-      Field state = bookClass.getDeclaredField("state_");
-
-      // Enable direct modification of private field
-      if (!state.isAccessible()) {
-        state.setAccessible(true);
-      }
-
-      // Set book state
-      state.set(book, EBookState.LOST);
-    }
-    catch (NoSuchFieldException e) {
-      fail("NoSuchFieldException should not occur");
-    }
-    catch (SecurityException e) {
-      fail("SecurityException should not occur");
-    }
-    catch (IllegalArgumentException e) {
-      fail("IllegalArgumentException should not occur");
-    }
-    catch (IllegalAccessException e) {
-      fail("IllegalAccessException should not occur");
-    }
+    // Ensure book state is correct for this test
+    setBookState(book, EBookState.LOST);
 
     // Confirm EBookState.LOST state
     assertEquals(book.getState(), EBookState.LOST);
@@ -877,33 +621,8 @@ public class TestBook extends TestCase
     Book book = new Book("Charles Dickens", "Great Expectations",
                          "82.023 275 [2011]", 1);
 
-    try {
-      // Using Reflection to directly set private field 'state_' to
-      // EBookState.DAMAGED
-
-      Class<?> bookClass = book.getClass();
-      Field state = bookClass.getDeclaredField("state_");
-
-      // Enable direct modification of private field
-      if (!state.isAccessible()) {
-        state.setAccessible(true);
-      }
-
-      // Set book state
-      state.set(book, EBookState.DAMAGED);
-    }
-    catch (NoSuchFieldException e) {
-      fail("NoSuchFieldException should not occur");
-    }
-    catch (SecurityException e) {
-      fail("SecurityException should not occur");
-    }
-    catch (IllegalArgumentException e) {
-      fail("IllegalArgumentException should not occur");
-    }
-    catch (IllegalAccessException e) {
-      fail("IllegalAccessException should not occur");
-    }
+    // Ensure book state is correct for this test
+    setBookState(book, EBookState.DAMAGED);
 
     // Confirm EBookState.DAMAGED state
     assertEquals(book.getState(), EBookState.DAMAGED);
@@ -930,33 +649,8 @@ public class TestBook extends TestCase
     Book book = new Book("Charles Dickens", "Great Expectations",
                          "82.023 275 [2011]", 1);
 
-    try {
-      // Using Reflection to directly set private field 'state_' to
-      // EBookState.DISPOSED
-
-      Class<?> bookClass = book.getClass();
-      Field state = bookClass.getDeclaredField("state_");
-
-      // Enable direct modification of private field
-      if (!state.isAccessible()) {
-        state.setAccessible(true);
-      }
-
-      // Set book state
-      state.set(book, EBookState.DISPOSED);
-    }
-    catch (NoSuchFieldException e) {
-      fail("NoSuchFieldException should not occur");
-    }
-    catch (SecurityException e) {
-      fail("SecurityException should not occur");
-    }
-    catch (IllegalArgumentException e) {
-      fail("IllegalArgumentException should not occur");
-    }
-    catch (IllegalAccessException e) {
-      fail("IllegalAccessException should not occur");
-    }
+    // Ensure book state is correct for this test
+    setBookState(book, EBookState.DISPOSED);
 
     // Confirm EBookState.DISPOSED state
     assertEquals(book.getState(), EBookState.DISPOSED);
@@ -989,33 +683,8 @@ public class TestBook extends TestCase
     Book book = new Book("Charles Dickens", "Great Expectations",
                          "82.023 275 [2011]", 1);
 
-    try {
-      // Using Reflection to directly set private field 'state_' to
-      // EBookState.DAMAGED in order to satisfy repair() pre-condition
-
-      Class<?> bookClass = book.getClass();
-      Field state = bookClass.getDeclaredField("state_");
-
-      // Enable direct modification of private field
-      if (!state.isAccessible()) {
-        state.setAccessible(true);
-      }
-
-      // Set book state
-      state.set(book, EBookState.DAMAGED);
-    }
-    catch (NoSuchFieldException e) {
-      fail("NoSuchFieldException should not occur");
-    }
-    catch (SecurityException e) {
-      fail("SecurityException should not occur");
-    }
-    catch (IllegalArgumentException e) {
-      fail("IllegalArgumentException should not occur");
-    }
-    catch (IllegalAccessException e) {
-      fail("IllegalAccessException should not occur");
-    }
+    // Ensure book state is correct for this test
+    setBookState(book, EBookState.DAMAGED);
 
     // Confirm EBookState.DAMAGED state
     assertEquals(book.getState(), EBookState.DAMAGED);
@@ -1036,33 +705,8 @@ public class TestBook extends TestCase
     Book book = new Book("Charles Dickens", "Great Expectations",
                          "82.023 275 [2011]", 1);
 
-    try {
-      // Using Reflection to directly set private field 'state_' to
-      // EBookState.AVAILABLE
-
-      Class<?> bookClass = book.getClass();
-      Field state = bookClass.getDeclaredField("state_");
-
-      // Enable direct modification of private field
-      if (!state.isAccessible()) {
-        state.setAccessible(true);
-      }
-
-      // Set book state
-      state.set(book, EBookState.AVAILABLE);
-    }
-    catch (NoSuchFieldException e) {
-      fail("NoSuchFieldException should not occur");
-    }
-    catch (SecurityException e) {
-      fail("SecurityException should not occur");
-    }
-    catch (IllegalArgumentException e) {
-      fail("IllegalArgumentException should not occur");
-    }
-    catch (IllegalAccessException e) {
-      fail("IllegalAccessException should not occur");
-    }
+    // Ensure book state is correct for this test
+    setBookState(book, EBookState.AVAILABLE);
 
     // Confirm EBookState.AVAILABLE state
     assertEquals(book.getState(), EBookState.AVAILABLE);
@@ -1088,34 +732,9 @@ public class TestBook extends TestCase
     // Create test Book object
     Book book = new Book("Charles Dickens", "Great Expectations",
                          "82.023 275 [2011]", 1);
-
-    try {
-      // Using Reflection to directly set private field 'state_' to
-      // EBookState.ON_LOAN
-
-      Class<?> bookClass = book.getClass();
-      Field state = bookClass.getDeclaredField("state_");
-
-      // Enable direct modification of private field
-      if (!state.isAccessible()) {
-        state.setAccessible(true);
-      }
-
-      // Set book state
-      state.set(book, EBookState.ON_LOAN);
-    }
-    catch (NoSuchFieldException e) {
-      fail("NoSuchFieldException should not occur");
-    }
-    catch (SecurityException e) {
-      fail("SecurityException should not occur");
-    }
-    catch (IllegalArgumentException e) {
-      fail("IllegalArgumentException should not occur");
-    }
-    catch (IllegalAccessException e) {
-      fail("IllegalAccessException should not occur");
-    }
+    
+    // Ensure book state is correct for this test
+    setBookState(book, EBookState.ON_LOAN);
 
     // Confirm EBookState.ON_LOAN state
     assertEquals(book.getState(), EBookState.ON_LOAN);
@@ -1142,33 +761,8 @@ public class TestBook extends TestCase
     Book book = new Book("Charles Dickens", "Great Expectations",
                          "82.023 275 [2011]", 1);
 
-    try {
-      // Using Reflection to directly set private field 'state_' to
-      // EBookState.LOST
-
-      Class<?> bookClass = book.getClass();
-      Field state = bookClass.getDeclaredField("state_");
-
-      // Enable direct modification of private field
-      if (!state.isAccessible()) {
-        state.setAccessible(true);
-      }
-
-      // Set book state
-      state.set(book, EBookState.LOST);
-    }
-    catch (NoSuchFieldException e) {
-      fail("NoSuchFieldException should not occur");
-    }
-    catch (SecurityException e) {
-      fail("SecurityException should not occur");
-    }
-    catch (IllegalArgumentException e) {
-      fail("IllegalArgumentException should not occur");
-    }
-    catch (IllegalAccessException e) {
-      fail("IllegalAccessException should not occur");
-    }
+    // Ensure book state is correct for this test
+    setBookState(book, EBookState.LOST);
 
     // Confirm EBookState.LOST state
     assertEquals(book.getState(), EBookState.LOST);
@@ -1194,33 +788,8 @@ public class TestBook extends TestCase
     Book book = new Book("Charles Dickens", "Great Expectations",
                          "82.023 275 [2011]", 1);
 
-    try {
-      // Using Reflection to directly set private field 'state_' to
-      // EBookState.DISPOSED
-
-      Class<?> bookClass = book.getClass();
-      Field state = bookClass.getDeclaredField("state_");
-
-      // Enable direct modification of private field
-      if (!state.isAccessible()) {
-        state.setAccessible(true);
-      }
-
-      // Set book state
-      state.set(book, EBookState.DISPOSED);
-    }
-    catch (NoSuchFieldException e) {
-      fail("NoSuchFieldException should not occur");
-    }
-    catch (SecurityException e) {
-      fail("SecurityException should not occur");
-    }
-    catch (IllegalArgumentException e) {
-      fail("IllegalArgumentException should not occur");
-    }
-    catch (IllegalAccessException e) {
-      fail("IllegalAccessException should not occur");
-    }
+    // Ensure book state is correct for this test
+    setBookState(book, EBookState.DISPOSED);
 
     // Confirm EBookState.DISPOSED state
     assertEquals(book.getState(), EBookState.DISPOSED);
@@ -1253,34 +822,8 @@ public class TestBook extends TestCase
     Book book = new Book("Charles Dickens", "Great Expectations",
                          "82.023 275 [2011]", 1);
 
-    try {
-      // Using Reflection to directly set private field 'state_' to
-      // EBookState.AVAILABLE in order to satisfy one of the dispose()
-      // pre-conditions
-
-      Class<?> bookClass = book.getClass();
-      Field state = bookClass.getDeclaredField("state_");
-
-      // Enable direct modification of private field
-      if (!state.isAccessible()) {
-        state.setAccessible(true);
-      }
-
-      // Set book state
-      state.set(book, EBookState.AVAILABLE);
-    }
-    catch (NoSuchFieldException e) {
-      fail("NoSuchFieldException should not occur");
-    }
-    catch (SecurityException e) {
-      fail("SecurityException should not occur");
-    }
-    catch (IllegalArgumentException e) {
-      fail("IllegalArgumentException should not occur");
-    }
-    catch (IllegalAccessException e) {
-      fail("IllegalAccessException should not occur");
-    }
+    // Ensure book state is correct for this test
+    setBookState(book, EBookState.AVAILABLE);
 
     // Confirm EBookState.AVAILABLE state
     assertEquals(book.getState(), EBookState.AVAILABLE);
@@ -1301,34 +844,8 @@ public class TestBook extends TestCase
     Book book = new Book("Charles Dickens", "Great Expectations",
                          "82.023 275 [2011]", 1);
 
-    try {
-      // Using Reflection to directly set private field 'state_' to
-      // EBookState.DAMAGED in order to satisfy one of the dispose()
-      // pre-conditions
-
-      Class<?> bookClass = book.getClass();
-      Field state = bookClass.getDeclaredField("state_");
-
-      // Enable direct modification of private field
-      if (!state.isAccessible()) {
-        state.setAccessible(true);
-      }
-
-      // Set book state
-      state.set(book, EBookState.DAMAGED);
-    }
-    catch (NoSuchFieldException e) {
-      fail("NoSuchFieldException should not occur");
-    }
-    catch (SecurityException e) {
-      fail("SecurityException should not occur");
-    }
-    catch (IllegalArgumentException e) {
-      fail("IllegalArgumentException should not occur");
-    }
-    catch (IllegalAccessException e) {
-      fail("IllegalAccessException should not occur");
-    }
+    // Ensure book state is correct for this test
+    setBookState(book, EBookState.DAMAGED);
 
     // Confirm EBookState.DAMAGED state
     assertEquals(book.getState(), EBookState.DAMAGED);
@@ -1349,34 +866,8 @@ public class TestBook extends TestCase
     Book book = new Book("Charles Dickens", "Great Expectations",
                          "82.023 275 [2011]", 1);
 
-    try {
-      // Using Reflection to directly set private field 'state_' to
-      // EBookState.LOST in order to satisfy one of the dispose()
-      // pre-conditions
-
-      Class<?> bookClass = book.getClass();
-      Field state = bookClass.getDeclaredField("state_");
-
-      // Enable direct modification of private field
-      if (!state.isAccessible()) {
-        state.setAccessible(true);
-      }
-
-      // Set book state
-      state.set(book, EBookState.LOST);
-    }
-    catch (NoSuchFieldException e) {
-      fail("NoSuchFieldException should not occur");
-    }
-    catch (SecurityException e) {
-      fail("SecurityException should not occur");
-    }
-    catch (IllegalArgumentException e) {
-      fail("IllegalArgumentException should not occur");
-    }
-    catch (IllegalAccessException e) {
-      fail("IllegalAccessException should not occur");
-    }
+    // Ensure book state is correct for this test
+    setBookState(book, EBookState.LOST);
 
     // Confirm EBookState.LOST state
     assertEquals(book.getState(), EBookState.LOST);
@@ -1397,33 +888,8 @@ public class TestBook extends TestCase
     Book book = new Book("Charles Dickens", "Great Expectations",
                          "82.023 275 [2011]", 1);
 
-    try {
-      // Using Reflection to directly set private field 'state_' to
-      // EBookState.ON_LOAN
-
-      Class<?> bookClass = book.getClass();
-      Field state = bookClass.getDeclaredField("state_");
-
-      // Enable direct modification of private field
-      if (!state.isAccessible()) {
-        state.setAccessible(true);
-      }
-
-      // Set book state
-      state.set(book, EBookState.ON_LOAN);
-    }
-    catch (NoSuchFieldException e) {
-      fail("NoSuchFieldException should not occur");
-    }
-    catch (SecurityException e) {
-      fail("SecurityException should not occur");
-    }
-    catch (IllegalArgumentException e) {
-      fail("IllegalArgumentException should not occur");
-    }
-    catch (IllegalAccessException e) {
-      fail("IllegalAccessException should not occur");
-    }
+    // Ensure book state is correct for this test
+    setBookState(book, EBookState.ON_LOAN);
 
     // Confirm EBookState.ON_LOAN state
     assertEquals(book.getState(), EBookState.ON_LOAN);
@@ -1450,33 +916,8 @@ public class TestBook extends TestCase
     Book book = new Book("Charles Dickens", "Great Expectations",
                          "82.023 275 [2011]", 1);
 
-    try {
-      // Using Reflection to directly set private field 'state_' to
-      // EBookState.DISPOSED
-
-      Class<?> bookClass = book.getClass();
-      Field state = bookClass.getDeclaredField("state_");
-
-      // Enable direct modification of private field
-      if (!state.isAccessible()) {
-        state.setAccessible(true);
-      }
-
-      // Set book state
-      state.set(book, EBookState.DISPOSED);
-    }
-    catch (NoSuchFieldException e) {
-      fail("NoSuchFieldException should not occur");
-    }
-    catch (SecurityException e) {
-      fail("SecurityException should not occur");
-    }
-    catch (IllegalArgumentException e) {
-      fail("IllegalArgumentException should not occur");
-    }
-    catch (IllegalAccessException e) {
-      fail("IllegalAccessException should not occur");
-    }
+    // Ensure book state is correct for this test
+    setBookState(book, EBookState.DISPOSED);
 
     // Confirm EBookState.DISPOSED state
     assertEquals(book.getState(), EBookState.DISPOSED);
@@ -1515,43 +956,11 @@ public class TestBook extends TestCase
     when(mockedLoan.getBook()).thenReturn(book);
     when(mockedLoan.isOverDue()).thenReturn(true);
 
-    try {
-      // Using Reflection to directly set private field 'state_' to
-      // EBookState.ON_LOAN in order to satisfy one of the returnBook()
-      // pre-conditions
+    // Ensure book state is correct for this test
+    setBookState(book, EBookState.ON_LOAN);
 
-      Class<?> bookClass = book.getClass();
-      Field state = bookClass.getDeclaredField("state_");
-      Field loan = bookClass.getDeclaredField("loan_");
-
-      // Enable direct modification of private fields
-      if (!state.isAccessible()) {
-        state.setAccessible(true);
-      }
-
-      if (!loan.isAccessible()) {
-        loan.setAccessible(true);
-      }
-
-      // Set book state
-      state.set(book, EBookState.ON_LOAN);
-
-      // Set book loan
-      loan.set(book, mockedLoan);
-
-    }
-    catch (NoSuchFieldException e) {
-      fail("NoSuchFieldException should not occur");
-    }
-    catch (SecurityException e) {
-      fail("SecurityException should not occur");
-    }
-    catch (IllegalArgumentException e) {
-      fail("IllegalArgumentException should not occur");
-    }
-    catch (IllegalAccessException e) {
-      fail("IllegalAccessException should not occur");
-    }
+    // Set mockedLoan as value for 'loan_' field
+    setBookLoan(book, mockedLoan);
 
     // Confirm EBookState.ON_LOAN state
     assertEquals(book.getState(), EBookState.ON_LOAN);
@@ -1586,42 +995,11 @@ public class TestBook extends TestCase
     when(mockedLoan.getBook()).thenReturn(book);
     when(mockedLoan.isOverDue()).thenReturn(true);
 
-    try {
-      // Using Reflection to directly set private field 'state_' to
-      // EBookState.ON_LOAN in order to satisfy one of the returnBook()
-      // pre-conditions
+    // Ensure book state is correct for this test
+    setBookState(book, EBookState.ON_LOAN);
 
-      Class<?> bookClass = book.getClass();
-      Field state = bookClass.getDeclaredField("state_");
-      Field loan = bookClass.getDeclaredField("loan_");
-
-      // Enable direct modification of private fields
-      if (!state.isAccessible()) {
-        state.setAccessible(true);
-      }
-
-      if (!loan.isAccessible()) {
-        loan.setAccessible(true);
-      }
-
-      // Set book state
-      state.set(book, EBookState.ON_LOAN);
-
-      // Set book loan
-      loan.set(book, mockedLoan);
-    }
-    catch (NoSuchFieldException e) {
-      fail("NoSuchFieldException should not occur");
-    }
-    catch (SecurityException e) {
-      fail("SecurityException should not occur");
-    }
-    catch (IllegalArgumentException e) {
-      fail("IllegalArgumentException should not occur");
-    }
-    catch (IllegalAccessException e) {
-      fail("IllegalAccessException should not occur");
-    }
+    // Set mockedLoan as value for 'loan_' field
+    setBookLoan(book, mockedLoan);
 
     // Confirm EBookState.ON_LOAN state
     assertEquals(book.getState(), EBookState.ON_LOAN);
@@ -1649,40 +1027,9 @@ public class TestBook extends TestCase
     // Create test Book object
     Book book = new Book("Charles Dickens", "Great Expectations",
                          "82.023 275 [2011]", 1);
-
-    try {
-      // Using Reflection to directly set private field 'state_' to
-      // EBookState.LOST in order to satisfy one of the returnBook()
-      // pre-conditions
-
-      Class<?> bookClass = book.getClass();
-      Field state = bookClass.getDeclaredField("state_");
-      Field loan = bookClass.getDeclaredField("loan_");
-
-      // Enable direct modification of private fields
-      if (!state.isAccessible()) {
-        state.setAccessible(true);
-      }
-
-      if (!loan.isAccessible()) {
-        loan.setAccessible(true);
-      }
-
-      // Set book state
-      state.set(book, EBookState.LOST);
-    }
-    catch (NoSuchFieldException e) {
-      fail("NoSuchFieldException should not occur");
-    }
-    catch (SecurityException e) {
-      fail("SecurityException should not occur");
-    }
-    catch (IllegalArgumentException e) {
-      fail("IllegalArgumentException should not occur");
-    }
-    catch (IllegalAccessException e) {
-      fail("IllegalAccessException should not occur");
-    }
+    
+    // Ensure book state is correct for this test
+    setBookState(book, EBookState.LOST);
 
     // Confirm EBookState.LOST state
     assertEquals(book.getState(), EBookState.LOST);
@@ -1709,39 +1056,8 @@ public class TestBook extends TestCase
     Book book = new Book("Charles Dickens", "Great Expectations",
                          "82.023 275 [2011]", 1);
     
-    try {
-      // Using Reflection to directly set private field 'state_' to
-      // EBookState.LOST in order to satisfy one of the returnBook()
-      // pre-conditions
-
-      Class<?> bookClass = book.getClass();
-      Field state = bookClass.getDeclaredField("state_");
-      Field loan = bookClass.getDeclaredField("loan_");
-
-      // Enable direct modification of private fields
-      if (!state.isAccessible()) {
-        state.setAccessible(true);
-      }
-
-      if (!loan.isAccessible()) {
-        loan.setAccessible(true);
-      }
-
-      // Set book state
-      state.set(book, EBookState.LOST);
-    }
-    catch (NoSuchFieldException e) {
-      fail("NoSuchFieldException should not occur");
-    }
-    catch (SecurityException e) {
-      fail("SecurityException should not occur");
-    }
-    catch (IllegalArgumentException e) {
-      fail("IllegalArgumentException should not occur");
-    }
-    catch (IllegalAccessException e) {
-      fail("IllegalAccessException should not occur");
-    }
+    // Ensure book state is correct for this test
+    setBookState(book, EBookState.LOST);
 
     // Confirm EBookState.LOST state
     assertEquals(book.getState(), EBookState.LOST);
@@ -1768,33 +1084,8 @@ public class TestBook extends TestCase
     Book book = new Book("Charles Dickens", "Great Expectations",
                          "82.023 275 [2011]", 1);
 
-    try {
-      // Using Reflection to directly set private field 'state_' to
-      // EBookState.AVAILABLE
-
-      Class<?> bookClass = book.getClass();
-      Field state = bookClass.getDeclaredField("state_");
-
-      // Enable direct modification of private field
-      if (!state.isAccessible()) {
-        state.setAccessible(true);
-      }
-
-      // Set book state
-      state.set(book, EBookState.AVAILABLE);
-    }
-    catch (NoSuchFieldException e) {
-      fail("NoSuchFieldException should not occur");
-    }
-    catch (SecurityException e) {
-      fail("SecurityException should not occur");
-    }
-    catch (IllegalArgumentException e) {
-      fail("IllegalArgumentException should not occur");
-    }
-    catch (IllegalAccessException e) {
-      fail("IllegalAccessException should not occur");
-    }
+    // Ensure book state is correct for this test
+    setBookState(book, EBookState.AVAILABLE);
 
     // Confirm EBookState.AVAILABLE state
     assertEquals(book.getState(), EBookState.AVAILABLE);
@@ -1827,33 +1118,8 @@ public class TestBook extends TestCase
     Book book = new Book("Charles Dickens", "Great Expectations",
                          "82.023 275 [2011]", 1);
 
-    try {
-      // Using Reflection to directly set private field 'state_' to
-      // EBookState.AVAILABLE
-
-      Class<?> bookClass = book.getClass();
-      Field state = bookClass.getDeclaredField("state_");
-
-      // Enable direct modification of private field
-      if (!state.isAccessible()) {
-        state.setAccessible(true);
-      }
-
-      // Set book state
-      state.set(book, EBookState.AVAILABLE);
-    }
-    catch (NoSuchFieldException e) {
-      fail("NoSuchFieldException should not occur");
-    }
-    catch (SecurityException e) {
-      fail("SecurityException should not occur");
-    }
-    catch (IllegalArgumentException e) {
-      fail("IllegalArgumentException should not occur");
-    }
-    catch (IllegalAccessException e) {
-      fail("IllegalAccessException should not occur");
-    }
+    // Ensure book state is correct for this test
+    setBookState(book, EBookState.AVAILABLE);
 
     // Confirm EBookState.AVAILABLE state
     assertEquals(book.getState(), EBookState.AVAILABLE);
@@ -1885,33 +1151,8 @@ public class TestBook extends TestCase
     Book book = new Book("Charles Dickens", "Great Expectations",
                          "82.023 275 [2011]", 1);
 
-    try {
-      // Using Reflection to directly set private field 'state_' to
-      // EBookState.DAMAGED
-
-      Class<?> bookClass = book.getClass();
-      Field state = bookClass.getDeclaredField("state_");
-
-      // Enable direct modification of private field
-      if (!state.isAccessible()) {
-        state.setAccessible(true);
-      }
-
-      // Set book state
-      state.set(book, EBookState.DAMAGED);
-    }
-    catch (NoSuchFieldException e) {
-      fail("NoSuchFieldException should not occur");
-    }
-    catch (SecurityException e) {
-      fail("SecurityException should not occur");
-    }
-    catch (IllegalArgumentException e) {
-      fail("IllegalArgumentException should not occur");
-    }
-    catch (IllegalAccessException e) {
-      fail("IllegalAccessException should not occur");
-    }
+    // Ensure book state is correct for this test
+    setBookState(book, EBookState.DAMAGED);
 
     // Confirm EBookState.DAMAGED state
     assertEquals(book.getState(), EBookState.DAMAGED);
@@ -1944,33 +1185,8 @@ public class TestBook extends TestCase
     Book book = new Book("Charles Dickens", "Great Expectations",
                          "82.023 275 [2011]", 1);
 
-    try {
-      // Using Reflection to directly set private field 'state_' to
-      // EBookState.DAMAGED
-
-      Class<?> bookClass = book.getClass();
-      Field state = bookClass.getDeclaredField("state_");
-
-      // Enable direct modification of private field
-      if (!state.isAccessible()) {
-        state.setAccessible(true);
-      }
-
-      // Set book state
-      state.set(book, EBookState.DAMAGED);
-    }
-    catch (NoSuchFieldException e) {
-      fail("NoSuchFieldException should not occur");
-    }
-    catch (SecurityException e) {
-      fail("SecurityException should not occur");
-    }
-    catch (IllegalArgumentException e) {
-      fail("IllegalArgumentException should not occur");
-    }
-    catch (IllegalAccessException e) {
-      fail("IllegalAccessException should not occur");
-    }
+    // Ensure book state is correct for this test
+    setBookState(book, EBookState.DAMAGED);
 
     // Confirm EBookState.DAMAGED state
     assertEquals(book.getState(), EBookState.DAMAGED);
@@ -2003,33 +1219,8 @@ public class TestBook extends TestCase
     Book book = new Book("Charles Dickens", "Great Expectations",
                          "82.023 275 [2011]", 1);
 
-    try {
-      // Using Reflection to directly set private field 'state_' to
-      // EBookState.DISPOSED
-
-      Class<?> bookClass = book.getClass();
-      Field state = bookClass.getDeclaredField("state_");
-
-      // Enable direct modification of private field
-      if (!state.isAccessible()) {
-        state.setAccessible(true);
-      }
-
-      // Set book state
-      state.set(book, EBookState.DISPOSED);
-    }
-    catch (NoSuchFieldException e) {
-      fail("NoSuchFieldException should not occur");
-    }
-    catch (SecurityException e) {
-      fail("SecurityException should not occur");
-    }
-    catch (IllegalArgumentException e) {
-      fail("IllegalArgumentException should not occur");
-    }
-    catch (IllegalAccessException e) {
-      fail("IllegalAccessException should not occur");
-    }
+    // Ensure book state is correct for this test
+    setBookState(book, EBookState.DISPOSED);
 
     // Confirm EBookState.DISPOSED state
     assertEquals(book.getState(), EBookState.DISPOSED);
@@ -2062,33 +1253,8 @@ public class TestBook extends TestCase
     Book book = new Book("Charles Dickens", "Great Expectations",
                          "82.023 275 [2011]", 1);
 
-    try {
-      // Using Reflection to directly set private field 'state_' to
-      // EBookState.DISPOSED
-
-      Class<?> bookClass = book.getClass();
-      Field state = bookClass.getDeclaredField("state_");
-
-      // Enable direct modification of private field
-      if (!state.isAccessible()) {
-        state.setAccessible(true);
-      }
-
-      // Set book state
-      state.set(book, EBookState.DISPOSED);
-    }
-    catch (NoSuchFieldException e) {
-      fail("NoSuchFieldException should not occur");
-    }
-    catch (SecurityException e) {
-      fail("SecurityException should not occur");
-    }
-    catch (IllegalArgumentException e) {
-      fail("IllegalArgumentException should not occur");
-    }
-    catch (IllegalAccessException e) {
-      fail("IllegalAccessException should not occur");
-    }
+    // Ensure book state is correct for this test
+    setBookState(book, EBookState.DISPOSED);
 
     // Confirm EBookState.DISPOSED state
     assertEquals(book.getState(), EBookState.DISPOSED);
@@ -2131,6 +1297,79 @@ public class TestBook extends TestCase
                             + "Call Number: 82.023 275 [2011]";
 
     assertEquals(expectedString, book.toString());
+  }
+  
+  
+  
+  // ==========================================================================
+  // Helper Methods (Not Tests)
+  // ==========================================================================
+  
+  
+  
+  private Book setBookState(Book book, EBookState newState) {
+    
+    try {
+      // Using Reflection to directly set private field 'state_'
+
+      Class<?> bookClass = book.getClass();
+      Field state = bookClass.getDeclaredField("state_");
+
+      // Enable direct modification of private field
+      if (!state.isAccessible()) {
+        state.setAccessible(true);
+      }
+
+      // Set book state
+      state.set(book, newState);
+    }
+    catch (NoSuchFieldException e) {
+      fail("NoSuchFieldException should not occur");
+    }
+    catch (SecurityException e) {
+      fail("SecurityException should not occur");
+    }
+    catch (IllegalArgumentException e) {
+      fail("IllegalArgumentException should not occur");
+    }
+    catch (IllegalAccessException e) {
+      fail("IllegalAccessException should not occur");
+    }
+    
+    return book;
+  }
+  
+  private Book setBookLoan(Book book, ILoan mockedLoan) {
+    try {
+      
+      // Using Reflection to directly set private field 'loan_'
+
+      Class<?> bookClass = book.getClass();
+      Field loan = bookClass.getDeclaredField("loan_");
+
+      // Enable direct modification of private field
+      if (!loan.isAccessible()) {
+        loan.setAccessible(true);
+      }
+
+      // Set book loan
+      loan.set(book, mockedLoan);
+
+    }
+    catch (NoSuchFieldException e) {
+      fail("NoSuchFieldException should not occur");
+    }
+    catch (SecurityException e) {
+      fail("SecurityException should not occur");
+    }
+    catch (IllegalArgumentException e) {
+      fail("IllegalArgumentException should not occur");
+    }
+    catch (IllegalAccessException e) {
+      fail("IllegalAccessException should not occur");
+    }
+    
+    return book;
   }
 
 }
