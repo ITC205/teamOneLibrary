@@ -53,9 +53,25 @@ public class BookDAO implements IBookDAO
   
   
   @Override
-  public IBook addBook(String author, String title, String callNo)
+  public IBook addBook(String author, String title, String callNumber)
   {
-    IBook newBook = helper_.makeBook(author, title, callNo, getNextId());
+    if(isStringNullOrEmpty(author)) {
+      throw new IllegalArgumentException("BookDAO: addBook: value for 'author' "
+                                         + "cannot be null or empty");
+    }
+    
+    if(isStringNullOrEmpty(title)) {
+      throw new IllegalArgumentException("BookDAO: addBook: value for 'title' "
+                                         + "cannot be null or empty");
+    }
+    
+    if(isStringNullOrEmpty(callNumber)) {
+      throw new IllegalArgumentException("BookDAO: addBook: value for "
+                                         + "'callNumber' cannot be null or "
+                                         + "empty");
+    }
+    
+    IBook newBook = helper_.makeBook(author, title, callNumber, getNextId());
     bookMap_.put(newBook.getID(), newBook);
     updateNextId();
     return newBook;
@@ -70,11 +86,16 @@ public class BookDAO implements IBookDAO
   
   
   @Override
-  public IBook getBookByID(int id)
+  public IBook getBookByID(int bookID)
   {
+    if(!isBookIdValid(bookID)) {
+      throw new IllegalArgumentException("BookDAO: getBookByID: value for "
+                                         + "'bookID' must be a positive integer"
+                                         + " (>= 0)");
+    }
     // get method of HashMap returns the value associated with the given key
     // or null if there is no value associated with the given key (by default)
-    return bookMap_.get(id);
+    return bookMap_.get(bookID);
   }
 
 
@@ -90,6 +111,12 @@ public class BookDAO implements IBookDAO
   @Override
   public List<IBook> findBooksByAuthor(String author)
   {
+    if(isStringNullOrEmpty(author)) {
+      throw new IllegalArgumentException("BookDAO: findBooksByAuthor: value "
+                                         + "for 'author' cannot be null or "
+                                         + "empty");
+    }
+    
     ArrayList<IBook> booksByAuthor = new ArrayList<>();
     
     for(IBook book: bookMap_.values()) {
@@ -105,6 +132,11 @@ public class BookDAO implements IBookDAO
   @Override
   public List<IBook> findBooksByTitle(String title)
   {
+    if(isStringNullOrEmpty(title)) {
+      throw new IllegalArgumentException("BookDAO: findBooksByTitle: value for "
+                                         + "'title' cannot be null or empty");
+    }
+    
     ArrayList<IBook> booksByTitle = new ArrayList<>();
     
     for(IBook book: bookMap_.values()) {
@@ -120,6 +152,18 @@ public class BookDAO implements IBookDAO
   @Override
   public List<IBook> findBooksByAuthorTitle(String author, String title)
   {
+    if(isStringNullOrEmpty(author)) {
+      throw new IllegalArgumentException("BookDAO: findBooksByAuthorTitle: "
+                                         + "value for 'author' cannot be null "
+                                         + "or empty");
+    }
+    
+    if(isStringNullOrEmpty(title)) {
+      throw new IllegalArgumentException("BookDAO: findBooksByAuthorTitle: "
+                                         + "value for 'title' cannot be null "
+                                         + "or empty");
+    }
+    
     ArrayList<IBook> booksByTitleAndAuthor = new ArrayList<>();
     
     for(IBook book: bookMap_.values()) {
@@ -150,4 +194,31 @@ public class BookDAO implements IBookDAO
     nextId_++;
   }
   
+  
+  
+  // ==========================================================================
+  // Validation Methods
+  // ==========================================================================
+  
+  
+  
+  private boolean isStringNullOrEmpty(String input) 
+  {
+    // Check null first to avoid NullPointException 
+    if(input == null) {
+      return true;
+    }
+    if(input.isEmpty()) {
+      return true;
+    }
+
+    return false;
+  }
+  
+  
+  
+  private boolean isBookIdValid(int id) 
+  {
+    return id > 0;
+  }
 }
