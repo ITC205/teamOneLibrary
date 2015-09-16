@@ -1497,11 +1497,12 @@ public class TestBook extends TestCase
 
 
   // ==========================================================================
-  // Testing returnBook(boolean damaged) method (Uses ILoan mocks)
+  // Testing returnBook(boolean damaged) method 
   // ==========================================================================
 
   
   
+  // TB-38 (Uses ILoan mock)
   public void testReturnBookFromOnLoanDamaged()
   {
     // Create test Book object
@@ -1572,6 +1573,7 @@ public class TestBook extends TestCase
 
 
 
+  // TB-39 (Uses ILoan mock)
   public void testReturnBookFromOnLoanUndamaged()
   {
     // Create test Book object
@@ -1641,17 +1643,12 @@ public class TestBook extends TestCase
 
 
 
+  // TB-40
   public void testReturnBookFromLostDamaged()
   {
     // Create test Book object
     Book book = new Book("Charles Dickens", "Great Expectations",
                          "82.023 275 [2011]", 1);
-    
-    ILoan mockedLoan = mock(ILoan.class);
-
-    // Set some behaviour for mockedLoan
-    when(mockedLoan.getBook()).thenReturn(book);
-    when(mockedLoan.isOverDue()).thenReturn(true);
 
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -1673,9 +1670,6 @@ public class TestBook extends TestCase
 
       // Set book state
       state.set(book, EBookState.LOST);
-
-      // Set book loan
-      loan.set(book, mockedLoan);
     }
     catch (NoSuchFieldException e) {
       fail("NoSuchFieldException should not occur");
@@ -1708,17 +1702,12 @@ public class TestBook extends TestCase
 
 
 
+  // TB-41
   public void testReturnBookFromLostUndamaged()
   {
     // Create test Book object
     Book book = new Book("Charles Dickens", "Great Expectations",
                          "82.023 275 [2011]", 1);
-
-    ILoan mockedLoan = mock(ILoan.class);
-
-    // Set some behaviour for mockedLoan
-    when(mockedLoan.getBook()).thenReturn(book);
-    when(mockedLoan.isOverDue()).thenReturn(true);
     
     try {
       // Using Reflection to directly set private field 'state_' to
@@ -1740,9 +1729,6 @@ public class TestBook extends TestCase
 
       // Set book state
       state.set(book, EBookState.LOST);
-
-      // Set book loan
-      loan.set(book, mockedLoan);
     }
     catch (NoSuchFieldException e) {
       fail("NoSuchFieldException should not occur");
@@ -1775,6 +1761,7 @@ public class TestBook extends TestCase
 
 
 
+  // TB-42
   public void testReturnBookFromAvailableDamaged()
   {
     // Create test Book object
@@ -1833,6 +1820,7 @@ public class TestBook extends TestCase
 
 
 
+  // TB-43
   public void testReturnBookFromAvailableUndamaged()
   {
     // Create test Book object
@@ -1890,7 +1878,7 @@ public class TestBook extends TestCase
   }
 
 
-
+  // TB-44
   public void testReturnBookFromDamagedDamaged()
   {
     // Create test Book object
@@ -1949,6 +1937,7 @@ public class TestBook extends TestCase
 
 
 
+  // TB-45
   public void testReturnBookFromDamagedUndamaged()
   {
     // Create test Book object
@@ -2006,7 +1995,8 @@ public class TestBook extends TestCase
   }
 
 
-
+  
+  // TB-46
   public void testReturnBookFromDisposedDamaged()
   {
     // Create test Book object
@@ -2065,6 +2055,7 @@ public class TestBook extends TestCase
 
 
 
+  // TB-47
   public void testReturnBookFromDisposedUndamaged()
   {
     // Create test Book object
@@ -2129,6 +2120,7 @@ public class TestBook extends TestCase
 
   
   
+  // TB-48
   public void testToString()
   {
     Book book = new Book("Charles Dickens", "Great Expectations",
