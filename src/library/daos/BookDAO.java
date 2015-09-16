@@ -10,7 +10,7 @@ import library.interfaces.daos.IBookHelper;
 import library.interfaces.entities.IBook;
 
 /**
- * BookMapDAO class
+ * BookDAO class
  * @author Josh Kent
  *
  */
@@ -36,7 +36,7 @@ public class BookDAO implements IBookDAO
   
   public BookDAO(IBookHelper helper) {
     if(helper == null) {
-      throw new IllegalArgumentException("BookMapDAO: constructor: value for "
+      throw new IllegalArgumentException("BookDAO: constructor: value for "
                                          + "'helper' cannot be null");
     }
     helper_ = helper;
