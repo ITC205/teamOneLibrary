@@ -7,6 +7,8 @@ import library.interfaces.entities.IBook;
 
 import static org.mockito.Mockito.*;
 
+import java.util.List;
+
 /**
  * TestBookDAO class
  * @author Josh Kent
@@ -33,10 +35,13 @@ public class TestBookDAO extends TestCase
     when(mockedBookTwo.getTitle()).thenReturn("To Kill a Mockingbird");
     when(mockedBookTwo.getCallNumber()).thenReturn("813.54 TOKI");
     
+    // Fixed ID value means that 'Great Expectations' should always be used as
+    // the first mockedBook
     when(mockedHelper.makeBook("Charles Dickens", "Great Expectations", 
                                "82.023 275 [2011]", 1))
                      .thenReturn(mockedBook);
     
+    // 'To Kill a Mockingbird' should be used as the second book
     when(mockedHelper.makeBook("Harper Lee", "To Kill a Mockingbird", 
                                "813.54 TOKI", 2))
                      .thenReturn(mockedBookTwo);
@@ -169,11 +174,15 @@ public class TestBookDAO extends TestCase
     
     assertEquals(mockedBook, returnedBook);
     
+    assertEquals(1, returnedBook.getID());
+    
     testBookDAO.addBook("Harper Lee", "To Kill a Mockingbird", "813.54 TOKI");
     
     returnedBook = testBookDAO.getBookByID(2);
     
     assertEquals(mockedBookTwo, returnedBook);    
+    
+    assertEquals(2, returnedBook.getID());
   }
   
   public void testGetBookByIDNegativeId() 
@@ -223,22 +232,164 @@ public class TestBookDAO extends TestCase
   // Testing listBooks() method
   // ==========================================================================
   
+  public void testListBooksDefault() 
+  {
+    BookDAO testBookDAO = new BookDAO(mockedHelper);
+    
+    List<IBook> bookList = testBookDAO.listBooks();
+    
+    // Confirm empty list
+    assertTrue(bookList.isEmpty());
+    
+    // Add two books 
+    testBookDAO.addBook("Charles Dickens", "Great Expectations", 
+                        "82.023 275 [2011]");
+    
+    testBookDAO.addBook("Harper Lee", "To Kill a Mockingbird", "813.54 TOKI");
+    
+    // Get list of added books
+    bookList = testBookDAO.listBooks();
+    
+    // Confirm only two items in list
+    assertEquals(2, bookList.size());
+    
+    // Confirm first book 
+    assertEquals(mockedBook, bookList.get(0));
+    
+    // Confirm second book
+    assertEquals(mockedBookTwo, bookList.get(1));
+
+  }
   
-  
-  
-  
-  
-  
+  public void testListBooksNoBooks() 
+  {
+    BookDAO testBookDAO = new BookDAO(mockedHelper);
+    
+    List<IBook> bookList = testBookDAO.listBooks();
+    
+    // Confirm empty list
+    assertTrue(bookList.isEmpty());
+  }
+   
+  public void testListBooksOneBook() 
+  {
+    BookDAO testBookDAO = new BookDAO(mockedHelper);
+    
+    List<IBook> bookList = testBookDAO.listBooks();
+    
+    // Confirm empty list
+    assertTrue(bookList.isEmpty());
+    
+    testBookDAO.addBook("Charles Dickens", "Great Expectations", 
+                        "82.023 275 [2011]");
+    
+    // Get list of added books
+    bookList = testBookDAO.listBooks();
+    
+    // Confirm only one item in list
+    assertEquals(1, bookList.size());
+    
+    // Confirm first book in list equals 'Great Expectations' 
+    assertEquals(mockedBook, bookList.get(0));
+    
+  }
   
   // ==========================================================================
   // Testing findBooksByAuthor(String author) method
   // ==========================================================================
   
+  public void testFindBooksByAuthorDefault() 
+  {
+    BookDAO testBookDAO = new BookDAO(mockedHelper);
+    
+    // Add two books 
+    testBookDAO.addBook("Charles Dickens", "Great Expectations", 
+                        "82.023 275 [2011]");
+    
+    testBookDAO.addBook("Harper Lee", "To Kill a Mockingbird", "813.54 TOKI");
+    
+    // Try to find Harper Lee book
+    List<IBook> bookListByAuthor = testBookDAO.findBooksByAuthor("Harper Lee");
+    
+    // Confirm only one item in list
+    assertEquals(1, bookListByAuthor.size());
+    
+    IBook book = bookListByAuthor.get(0);
+    
+    // Confirm book matches expected book
+    assertEquals(mockedBookTwo, book);
+    
+    // Confirm book author matches input
+    assertEquals("Harper Lee", book.getAuthor());
+    
+    // Try to find Charles Dickens book
+    bookListByAuthor = testBookDAO.findBooksByAuthor("Charles Dickens");
+    
+    // Confirm only one item in list
+    assertEquals(1, bookListByAuthor.size());
+    
+    book = bookListByAuthor.get(0);
+    
+    // Confirm book matches expected book
+    assertEquals(mockedBook, book);
+    
+    // Confirm book author matches input
+    assertEquals("Charles Dickens", book.getAuthor()); 
+  }
   
+  public void testFindBooksByAuthorNullAuthor() 
+  {
+    BookDAO testBookDAO = new BookDAO(mockedHelper);
+    
+    try {
+      testBookDAO.findBooksByAuthor(null);
+      fail("Should have thrown IllegalArgumentException");
+    }
+    catch(IllegalArgumentException iae) {
+      assertTrue(true);
+    }
+  }
   
+  public void testFindBooksByAuthorEmptyAuthor()
+  {
+    BookDAO testBookDAO = new BookDAO(mockedHelper);
+    
+    try {
+      testBookDAO.findBooksByAuthor("");
+      fail("Should have thrown IllegalArgumentException");
+    }
+    catch(IllegalArgumentException iae) {
+      assertTrue(true);
+    }
+  }
   
+  public void testFindBooksByAuthorNonExistentAuthor() 
+  {
+    BookDAO testBookDAO = new BookDAO(mockedHelper);
+    
+    // Add two books 
+    testBookDAO.addBook("Charles Dickens", "Great Expectations", 
+                        "82.023 275 [2011]");
+    
+    testBookDAO.addBook("Harper Lee", "To Kill a Mockingbird", "813.54 TOKI");
+    
+    // Try to find Dean Koontz book
+    List<IBook> bookListByAuthor = testBookDAO.findBooksByAuthor("Dean Koontz");
+    
+    // Confirm list empty
+    assertTrue(bookListByAuthor.isEmpty());
+  }
   
-  
+  public void testFindBooksByAuthorNoBooks() 
+  {
+    BookDAO testBookDAO = new BookDAO(mockedHelper);
+    
+    // Try to find Dean Koontz book
+    List<IBook> bookListByAuthor = testBookDAO.findBooksByAuthor("Dean Koontz");
+    
+    // Confirm list empty
+    assertTrue(bookListByAuthor.isEmpty());
+  }
   
   // ==========================================================================
   // Testing findBooksByTitle() method
