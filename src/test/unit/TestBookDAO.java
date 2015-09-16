@@ -19,6 +19,7 @@ public class TestBookDAO extends TestCase
   private IBookHelper mockedHelper;
   private IBook mockedBook;
   private IBook mockedBookTwo;
+  private IBook mockedBookThree;
   
   protected void setUp() 
   {
@@ -35,6 +36,12 @@ public class TestBookDAO extends TestCase
     when(mockedBookTwo.getTitle()).thenReturn("To Kill a Mockingbird");
     when(mockedBookTwo.getCallNumber()).thenReturn("813.54 TOKI");
     
+    mockedBookThree = mock(IBook.class);
+    when(mockedBookThree.getID()).thenReturn(3);
+    when(mockedBookThree.getAuthor()).thenReturn("Harper Lee");
+    when(mockedBookThree.getTitle()).thenReturn("Go Set a Watchman");
+    when(mockedBookThree.getCallNumber()).thenReturn("982.441 LEE");
+    
     // Fixed ID value means that 'Great Expectations' should always be used as
     // the first mockedBook
     when(mockedHelper.makeBook("Charles Dickens", "Great Expectations", 
@@ -45,6 +52,11 @@ public class TestBookDAO extends TestCase
     when(mockedHelper.makeBook("Harper Lee", "To Kill a Mockingbird", 
                                "813.54 TOKI", 2))
                      .thenReturn(mockedBookTwo);
+    
+    // 'Go Set a Watchman' should be used as the third book
+    when(mockedHelper.makeBook("Harper Lee", "Go Set a Watchman", 
+                               "982.441 LEE", 3))
+                     .thenReturn(mockedBookThree);
   }
   
   protected void tearDown()
@@ -391,11 +403,79 @@ public class TestBookDAO extends TestCase
     assertTrue(bookListByAuthor.isEmpty());
   }
   
+  public void testFindBooksByAuthorMulitpleBooksByAuthor()
+  {
+    BookDAO testBookDAO = new BookDAO(mockedHelper);
+    
+    // Add three books 
+    testBookDAO.addBook("Charles Dickens", "Great Expectations", 
+                        "82.023 275 [2011]");
+    
+    testBookDAO.addBook("Harper Lee", "To Kill a Mockingbird", "813.54 TOKI");
+    
+    testBookDAO.addBook("Harper Lee", "Go Set a Watchman", "982.441 LEE");
+    
+    // Try to find Harper Lee books
+    List<IBook> bookListByAuthor = testBookDAO.findBooksByAuthor("Harper Lee");
+    
+    // Confirm two items in list
+    assertEquals(2, bookListByAuthor.size());
+    
+    IBook toKillBook = bookListByAuthor.get(0);
+    IBook goSetBook = bookListByAuthor.get(1);
+    
+    // Confirm items match expected books
+    assertEquals(mockedBookTwo, toKillBook);
+    assertEquals(mockedBookThree, goSetBook);
+    
+    // Confirm authors of books matches input
+    assertEquals("Harper Lee", toKillBook.getAuthor());
+    assertEquals("Harper Lee", goSetBook.getAuthor());
+  }
+  
   // ==========================================================================
   // Testing findBooksByTitle() method
   // ==========================================================================
   
-  
+  public void testFindBooksByTitleDefault() 
+  {
+    BookDAO testBookDAO = new BookDAO(mockedHelper);
+    
+    // Add two books 
+    testBookDAO.addBook("Charles Dickens", "Great Expectations", 
+                        "82.023 275 [2011]");
+    
+    testBookDAO.addBook("Harper Lee", "To Kill a Mockingbird", "813.54 TOKI");
+    
+    // Try to find 'To Kill a Mockingbird' book
+    List<IBook> bookListByTitle = testBookDAO.findBooksByTitle("To Kill a "
+                                                               + "Mockingbird");
+    
+    // Confirm only one item in list
+    assertEquals(1, bookListByTitle.size());
+    
+    IBook book = bookListByTitle.get(0);
+    
+    // Confirm book matches expected book
+    assertEquals(mockedBookTwo, book);
+    
+    // Confirm book title matches input
+    assertEquals("To Kill a Mockingbird", book.getTitle());
+    
+    // Try to find 'Great Expectations' book
+    bookListByTitle = testBookDAO.findBooksByTitle("Great Expectations");
+    
+    // Confirm only one item in list
+    assertEquals(1, bookListByTitle.size());
+    
+    book = bookListByTitle.get(0);
+    
+    // Confirm book matches expected book
+    assertEquals(mockedBook, book);
+    
+    // Confirm book title matches input
+    assertEquals("Great Expectations", book.getTitle()); 
+  }
   
   
   
