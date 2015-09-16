@@ -16,15 +16,30 @@ public class TestBookDAO extends TestCase
 {
   private IBookHelper mockedHelper;
   private IBook mockedBook;
+  private IBook mockedBookTwo;
   
   protected void setUp() 
   {
     mockedHelper = mock(IBookHelper.class);
     mockedBook = mock(IBook.class);
+    when(mockedBook.getID()).thenReturn(1);
+    when(mockedBook.getAuthor()).thenReturn("Charles Dickens");
+    when(mockedBook.getTitle()).thenReturn("Great Expectations");
+    when(mockedBook.getCallNumber()).thenReturn("82.023 275 [2011]");
+    
+    mockedBookTwo = mock(IBook.class);
+    when(mockedBookTwo.getID()).thenReturn(2);
+    when(mockedBookTwo.getAuthor()).thenReturn("Harper Lee");
+    when(mockedBookTwo.getTitle()).thenReturn("To Kill a Mockingbird");
+    when(mockedBookTwo.getCallNumber()).thenReturn("813.54 TOKI");
     
     when(mockedHelper.makeBook("Charles Dickens", "Great Expectations", 
                                "82.023 275 [2011]", 1))
                      .thenReturn(mockedBook);
+    
+    when(mockedHelper.makeBook("Harper Lee", "To Kill a Mockingbird", 
+                               "813.54 TOKI", 2))
+                     .thenReturn(mockedBookTwo);
   }
   
   protected void tearDown()
@@ -138,4 +153,103 @@ public class TestBookDAO extends TestCase
       assertTrue(true);
     }
   }
+  
+  // ==========================================================================
+  // Testing getBookByID(int bookID) method
+  // ==========================================================================
+  
+  public void testGetBookDefault() 
+  {
+    BookDAO testBookDAO = new BookDAO(mockedHelper);
+    
+    testBookDAO.addBook("Charles Dickens", "Great Expectations", 
+                        "82.023 275 [2011]");
+    
+    IBook returnedBook = testBookDAO.getBookByID(1);
+    
+    assertEquals(mockedBook, returnedBook);
+    
+    testBookDAO.addBook("Harper Lee", "To Kill a Mockingbird", "813.54 TOKI");
+    
+    returnedBook = testBookDAO.getBookByID(2);
+    
+    assertEquals(mockedBookTwo, returnedBook);    
+  }
+  
+  public void testGetBookByIDNegativeId() 
+  {
+    BookDAO testBookDAO = new BookDAO(mockedHelper);
+
+    try {
+      @SuppressWarnings("unused")
+      IBook returnedBook = testBookDAO.getBookByID(-1);    
+      fail("Should have thrown IllegalArgumentException");
+    }
+    catch(IllegalArgumentException iae) {
+      assertTrue(true);
+    }
+  }
+  
+  public void testGetBookByIDZeroId()
+  {
+    BookDAO testBookDAO = new BookDAO(mockedHelper);
+
+    try {
+      @SuppressWarnings("unused")
+      IBook returnedBook = testBookDAO.getBookByID(0);    
+      fail("Should have thrown IllegalArgumentException");
+    }
+    catch(IllegalArgumentException iae) {
+      assertTrue(true);
+    }
+  }
+  
+  public void testGetBookByIDNonExistentId()
+  {
+    BookDAO testBookDAO = new BookDAO(mockedHelper);
+    
+    // Try to get ID 1 with no books added
+    IBook returnedBook = testBookDAO.getBookByID(1);
+    
+    assertNull(returnedBook);
+    
+    // Try to get ID 15 with no books added
+    returnedBook = testBookDAO.getBookByID(15);
+    
+    assertNull(returnedBook);
+  }
+  
+  // ==========================================================================
+  // Testing listBooks() method
+  // ==========================================================================
+  
+  
+  
+  
+  
+  
+  
+  
+  // ==========================================================================
+  // Testing findBooksByAuthor(String author) method
+  // ==========================================================================
+  
+  
+  
+  
+  
+  
+  
+  // ==========================================================================
+  // Testing findBooksByTitle() method
+  // ==========================================================================
+  
+  
+  
+  
+  
+  
+  // ==========================================================================
+  // Testing findBooksByAuthorTitle(String author, String title) method
+  // ==========================================================================
 }
