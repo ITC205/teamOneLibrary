@@ -16,48 +16,37 @@ public class Loan
   // Variables
   //===========================================================================
 
-
-
   IBook book_;
   IMember borrower_;
   Date borrowDate_;
   Date returnDate_;
 
-
-
   //===========================================================================
   // Constructors
   //===========================================================================
-
-
 
   /**
    *
    */
   public Loan(IBook book, IMember borrower, Date borrowDate, Date returnDate)
   {
-    if (borrower == null) {
-      throw new IllegalArgumentException( "" );
-    }
-
-    if (book == null) {
-      throw new IllegalArgumentException( "" );
-    }
-
-
-    book_ = book;
-    borrower_ = borrower;
-    borrowDate_ = borrowDate;
-    returnDate_ = returnDate;
+    book_ = throwIfObjectNull("Book.", book);
+    borrower_ = throwIfObjectNull("Borrower.", borrower);
+    // borrowDate_ = throwIfObjectNull("Borrowing Date.", borrowDate);
+    // returnDate_ = throwIfObjectNull("Return Date.", returnDate);
   }
 
-
+  public static <T> T throwIfObjectNull(String parameterName, T object) {
+    String message = "Cannot create a new Loan with a null ";
+    if(object == null) {
+      throw new IllegalArgumentException(message + parameterName);
+    }
+    return object;
+  }
 
   //===========================================================================
   // Getters & setters
   //===========================================================================
-
-
 
   /**
    *
@@ -87,13 +76,9 @@ public class Loan
     return 0;
   }
 
-
-
   //===========================================================================
   // Primary methods
   //===========================================================================
-
-
 
   /**
    *
