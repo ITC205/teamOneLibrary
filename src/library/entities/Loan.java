@@ -39,6 +39,12 @@ public class Loan
     if (borrower == null) {
       throw new IllegalArgumentException( "" );
     }
+
+    if (book == null) {
+      throw new IllegalArgumentException( "" );
+    }
+
+
     book_ = book;
     borrower_ = borrower;
     borrowDate_ = borrowDate;

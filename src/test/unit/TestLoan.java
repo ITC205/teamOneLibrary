@@ -76,7 +76,7 @@ public class TestLoan
   // ==========================================================================
   // Constructor Testing
   // ==========================================================================
-  
+
   @Test
   public void constructNewLoan()
   {
@@ -96,12 +96,28 @@ public class TestLoan
 
 
   // TODO: check constructor throws IllegalArgumentException if:
-  // book is null
-  // borrower is null
   // borrowDate is null
   // dueDate is null
   // dueDate is less than borrowDate
   // loanID is less than or equal to zero
+
+
+  @Test
+  public void constructNewLoanWithNullBookThrows()
+  {
+    thrown.expect(IllegalArgumentException.class);
+
+    // given null member and stub for book
+    IMember fakeBorrower = stubMember();
+    IBook fakeBook = null;
+    // With dates (valid dates to check later)
+    Date borrowDate = new Date();
+    Date returnDate = new Date();
+
+    // When create a loan, exception is thrown
+    ILoan loan = new Loan(fakeBook, fakeBorrower, borrowDate, returnDate);
+  }
+
 
 
   @Test
