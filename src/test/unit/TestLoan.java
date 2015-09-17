@@ -1,23 +1,16 @@
 package test.unit;
 
-import java.util.List;
 import java.util.Date;
 
 import library.interfaces.entities.IBook;
-import library.interfaces.entities.EBookState;
 import library.interfaces.entities.IMember;
-import library.interfaces.entities.EMemberState;
 import library.interfaces.entities.ILoan;
-import library.interfaces.entities.ELoanState;
 
 import library.entities.Loan;
 
 import org.junit.Rule;
-import org.junit.Ignore;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.After;
 
 import org.junit.rules.ExpectedException;
 
@@ -71,7 +64,7 @@ public class TestLoan
   // ==========================================================================
 
   @Rule
-  public ExpectedException thrown= ExpectedException.none();
+  public ExpectedException thrown = ExpectedException.none();
 
   // ==========================================================================
   // Constructor Testing
@@ -81,14 +74,14 @@ public class TestLoan
   public void constructNewLoan()
   {
     // given stubs for book and member
-    IBook fakeBook = stubBook();
-    IMember fakeBorrower = stubMember();
+    IBook book = stubBook();
+    IMember borrower = stubMember();
     // With dates (valid dates to check later)
     Date borrowDate = new Date();
     Date returnDate = new Date();
 
     // Then can create a loan
-    ILoan loan = new Loan(fakeBook, fakeBorrower, borrowDate, returnDate);
+    ILoan loan = new Loan(book, borrower, borrowDate, returnDate);
 
     // Naive, initial check that loan was created
     assertTrue(loan instanceof ILoan);
@@ -106,14 +99,14 @@ public class TestLoan
     thrown.expect(IllegalArgumentException.class);
 
     // given null book and stub for member
-    IBook fakeBook = null;
-    IMember fakeBorrower = stubMember();
+    IBook book = null;
+    IMember borrower = stubMember();
     // With dates (valid dates to check later)
     Date borrowDate = new Date();
     Date returnDate = new Date();
 
     // When create a loan, exception is thrown
-    ILoan loan = new Loan(fakeBook, fakeBorrower, borrowDate, returnDate);
+    ILoan loan = new Loan(book, borrower, borrowDate, returnDate);
   }
 
 
@@ -124,14 +117,14 @@ public class TestLoan
     thrown.expect(IllegalArgumentException.class);
 
     // given stub for book and null member
-    IBook fakeBook = stubBook();
-    IMember fakeBorrower = null;
+    IBook book = stubBook();
+    IMember borrower = null;
     // With dates (valid dates to check later)
     Date borrowDate = new Date();
     Date returnDate = new Date();
 
     // When create a loan, exception is thrown
-    ILoan loan = new Loan(fakeBook, fakeBorrower, borrowDate, returnDate);
+    ILoan loan = new Loan(book, borrower, borrowDate, returnDate);
   }
 
 
@@ -141,14 +134,14 @@ public class TestLoan
     thrown.expect(IllegalArgumentException.class);
 
     // given stubs for book and member
-    IBook fakeBook = stubBook();
-    IMember fakeBorrower = stubMember();
+    IBook book = stubBook();
+    IMember borrower = stubMember();
     // With null borrowDate
     Date borrowDate = null;
     Date returnDate = new Date();
 
     // When create a loan, exception is thrown
-    ILoan loan = new Loan(fakeBook, fakeBorrower, borrowDate, returnDate);
+    ILoan loan = new Loan(book, borrower, borrowDate, returnDate);
   }
 
 
@@ -157,15 +150,15 @@ public class TestLoan
   {
     thrown.expect(IllegalArgumentException.class);
 
-    // given stub member and book
-    IMember fakeBorrower = stubMember();
-    IBook fakeBook = stubBook();
+    // given stubs for book and member
+    IBook book = stubBook();
+    IMember borrower = stubMember();
     // With null returnDate
     Date borrowDate = new Date();
     Date returnDate = null;
 
     // When create a loan, exception is thrown
-    ILoan loan = new Loan(fakeBook, fakeBorrower, borrowDate, returnDate);
+    ILoan loan = new Loan(book, borrower, borrowDate, returnDate);
   }
 
 
@@ -176,14 +169,14 @@ public class TestLoan
     thrown.expectMessage( "Cannot create a new Loan with a null Book.");
 
     // given null book and stub for member
-    IBook fakeBook = null;
-    IMember fakeBorrower = stubMember();
+    IBook book = null;
+    IMember borrower = stubMember();
     // With dates (valid dates to check later)
     Date borrowDate = new Date();
     Date returnDate = new Date();
 
     // When create a loan, exception is thrown
-    ILoan loan = new Loan(fakeBook, fakeBorrower, borrowDate, returnDate);
+    ILoan loan = new Loan(book, borrower, borrowDate, returnDate);
   }
 
 }
