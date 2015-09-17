@@ -1,6 +1,8 @@
 package test.unit;
 
+import java.text.ParseException;
 import java.util.Date;
+import java.text.SimpleDateFormat;
 
 import library.interfaces.entities.IBook;
 import library.interfaces.entities.IMember;
@@ -9,9 +11,7 @@ import library.interfaces.entities.ILoan;
 import library.entities.Loan;
 
 import org.junit.Rule;
-
 import org.junit.Test;
-
 import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.*;
@@ -36,7 +36,7 @@ public class TestLoan
     return mock(IBook.class);
   }
 
-  
+
 
   /**
    * Create stub Member with Mockito. Simply provides an explicitly named method
@@ -65,9 +65,9 @@ public class TestLoan
     // given stubs for book and member
     IBook book = stubBook();
     IMember borrower = stubMember();
-    // With dates (valid dates to check later)
-    Date borrowDate = new Date();
-    Date returnDate = new Date();
+    // With valid, but very simple dates in millis
+    Date borrowDate = new Date(1);
+    Date returnDate = new Date(2);
 
     // Then can create a loan
     ILoan loan = new Loan(book, borrower, borrowDate, returnDate);
@@ -76,10 +76,6 @@ public class TestLoan
     assertTrue(loan instanceof ILoan);
   }
 
-
-  // TODO: check constructor throws IllegalArgumentException if:
-  // dueDate is less than borrowDate
-  // loanID is less than or equal to zero
 
 
   @Test
@@ -90,9 +86,9 @@ public class TestLoan
     // given null book and stub for member
     IBook book = null;
     IMember borrower = stubMember();
-    // With dates (valid dates to check later)
-    Date borrowDate = new Date();
-    Date returnDate = new Date();
+    // With valid, but very simple dates in millis
+    Date borrowDate = new Date(1);
+    Date returnDate = new Date(2);
 
     // When create a loan, exception is thrown
     ILoan loan = new Loan(book, borrower, borrowDate, returnDate);
@@ -108,13 +104,14 @@ public class TestLoan
     // given stub for book and null member
     IBook book = stubBook();
     IMember borrower = null;
-    // With dates (valid dates to check later)
-    Date borrowDate = new Date();
-    Date returnDate = new Date();
+    // With valid, but very simple dates in millis
+    Date borrowDate = new Date(1);
+    Date returnDate = new Date(2);
 
     // When create a loan, exception is thrown
     ILoan loan = new Loan(book, borrower, borrowDate, returnDate);
   }
+
 
 
   @Test
@@ -127,11 +124,12 @@ public class TestLoan
     IMember borrower = stubMember();
     // With null borrowDate
     Date borrowDate = null;
-    Date returnDate = new Date();
+    Date returnDate = new Date(2);
 
     // When create a loan, exception is thrown
     ILoan loan = new Loan(book, borrower, borrowDate, returnDate);
   }
+
 
 
   @Test
@@ -143,7 +141,7 @@ public class TestLoan
     IBook book = stubBook();
     IMember borrower = stubMember();
     // With null returnDate
-    Date borrowDate = new Date();
+    Date borrowDate = new Date(1);
     Date returnDate = null;
 
     // When create a loan, exception is thrown
@@ -151,21 +149,55 @@ public class TestLoan
   }
 
 
+
   @Test
   public void checkExceptionMessageWhenConstructorThrows()
   {
     thrown.expect(IllegalArgumentException.class);
-    thrown.expectMessage( "Cannot create a new Loan with a null Book.");
+    thrown.expectMessage("Cannot create a new Loan with a null Book.");
 
     // given null book and stub for member
     IBook book = null;
     IMember borrower = stubMember();
-    // With dates (valid dates to check later)
-    Date borrowDate = new Date();
-    Date returnDate = new Date();
+    // With valid, but very simple dates in millis
+    Date borrowDate = new Date(1);
+    Date returnDate = new Date(2);
 
     // When create a loan, exception is thrown
     ILoan loan = new Loan(book, borrower, borrowDate, returnDate);
   }
+
+
+  @Test
+  public void constructNewLoanWithValidDates()
+  {
+    // given stubs for book and member
+    IBook book = stubBook();
+    IMember borrower = stubMember();
+
+    Date borrowDate = null;
+    Date returnDate = null;
+    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+    try {
+      borrowDate = dateFormat.parse("17/09/2015");
+      returnDate = dateFormat.parse("18/09/2015");
+    }
+    catch (ParseException exception) {
+      fail();
+    }
+
+    ILoan loan = new Loan(book, borrower, borrowDate, returnDate);
+
+    // Naive, initial check that loan was created
+    assertTrue(loan instanceof ILoan);
+  }
+
+
+  // TODO: check constructor throws IllegalArgumentException if:
+  // loanID is less than or equal to zero
+
+
+
 
 }

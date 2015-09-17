@@ -30,20 +30,33 @@ public class Loan
    */
   public Loan(IBook book, IMember borrower, Date borrowDate, Date returnDate)
   {
-    book_ = throwIfObjectNull("Book.", book);
-    borrower_ = throwIfObjectNull("Borrower.", borrower);
-    borrowDate_ = throwIfObjectNull("Borrowing Date.", borrowDate);
-    returnDate_ = throwIfObjectNull("Return Date.", returnDate);
+    throwIfObjectNull("Book.", book);
+    throwIfObjectNull("Borrower.", borrower);
+    throwIfObjectNull("Borrowing Date.", borrowDate);
+    throwIfObjectNull( "Return Date.", returnDate );
+    throwIfReturnDateIsNotAfterBorrowDate( borrowDate, returnDate );
+    book_ = book;
+    borrower_ = borrower;
+    borrowDate_ = borrowDate;
+    returnDate_ = returnDate;
   }
 
 
 
-  private static <T> T throwIfObjectNull(String parameterName, T object) {
+  private static <T> void throwIfObjectNull(String parameterName, T object)
+  {
     String message = "Cannot create a new Loan with a null ";
     if (object == null) {
-      throw new IllegalArgumentException(message + parameterName);
+      throw new IllegalArgumentException( message + parameterName );
     }
-    return object;
+  }
+
+  private void throwIfReturnDateIsNotAfterBorrowDate(Date borrowDate, Date returnDate)
+  {
+    if (!returnDate.after(borrowDate)) {
+      throw new IllegalArgumentException("Cannot create a new Loan when the " +
+      "return Date is before r the same as the Borrowing Date.");
+    }
   }
 
   //===========================================================================
