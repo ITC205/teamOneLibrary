@@ -136,6 +136,23 @@ public class TestLoan
     ILoan loan = new Loan(fakeBook, fakeBorrower, borrowDate, returnDate);
   }
 
+
+  @Test
+  public void constructNewLoanWithNullBorrowDateThrows()
+  {
+    thrown.expect(IllegalArgumentException.class);
+
+    // given null member and stub for book
+    IMember fakeBorrower = stubMember();
+    IBook fakeBook = stubBook();
+    // With dates (valid dates to check later)
+    Date borrowDate = null;
+    Date returnDate = new Date();
+
+    // When create a loan, exception is thrown
+    ILoan loan = new Loan(fakeBook, fakeBorrower, borrowDate, returnDate);
+  }
+
   // TODO: check exceptions message from thrown.expectMessage("");
 
 }

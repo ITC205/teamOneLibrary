@@ -32,11 +32,13 @@ public class Loan
   {
     book_ = throwIfObjectNull("Book.", book);
     borrower_ = throwIfObjectNull("Borrower.", borrower);
-    // borrowDate_ = throwIfObjectNull("Borrowing Date.", borrowDate);
+    borrowDate_ = throwIfObjectNull("Borrowing Date.", borrowDate);
     // returnDate_ = throwIfObjectNull("Return Date.", returnDate);
   }
 
-  public static <T> T throwIfObjectNull(String parameterName, T object) {
+
+
+  private static <T> T throwIfObjectNull(String parameterName, T object) {
     String message = "Cannot create a new Loan with a null ";
     if(object == null) {
       throw new IllegalArgumentException(message + parameterName);
