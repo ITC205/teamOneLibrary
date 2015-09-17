@@ -40,7 +40,7 @@ public class Loan
 
   private static <T> T throwIfObjectNull(String parameterName, T object) {
     String message = "Cannot create a new Loan with a null ";
-    if(object == null) {
+    if (object == null) {
       throw new IllegalArgumentException(message + parameterName);
     }
     return object;
