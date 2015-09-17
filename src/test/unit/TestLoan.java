@@ -256,6 +256,36 @@ public class TestLoan
     ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
   }
 
+
+
+  @Test
+  public void checkExceptionMessageWhenInvalidDueDate()
+  {
+    thrown.expect(IllegalArgumentException.class);
+    thrown.expectMessage("Cannot create a new Loan when the return Date is " +
+                         "before or the same as the Borrowing Date.");
+
+    // given stubs for book and member
+    IBook book = stubBook();
+    IMember borrower = stubMember();
+    Date borrowDate = null;
+    Date dueDate = null;
+    int iD = 1;
+
+    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+    try {
+      borrowDate = dateFormat.parse("17/09/2015");
+      dueDate = dateFormat.parse("16/09/2015");
+    }
+    catch (ParseException exception) {
+      fail();
+    }
+
+    // When create a loan, exception is thrown
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
+  }
+
   // TODO: need to check if borrow date later than return date - but same day?
 
 
