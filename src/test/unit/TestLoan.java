@@ -27,36 +27,25 @@ public class TestLoan
   // ==========================================================================
 
   /**
-   * Create stub items with Mockito, but explicitly name method to show that
-   * stubs are being used (not mocks or other fakes/doubles) :-)
-   * @param classToMock Class to be stubbed
-   * @return stub of class
-   */
-  public static <T> T stub(Class<T> classToMock)
-  {
-    return mock(classToMock);
-  }
-
-
-
-  /**
-   * Create stub IMember with Mockito.
-   * @return stub IMember.
-   */
-  public static IMember stubMember()
-  {
-    return mock(IMember.class);
-  }
-
-
-
-  /**
-   * Create stub IBook with Mockito.
-   * @return stub IBook.
+   * Create stub Book with Mockito. Simply provides an explicitly named method
+   * to show that stubs are being used (not mocks or other fakes/doubles) :-)
+   * @return stub Book.
    */
   public static IBook stubBook()
   {
     return mock(IBook.class);
+  }
+
+  
+
+  /**
+   * Create stub Member with Mockito. Simply provides an explicitly named method
+   * to show that stubs are being used (not mocks or other fakes/doubles) :-)
+   * @return stub Member.
+   */
+  public static IMember stubMember()
+  {
+    return mock(IMember.class);
   }
 
   // ==========================================================================
