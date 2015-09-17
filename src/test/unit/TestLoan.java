@@ -154,7 +154,7 @@ public class TestLoan
   public void checkExceptionMessageWhenConstructorThrows()
   {
     thrown.expect(IllegalArgumentException.class);
-    thrown.expectMessage("Cannot create a new Loan with a null Book.");
+    thrown.expectMessage( "Cannot create a new Loan with a null Book." );
 
     // given null book and stub for member
     IBook book = null;
@@ -192,6 +192,60 @@ public class TestLoan
     // Naive, initial check that loan was created
     assertTrue(loan instanceof ILoan);
   }
+
+
+
+  @Test
+  public void constructNewLoanReturnDateBeforeBorrowDate()
+  {
+    thrown.expect(IllegalArgumentException.class);
+
+    // given stubs for book and member
+    IBook book = stubBook();
+    IMember borrower = stubMember();
+
+    Date borrowDate = null;
+    Date returnDate = null;
+    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+    try {
+      borrowDate = dateFormat.parse("17/09/2015");
+      returnDate = dateFormat.parse("16/09/2015");
+    }
+    catch (ParseException exception) {
+      fail();
+    }
+
+    // When create a loan, exception is thrown
+    ILoan loan = new Loan(book, borrower, borrowDate, returnDate);
+  }
+
+  @Test
+  public void constructNewLoanReturnDateSameAsBorrowDate()
+  {
+    thrown.expect(IllegalArgumentException.class);
+
+    // given stubs for book and member
+    IBook book = stubBook();
+    IMember borrower = stubMember();
+
+    Date borrowDate = null;
+    Date returnDate = null;
+    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+    try {
+      borrowDate = dateFormat.parse("17/09/2015");
+      returnDate = dateFormat.parse("17/09/2015");
+    }
+    catch (ParseException exception) {
+      fail();
+    }
+
+    // When create a loan, exception is thrown
+    ILoan loan = new Loan(book, borrower, borrowDate, returnDate);
+  }
+
+  // TODO: need to check if borrow date later than return date - but same day?
 
 
   // TODO: check constructor throws IllegalArgumentException if:
