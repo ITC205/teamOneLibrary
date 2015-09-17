@@ -81,7 +81,8 @@ public class Loan
   //===========================================================================
 
   /**
-   *
+   * Returns the borrower associated with this loan.
+   * @return IMember The borrower associated with this loan.
    */
   public IMember getBorrower()
   {

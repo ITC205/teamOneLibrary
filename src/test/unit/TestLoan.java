@@ -70,10 +70,10 @@ public class TestLoan
     Date dueDate = new Date(2);
     int iD = 1;
 
-    // Then can create a loan
+    // When create a loan
     ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
 
-    // Naive, initial check that loan was created
+    // then can (naively) check that loan was created
     assertTrue(loan instanceof ILoan);
   }
 
@@ -92,7 +92,7 @@ public class TestLoan
     Date dueDate = new Date(2);
     int iD = 1;
 
-    // When create a loan, exception is thrown
+    // When create a loan, then exception is thrown
     ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
   }
 
@@ -111,7 +111,7 @@ public class TestLoan
     Date dueDate = new Date(2);
     int iD = 1;
 
-    // When create a loan, exception is thrown
+    // When create a loan, then exception is thrown
     ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
   }
 
@@ -130,7 +130,7 @@ public class TestLoan
     Date dueDate = new Date(2);
     int iD = 1;
 
-    // When create a loan, exception is thrown
+    // When create a loan, then exception is thrown
     ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
   }
 
@@ -149,7 +149,7 @@ public class TestLoan
     Date dueDate = null;
     int iD = 1;
 
-    // When create a loan, exception is thrown
+    // When create a loan, then exception is thrown
     ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
   }
 
@@ -169,7 +169,7 @@ public class TestLoan
     Date dueDate = new Date(2);
     int iD = 1;
 
-    // When create a loan, exception is thrown
+    // When create a loan, then exception is thrown
     ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
   }
 
@@ -195,9 +195,10 @@ public class TestLoan
       fail();
     }
 
+    // When create a loan
     ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
 
-    // Naive, initial check that loan was created
+    // then can (naively) check that loan was created
     assertTrue(loan instanceof ILoan);
   }
 
@@ -225,7 +226,7 @@ public class TestLoan
       fail();
     }
 
-    // When create a loan, exception is thrown
+    // When create a loan, then exception is thrown
     ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
   }
 
@@ -253,7 +254,7 @@ public class TestLoan
       fail();
     }
 
-    // When create a loan, exception is thrown
+    // When create a loan, then exception is thrown
     ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
   }
 
@@ -283,7 +284,7 @@ public class TestLoan
       fail();
     }
 
-    // When create a loan, exception is thrown
+    // When create a loan, then exception is thrown
     ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
   }
 
@@ -312,7 +313,7 @@ public class TestLoan
       fail();
     }
 
-    // When create a loan, exception is thrown
+    // When create a loan, then exception is thrown
     ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
   }
 
@@ -340,7 +341,7 @@ public class TestLoan
       fail();
     }
 
-    // When create a loan, exception is thrown
+    // When create a loan, then exception is thrown
     ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
   }
 
@@ -350,8 +351,8 @@ public class TestLoan
   public void checkExceptionMessageWhenInvalidID()
   {
     thrown.expect(IllegalArgumentException.class);
-    thrown.expectMessage("Cannot create a new Loan with an ID less than or " +
-                         "equal to zero.");
+    thrown.expectMessage( "Cannot create a new Loan with an ID less than or " +
+                              "equal to zero." );
 
     // given stubs for book and member
     IBook book = stubBook();
@@ -370,8 +371,32 @@ public class TestLoan
       fail();
     }
 
-    // When create a loan, exception is thrown
+    // When create a loan, then exception is thrown
     ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
+  }
+
+  // ==========================================================================
+  // Getters & setters testing
+  // ==========================================================================
+
+  @Test
+  public void getBorrowerFromLoan()
+  {
+    // given stubs for book and member
+    IBook book = stubBook();
+    IMember borrower = stubMember();
+
+    // With valid dates
+    Date borrowDate = new Date(1);
+    Date dueDate = new Date(2);
+    int iD = 1;
+
+    // when create a loan
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD );
+
+    // then can return borrower and verify it is same Member as local instance
+    IMember loanBorrower = loan.getBorrower();
+    assertSame(loanBorrower, borrower);
   }
 
 
