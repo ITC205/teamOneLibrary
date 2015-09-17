@@ -33,7 +33,7 @@ public class Loan
     book_ = throwIfObjectNull("Book.", book);
     borrower_ = throwIfObjectNull("Borrower.", borrower);
     borrowDate_ = throwIfObjectNull("Borrowing Date.", borrowDate);
-    // returnDate_ = throwIfObjectNull("Return Date.", returnDate);
+    returnDate_ = throwIfObjectNull("Return Date.", returnDate);
   }
 
 
