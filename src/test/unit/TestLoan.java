@@ -139,7 +139,7 @@ public class TestLoan
   @Test
   public void constructNewLoanWithNulldueDateThrows()
   {
-    thrown.expect(IllegalArgumentException.class);
+    thrown.expect( IllegalArgumentException.class );
 
     // given stubs for book and member
     IBook book = stubBook();
@@ -156,10 +156,10 @@ public class TestLoan
 
 
   @Test
-  public void checkExceptionMessageWhenConstructorThrows()
+  public void checkExceptionMessageWhenBookNull()
   {
     thrown.expect(IllegalArgumentException.class);
-    thrown.expectMessage( "Cannot create a new Loan with a null Book." );
+    thrown.expectMessage("Cannot create a new Loan with a null Book.");
 
     // given null book and stub for member
     IBook book = null;
@@ -203,7 +203,7 @@ public class TestLoan
 
 
   @Test
-  public void constructNewLoandueDateBeforeBorrowDate()
+  public void constructNewLoanDueDateBeforeBorrowDate()
   {
     thrown.expect(IllegalArgumentException.class);
 
@@ -228,8 +228,10 @@ public class TestLoan
     ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
   }
 
+  // TODO: check message of exception for dates
+
   @Test
-  public void constructNewLoandueDateSameAsBorrowDate()
+  public void constructNewLoanDueDateSameAsBorrowDate()
   {
     thrown.expect(IllegalArgumentException.class);
 
@@ -257,10 +259,86 @@ public class TestLoan
   // TODO: need to check if borrow date later than return date - but same day?
 
 
-  // TODO: check constructor throws IllegalArgumentException if:
-  // loanID is less than or equal to zero
+  @Test
+  public void constructNewLoanIDEqualsZero()
+  {
+    thrown.expect(IllegalArgumentException.class);
+
+    // given stubs for book and member
+    IBook book = stubBook();
+    IMember borrower = stubMember();
+    Date borrowDate = null;
+    Date dueDate = null;
+    int iD = 0;
+
+    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+    try {
+      borrowDate = dateFormat.parse("01/01/2015");
+      dueDate = dateFormat.parse("01/01/2025");
+    }
+    catch (ParseException exception) {
+      fail();
+    }
+
+    // When create a loan, exception is thrown
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
+  }
 
 
+  @Test
+  public void constructNewLoanIDNegative()
+  {
+    thrown.expect(IllegalArgumentException.class);
+
+    // given stubs for book and member
+    IBook book = stubBook();
+    IMember borrower = stubMember();
+    Date borrowDate = null;
+    Date dueDate = null;
+    int iD = -1;
+
+    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+    try {
+      borrowDate = dateFormat.parse("01/01/2015");
+      dueDate = dateFormat.parse("01/01/2025");
+    }
+    catch (ParseException exception) {
+      fail();
+    }
+
+    // When create a loan, exception is thrown
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
+  }
+
+  @Test
+  public void checkExceptionMessageWhenInvalidID()
+  {
+    thrown.expect(IllegalArgumentException.class);
+    thrown.expectMessage("Cannot create a new Loan with an ID less than or " +
+                         "equal to zero.");
+
+    // given stubs for book and member
+    IBook book = stubBook();
+    IMember borrower = stubMember();
+    Date borrowDate = null;
+    Date dueDate = null;
+    int iD = -1;
+
+    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+    try {
+      borrowDate = dateFormat.parse("01/01/2015");
+      dueDate = dateFormat.parse("01/01/2025");
+    }
+    catch (ParseException exception) {
+      fail();
+    }
+
+    // When create a loan, exception is thrown
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
+  }
 
 
 }

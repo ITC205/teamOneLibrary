@@ -36,7 +36,9 @@ public class Loan
     throwIfObjectNull("Borrower.", borrower);
     throwIfObjectNull("Borrowing Date.", borrowDate);
     throwIfObjectNull("Return Date.", dueDate);
-    throwIfReturnDateIsNotAfterBorrowDate(borrowDate, dueDate);
+    throwIfReturnDateIsNotAfterBorrowDate( borrowDate, dueDate );
+    throwIfIDLessThanOrEqualToZero( iD );
+
     book_ = book;
     borrower_ = borrower;
     borrowDate_ = borrowDate;
@@ -59,7 +61,18 @@ public class Loan
   {
     if (!returnDate.after(borrowDate)) {
       throw new IllegalArgumentException("Cannot create a new Loan when the " +
-      "return Date is before r the same as the Borrowing Date.");
+                                         "return Date is before or the same " +
+                                         "as the Borrowing Date.");
+    }
+  }
+
+
+
+  private void throwIfIDLessThanOrEqualToZero(int iD)
+  {
+    if (iD <= 0) {
+      throw new IllegalArgumentException("Cannot create a new Loan with an " +
+                                         "ID less than or equal to zero.");
     }
   }
 
