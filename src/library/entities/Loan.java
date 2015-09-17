@@ -16,10 +16,11 @@ public class Loan
   // Variables
   //===========================================================================
 
-  IBook book_;
-  IMember borrower_;
-  Date borrowDate_;
-  Date returnDate_;
+  private IBook book_;
+  private IMember borrower_;
+  private Date borrowDate_;
+  private Date dueDate_;
+  private int iD_;
 
   //===========================================================================
   // Constructors
@@ -28,17 +29,19 @@ public class Loan
   /**
    *
    */
-  public Loan(IBook book, IMember borrower, Date borrowDate, Date returnDate)
+  public Loan(IBook book, IMember borrower, Date borrowDate, Date dueDate,
+              int iD)
   {
     throwIfObjectNull("Book.", book);
     throwIfObjectNull("Borrower.", borrower);
     throwIfObjectNull("Borrowing Date.", borrowDate);
-    throwIfObjectNull( "Return Date.", returnDate );
-    throwIfReturnDateIsNotAfterBorrowDate( borrowDate, returnDate );
+    throwIfObjectNull("Return Date.", dueDate);
+    throwIfReturnDateIsNotAfterBorrowDate(borrowDate, dueDate);
     book_ = book;
     borrower_ = borrower;
     borrowDate_ = borrowDate;
-    returnDate_ = returnDate;
+    dueDate_ = dueDate;
+    iD_ = iD;
   }
 
 
@@ -47,11 +50,12 @@ public class Loan
   {
     String message = "Cannot create a new Loan with a null ";
     if (object == null) {
-      throw new IllegalArgumentException( message + parameterName );
+      throw new IllegalArgumentException(message + parameterName);
     }
   }
 
-  private void throwIfReturnDateIsNotAfterBorrowDate(Date borrowDate, Date returnDate)
+  private void throwIfReturnDateIsNotAfterBorrowDate(Date borrowDate,
+                                                     Date returnDate)
   {
     if (!returnDate.after(borrowDate)) {
       throw new IllegalArgumentException("Cannot create a new Loan when the " +

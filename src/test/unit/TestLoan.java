@@ -67,10 +67,11 @@ public class TestLoan
     IMember borrower = stubMember();
     // With valid, but very simple dates in millis
     Date borrowDate = new Date(1);
-    Date returnDate = new Date(2);
+    Date dueDate = new Date(2);
+    int iD = 1;
 
     // Then can create a loan
-    ILoan loan = new Loan(book, borrower, borrowDate, returnDate);
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
 
     // Naive, initial check that loan was created
     assertTrue(loan instanceof ILoan);
@@ -88,10 +89,11 @@ public class TestLoan
     IMember borrower = stubMember();
     // With valid, but very simple dates in millis
     Date borrowDate = new Date(1);
-    Date returnDate = new Date(2);
+    Date dueDate = new Date(2);
+    int iD = 1;
 
     // When create a loan, exception is thrown
-    ILoan loan = new Loan(book, borrower, borrowDate, returnDate);
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
   }
 
 
@@ -106,10 +108,11 @@ public class TestLoan
     IMember borrower = null;
     // With valid, but very simple dates in millis
     Date borrowDate = new Date(1);
-    Date returnDate = new Date(2);
+    Date dueDate = new Date(2);
+    int iD = 1;
 
     // When create a loan, exception is thrown
-    ILoan loan = new Loan(book, borrower, borrowDate, returnDate);
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
   }
 
 
@@ -124,28 +127,30 @@ public class TestLoan
     IMember borrower = stubMember();
     // With null borrowDate
     Date borrowDate = null;
-    Date returnDate = new Date(2);
+    Date dueDate = new Date(2);
+    int iD = 1;
 
     // When create a loan, exception is thrown
-    ILoan loan = new Loan(book, borrower, borrowDate, returnDate);
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
   }
 
 
 
   @Test
-  public void constructNewLoanWithNullReturnDateThrows()
+  public void constructNewLoanWithNulldueDateThrows()
   {
     thrown.expect(IllegalArgumentException.class);
 
     // given stubs for book and member
     IBook book = stubBook();
     IMember borrower = stubMember();
-    // With null returnDate
+    // With null due date
     Date borrowDate = new Date(1);
-    Date returnDate = null;
+    Date dueDate = null;
+    int iD = 1;
 
     // When create a loan, exception is thrown
-    ILoan loan = new Loan(book, borrower, borrowDate, returnDate);
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
   }
 
 
@@ -161,10 +166,11 @@ public class TestLoan
     IMember borrower = stubMember();
     // With valid, but very simple dates in millis
     Date borrowDate = new Date(1);
-    Date returnDate = new Date(2);
+    Date dueDate = new Date(2);
+    int iD = 1;
 
     // When create a loan, exception is thrown
-    ILoan loan = new Loan(book, borrower, borrowDate, returnDate);
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
   }
 
 
@@ -174,20 +180,21 @@ public class TestLoan
     // given stubs for book and member
     IBook book = stubBook();
     IMember borrower = stubMember();
-
     Date borrowDate = null;
-    Date returnDate = null;
+    Date dueDate = null;
+    int iD = 1;
+
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
     try {
       borrowDate = dateFormat.parse("17/09/2015");
-      returnDate = dateFormat.parse("18/09/2015");
+      dueDate = dateFormat.parse("18/09/2015");
     }
     catch (ParseException exception) {
       fail();
     }
 
-    ILoan loan = new Loan(book, borrower, borrowDate, returnDate);
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
 
     // Naive, initial check that loan was created
     assertTrue(loan instanceof ILoan);
@@ -196,53 +203,55 @@ public class TestLoan
 
 
   @Test
-  public void constructNewLoanReturnDateBeforeBorrowDate()
+  public void constructNewLoandueDateBeforeBorrowDate()
   {
     thrown.expect(IllegalArgumentException.class);
 
     // given stubs for book and member
     IBook book = stubBook();
     IMember borrower = stubMember();
-
     Date borrowDate = null;
-    Date returnDate = null;
+    Date dueDate = null;
+    int iD = 1;
+
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
     try {
       borrowDate = dateFormat.parse("17/09/2015");
-      returnDate = dateFormat.parse("16/09/2015");
+      dueDate = dateFormat.parse("16/09/2015");
     }
     catch (ParseException exception) {
       fail();
     }
 
     // When create a loan, exception is thrown
-    ILoan loan = new Loan(book, borrower, borrowDate, returnDate);
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
   }
 
   @Test
-  public void constructNewLoanReturnDateSameAsBorrowDate()
+  public void constructNewLoandueDateSameAsBorrowDate()
   {
     thrown.expect(IllegalArgumentException.class);
 
     // given stubs for book and member
     IBook book = stubBook();
     IMember borrower = stubMember();
-
     Date borrowDate = null;
-    Date returnDate = null;
+    Date dueDate = null;
+    int iD = 1;
+
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
     try {
       borrowDate = dateFormat.parse("17/09/2015");
-      returnDate = dateFormat.parse("17/09/2015");
+      dueDate = dateFormat.parse("17/09/2015");
     }
     catch (ParseException exception) {
       fail();
     }
 
     // When create a loan, exception is thrown
-    ILoan loan = new Loan(book, borrower, borrowDate, returnDate);
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
   }
 
   // TODO: need to check if borrow date later than return date - but same day?
