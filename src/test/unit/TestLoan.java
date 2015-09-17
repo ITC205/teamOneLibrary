@@ -137,7 +137,7 @@ public class TestLoan
 
 
   @Test
-  public void constructNewLoanWithNulldueDateThrows()
+  public void constructNewLoanWithNullDueDateThrows()
   {
     thrown.expect( IllegalArgumentException.class );
 
@@ -172,6 +172,7 @@ public class TestLoan
     // When create a loan, exception is thrown
     ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
   }
+
 
 
   @Test
@@ -228,7 +229,7 @@ public class TestLoan
     ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
   }
 
-  // TODO: check message of exception for dates
+
 
   @Test
   public void constructNewLoanDueDateSameAsBorrowDate()
@@ -290,7 +291,7 @@ public class TestLoan
 
 
   @Test
-  public void constructNewLoanIDEqualsZero()
+  public void constructNewLoanIDEqualsZeroThrows()
   {
     thrown.expect(IllegalArgumentException.class);
 
@@ -316,8 +317,9 @@ public class TestLoan
   }
 
 
+
   @Test
-  public void constructNewLoanIDNegative()
+  public void constructNewLoanIDNegativeThrows()
   {
     thrown.expect(IllegalArgumentException.class);
 
@@ -341,6 +343,8 @@ public class TestLoan
     // When create a loan, exception is thrown
     ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
   }
+
+
 
   @Test
   public void checkExceptionMessageWhenInvalidID()
