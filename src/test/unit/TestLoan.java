@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
 public class TestLoan
 {
   // ==========================================================================
-  // Stub helper
+  // Stub helpers
   // ==========================================================================
 
 
@@ -46,6 +46,28 @@ public class TestLoan
 
 
 
+  /**
+   * Create stub IMember with Mockito.
+   * @return stub IMember.
+   */
+  public static IMember stubMember()
+  {
+    return mock(IMember.class);
+  }
+
+
+
+  /**
+   * Create stub IBook with Mockito.
+   * @return stub IBook.
+   */
+  public static IBook stubBook()
+  {
+    return mock(IBook.class);
+  }
+
+
+
   // ==========================================================================
   // Constructor Testing
   // ==========================================================================
@@ -56,8 +78,8 @@ public class TestLoan
   public void constructNewLoan()
   {
     // given stubs for member and book
-    IMember fakeBorrower = stub(IMember.class);
-    IBook fakeBook = stub(IBook.class);
+    IMember fakeBorrower = stubMember();
+    IBook fakeBook = stubBook();
     // With dates (valid dates to check later)
     Date borrowDate = new Date();
     Date returnDate = new Date();
