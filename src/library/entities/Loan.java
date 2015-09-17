@@ -36,6 +36,9 @@ public class Loan
    */
   public Loan(IBook book, IMember borrower, Date borrowDate, Date returnDate)
   {
+    if (borrower == null) {
+      throw new IllegalArgumentException( "" );
+    }
     book_ = book;
     borrower_ = borrower;
     borrowDate_ = borrowDate;

@@ -19,6 +19,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.After;
 
+import org.junit.rules.ExpectedException;
+
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -30,8 +32,6 @@ public class TestLoan
   // ==========================================================================
   // Stub helpers
   // ==========================================================================
-
-
 
   /**
    * Create stub items with Mockito, but explicitly name method to show that
@@ -66,14 +66,17 @@ public class TestLoan
     return mock(IBook.class);
   }
 
+  // ==========================================================================
+  // Test rules
+  // ==========================================================================
 
+  @Rule
+  public ExpectedException thrown= ExpectedException.none();
 
   // ==========================================================================
   // Constructor Testing
   // ==========================================================================
-
-
-
+  
   @Test
   public void constructNewLoan()
   {
@@ -91,5 +94,32 @@ public class TestLoan
     assertTrue(loan instanceof ILoan);
   }
 
+
+  // TODO: check constructor throws IllegalArgumentException if:
+  // book is null
+  // borrower is null
+  // borrowDate is null
+  // dueDate is null
+  // dueDate is less than borrowDate
+  // loanID is less than or equal to zero
+
+
+  @Test
+  public void constructNewLoanWithNullBorrowerThrows()
+  {
+    thrown.expect(IllegalArgumentException.class);
+
+    // given null member and stub for book
+    IMember fakeBorrower = null;
+    IBook fakeBook = stubBook();
+    // With dates (valid dates to check later)
+    Date borrowDate = new Date();
+    Date returnDate = new Date();
+
+    // When create a loan, exception is thrown
+    ILoan loan = new Loan(fakeBook, fakeBorrower, borrowDate, returnDate);
+  }
+
+  // TODO: check exceptions message from thrown.expectMessage("");
 
 }
