@@ -145,6 +145,12 @@ public class TestLoanBuilder
   }
 
 
+  public TestLoanBuilder isCurrent()
+  {
+    state_ = ELoanState.CURRENT;
+    return this;
+  }
+
 }
 
 

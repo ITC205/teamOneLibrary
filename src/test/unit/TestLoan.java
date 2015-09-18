@@ -539,7 +539,7 @@ public class TestLoan
   // ==========================================================================
 
   @Test
-  public void testOverdueLoanReturnsTrue()
+  public void testOverDueLoanReturnsTrue()
   {
   // Given a manually set overdue loan
     ILoan loan = newLoan().isOverDue().build();
@@ -550,8 +550,26 @@ public class TestLoan
   }
 
 
+  @Test
+  public void testNewLoanIsNotOverDue()
+  {
+    // Given a manually set overdue loan
+    ILoan loan = newLoan().build();
 
+    // check if overdue
+    boolean isOverdue = loan.isOverDue();
+    assertFalse(isOverdue);
+  }
 
+  @Test
+  public void testCurrentLoanIsNotOverDue()
+  {
+    // Given a manually set overdue loan
+    ILoan loan = newLoan().isCurrent().build();
 
+    // check if overdue
+    boolean isOverdue = loan.isOverDue();
+    assertFalse(isOverdue);
+  }
 
 }
