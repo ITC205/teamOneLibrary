@@ -69,6 +69,7 @@ public class TestLoan
       // With valid, but very simple dates in millis
       Date borrowDate = new Date(1);
       Date dueDate = new Date(2);
+      // and valid ID
       int iD = 1;
 
       // When create a loan
@@ -98,6 +99,7 @@ public class TestLoan
     // With valid, but very simple dates in millis
     Date borrowDate = new Date(1);
     Date dueDate = new Date(2);
+    // and valid ID
     int iD = 1;
 
     // When create a loan, then exception is thrown
@@ -118,6 +120,7 @@ public class TestLoan
     // With valid, but very simple dates in millis
     Date borrowDate = new Date(1);
     Date dueDate = new Date(2);
+    // and valid ID
     int iD = 1;
 
     // When create a loan, then exception is thrown
@@ -138,6 +141,7 @@ public class TestLoan
     // With null borrowDate
     Date borrowDate = null;
     Date dueDate = new Date(2);
+    // and valid ID
     int iD = 1;
 
     // When create a loan, then exception is thrown
@@ -158,6 +162,7 @@ public class TestLoan
     // With null due date
     Date borrowDate = new Date(1);
     Date dueDate = null;
+    // and valid ID
     int iD = 1;
 
     // When create a loan, then exception is thrown
@@ -179,6 +184,7 @@ public class TestLoan
     // With valid, but very simple dates in millis
     Date borrowDate = new Date(1);
     Date dueDate = new Date(2);
+    // and valid ID
     int iD = 1;
 
     // When create a loan, then exception is thrown
@@ -193,8 +199,10 @@ public class TestLoan
     // Given stubs for book and member
     IBook book = stubBook();
     IMember borrower = stubMember();
+    // with formatted dates to be assigned
     Date borrowDate = null;
     Date dueDate = null;
+    // and valid ID
     int iD = 1;
 
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -204,7 +212,7 @@ public class TestLoan
       dueDate = dateFormat.parse("18/09/2015");
     }
     catch (ParseException exception) {
-      fail();
+      fail(exception.getMessage());
     }
 
     // When create a loan
@@ -217,7 +225,7 @@ public class TestLoan
 
 
   @Test
-  public void constructNewLoanDueDateBeforeBorrowDate()
+  public void constructNewLoanDueDateBeforeBorrowDateThrows()
   {
     // Expect exception to be thrown
     thrown.expect(IllegalArgumentException.class);
@@ -225,18 +233,21 @@ public class TestLoan
     // Given stubs for book and member
     IBook book = stubBook();
     IMember borrower = stubMember();
+    // with formatted dates to be assigned
     Date borrowDate = null;
     Date dueDate = null;
+    // and valid ID
     int iD = 1;
 
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
     try {
       borrowDate = dateFormat.parse("17/09/2015");
+      // dueDate is before the borrowDate
       dueDate = dateFormat.parse("16/09/2015");
     }
     catch (ParseException exception) {
-      fail();
+      fail(exception.getMessage());
     }
 
     // When create a loan, then exception is thrown
@@ -246,7 +257,7 @@ public class TestLoan
 
 
   @Test
-  public void constructNewLoanDueDateSameAsBorrowDate()
+  public void constructNewLoanDueDateSameAsBorrowDateThrows()
   {
     // Expect exception to be thrown
     thrown.expect(IllegalArgumentException.class);
@@ -254,18 +265,21 @@ public class TestLoan
     // Given stubs for book and member
     IBook book = stubBook();
     IMember borrower = stubMember();
+    // with formatted dates to be assigned
     Date borrowDate = null;
     Date dueDate = null;
+    // and valid ID
     int iD = 1;
 
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
     try {
       borrowDate = dateFormat.parse("17/09/2015");
+      // dueDate is same as the borrowDate
       dueDate = dateFormat.parse("17/09/2015");
     }
     catch (ParseException exception) {
-      fail();
+      fail(exception.getMessage());
     }
 
     // When create a loan, then exception is thrown
@@ -285,18 +299,21 @@ public class TestLoan
     // Given stubs for book and member
     IBook book = stubBook();
     IMember borrower = stubMember();
+    // with formatted dates to be assigned
     Date borrowDate = null;
     Date dueDate = null;
+    // and valid ID
     int iD = 1;
 
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
     try {
       borrowDate = dateFormat.parse("17/09/2015");
+      // dueDate is before the borrowDate
       dueDate = dateFormat.parse("16/09/2015");
     }
     catch (ParseException exception) {
-      fail();
+      fail(exception.getMessage());
     }
 
     // When create a loan, then exception is thrown
@@ -315,8 +332,10 @@ public class TestLoan
     // Given stubs for book and member
     IBook book = stubBook();
     IMember borrower = stubMember();
+    // with valid dates to be assigned
     Date borrowDate = null;
     Date dueDate = null;
+    // and ID equals zero
     int iD = 0;
 
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -326,7 +345,7 @@ public class TestLoan
       dueDate = dateFormat.parse("01/01/2025");
     }
     catch (ParseException exception) {
-      fail();
+      fail(exception.getMessage());
     }
 
     // When create a loan, then exception is thrown
@@ -344,8 +363,10 @@ public class TestLoan
     // Given stubs for book and member
     IBook book = stubBook();
     IMember borrower = stubMember();
+    // with valid dates to be assigned
     Date borrowDate = null;
     Date dueDate = null;
+    // and negative ID
     int iD = -1;
 
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -355,7 +376,7 @@ public class TestLoan
       dueDate = dateFormat.parse("01/01/2025");
     }
     catch (ParseException exception) {
-      fail();
+      fail(exception.getMessage());
     }
 
     // When create a loan, then exception is thrown
@@ -375,8 +396,10 @@ public class TestLoan
     // Given stubs for book and member
     IBook book = stubBook();
     IMember borrower = stubMember();
+    // with valid dates to be assigned
     Date borrowDate = null;
     Date dueDate = null;
+    // and negative ID
     int iD = -1;
 
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -386,7 +409,7 @@ public class TestLoan
       dueDate = dateFormat.parse("01/01/2025");
     }
     catch (ParseException exception) {
-      fail();
+      fail(exception.getMessage());
     }
 
     // When create a loan, then exception is thrown
@@ -404,7 +427,7 @@ public class TestLoan
     IBook book = stubBook();
     IMember borrower = stubMember();
 
-    // With valid dates
+    // With valid dates and ID
     Date borrowDate = new Date(1);
     Date dueDate = new Date(2);
     int iD = 1;
@@ -415,6 +438,19 @@ public class TestLoan
     // Then can return borrower and verify it is same Member as local instance
     IMember loanBorrower = loan.getBorrower();
     assertSame(loanBorrower, borrower);
+  }
+
+
+
+  @Test
+  public void test()
+  {
+    // Given
+
+    // When
+
+    // Then
+
   }
 
 }
