@@ -1,5 +1,6 @@
 # Java
 *.class
+out
 
 # Package Files - except for lib folder#
 *.jar
