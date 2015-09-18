@@ -23,14 +23,24 @@ public class Loan
   private int iD_;
 
   //===========================================================================
-  // Constructors
+  // Constructor (& helpers)
   //===========================================================================
 
   /**
-   *
+   * Creates a new instance of a Loan, providing parameters are valid.
+   * @param book IBook
+   * @param borrower IMember
+   * @param borrowDate Date
+   * @param dueDate Date
+   * @param iD int
+   * Throws an IllegalArgumentException if:
+   *  - any of book, borrower, borrowDate, or dueDate are null
+   *  - dueDate is less than borrowDate
+   *  - loanID is less than or equal to zero
    */
   public Loan(IBook book, IMember borrower, Date borrowDate, Date dueDate,
               int iD)
+    throws IllegalArgumentException
   {
     throwIfObjectNull("Book.", book);
     throwIfObjectNull("Borrower.", borrower);
@@ -48,7 +58,8 @@ public class Loan
 
 
 
-  private static <T> void throwIfObjectNull(String parameterName, T object)
+  private <T> void throwIfObjectNull(String parameterName, T object)
+    throws IllegalArgumentException
   {
     String message = "Cannot create a new Loan with a null ";
     if (object == null) {
@@ -56,12 +67,15 @@ public class Loan
     }
   }
 
+
+
   private void throwIfReturnDateIsNotAfterBorrowDate(Date borrowDate,
                                                      Date returnDate)
+    throws IllegalArgumentException
   {
     if (!returnDate.after(borrowDate)) {
       throw new IllegalArgumentException("Cannot create a new Loan when the " +
-                                         "return Date is before or the same " +
+                                         "Return Date is before or the same " +
                                          "as the Borrowing Date.");
     }
   }
@@ -69,6 +83,7 @@ public class Loan
 
 
   private void throwIfIDLessThanOrEqualToZero(int iD)
+    throws IllegalArgumentException
   {
     if (iD <= 0) {
       throw new IllegalArgumentException("Cannot create a new Loan with an " +
@@ -92,7 +107,8 @@ public class Loan
 
 
   /**
-   *
+   * Returns the book associated with this loan.
+   * @return IBook The book associated with this loan.
    */
   public IBook getBook()
   {
@@ -102,7 +118,8 @@ public class Loan
 
 
   /**
-   *
+   * Returns the this loan's ID.
+   * @return int The ID of this loan.
    */
   public int getID()
   {
@@ -114,7 +131,12 @@ public class Loan
   //===========================================================================
 
   /**
-   *
+   * sets the current state of the Loan to CURRENT calls book.borrow with
+   * itself as parameter
+   * calls borrower.addloan with itself as parameter
+   * throws a RuntimeException if:
+   * the loan’s current LoanState is not PENDING
+
    */
   public void commit(int id)
   {

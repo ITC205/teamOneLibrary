@@ -286,7 +286,7 @@ public class TestLoan
   {
     // Expect exception to be thrown
     thrown.expect(IllegalArgumentException.class);
-    thrown.expectMessage("Cannot create a new Loan when the return Date is " +
+    thrown.expectMessage("Cannot create a new Loan when the Return Date is " +
                          "before or the same as the Borrowing Date.");
 
     // Given stubs for book and member
@@ -510,6 +510,7 @@ public class TestLoan
     assertSame(loanBook, book);
     assertEquals(loanBookAuthor, author);
   }
+
 
 
   @Test
