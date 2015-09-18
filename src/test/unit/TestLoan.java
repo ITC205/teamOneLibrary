@@ -62,19 +62,26 @@ public class TestLoan
   @Test
   public void constructNewLoan()
   {
-    // given stubs for book and member
-    IBook book = stubBook();
-    IMember borrower = stubMember();
-    // With valid, but very simple dates in millis
-    Date borrowDate = new Date(1);
-    Date dueDate = new Date(2);
-    int iD = 1;
+    try {
+      // Given stubs for book and member
+      IBook book = stubBook();
+      IMember borrower = stubMember();
+      // With valid, but very simple dates in millis
+      Date borrowDate = new Date(1);
+      Date dueDate = new Date(2);
+      int iD = 1;
 
-    // When create a loan
-    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
+      // When create a loan
+      ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
 
-    // then can (naively) check that loan was created
-    assertTrue(loan instanceof ILoan);
+      // Then can (naively) check that loan was created
+      assertTrue(loan instanceof ILoan);
+    }
+    catch (Exception exception) {
+      fail(exception.getMessage());
+    }
+
+
   }
 
 
@@ -82,9 +89,10 @@ public class TestLoan
   @Test
   public void constructNewLoanWithNullBookThrows()
   {
+    // Expect exception to be thrown
     thrown.expect(IllegalArgumentException.class);
 
-    // given null book and stub for member
+    // Given null book and stub for member
     IBook book = null;
     IMember borrower = stubMember();
     // With valid, but very simple dates in millis
@@ -101,9 +109,10 @@ public class TestLoan
   @Test
   public void constructNewLoanWithNullBorrowerThrows()
   {
+    // Expect exception to be thrown
     thrown.expect(IllegalArgumentException.class);
 
-    // given stub for book and null member
+    // Given stub for book and null member
     IBook book = stubBook();
     IMember borrower = null;
     // With valid, but very simple dates in millis
@@ -120,9 +129,10 @@ public class TestLoan
   @Test
   public void constructNewLoanWithNullBorrowDateThrows()
   {
+    // Expect exception to be thrown
     thrown.expect(IllegalArgumentException.class);
 
-    // given stubs for book and member
+    // Given stubs for book and member
     IBook book = stubBook();
     IMember borrower = stubMember();
     // With null borrowDate
@@ -139,9 +149,10 @@ public class TestLoan
   @Test
   public void constructNewLoanWithNullDueDateThrows()
   {
-    thrown.expect( IllegalArgumentException.class );
+    // Expect exception to be thrown
+    thrown.expect(IllegalArgumentException.class);
 
-    // given stubs for book and member
+    // Given stubs for book and member
     IBook book = stubBook();
     IMember borrower = stubMember();
     // With null due date
@@ -158,10 +169,11 @@ public class TestLoan
   @Test
   public void checkExceptionMessageWhenBookNull()
   {
+    // Expect exception to be thrown
     thrown.expect(IllegalArgumentException.class);
     thrown.expectMessage("Cannot create a new Loan with a null Book.");
 
-    // given null book and stub for member
+    // Given null book and stub for member
     IBook book = null;
     IMember borrower = stubMember();
     // With valid, but very simple dates in millis
@@ -178,7 +190,7 @@ public class TestLoan
   @Test
   public void constructNewLoanWithValidDates()
   {
-    // given stubs for book and member
+    // Given stubs for book and member
     IBook book = stubBook();
     IMember borrower = stubMember();
     Date borrowDate = null;
@@ -198,7 +210,7 @@ public class TestLoan
     // When create a loan
     ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
 
-    // then can (naively) check that loan was created
+    // Then can (naively) check that loan was created
     assertTrue(loan instanceof ILoan);
   }
 
@@ -207,9 +219,10 @@ public class TestLoan
   @Test
   public void constructNewLoanDueDateBeforeBorrowDate()
   {
+    // Expect exception to be thrown
     thrown.expect(IllegalArgumentException.class);
 
-    // given stubs for book and member
+    // Given stubs for book and member
     IBook book = stubBook();
     IMember borrower = stubMember();
     Date borrowDate = null;
@@ -235,9 +248,10 @@ public class TestLoan
   @Test
   public void constructNewLoanDueDateSameAsBorrowDate()
   {
+    // Expect exception to be thrown
     thrown.expect(IllegalArgumentException.class);
 
-    // given stubs for book and member
+    // Given stubs for book and member
     IBook book = stubBook();
     IMember borrower = stubMember();
     Date borrowDate = null;
@@ -263,11 +277,12 @@ public class TestLoan
   @Test
   public void checkExceptionMessageWhenInvalidDueDate()
   {
+    // Expect exception to be thrown
     thrown.expect(IllegalArgumentException.class);
     thrown.expectMessage("Cannot create a new Loan when the return Date is " +
                          "before or the same as the Borrowing Date.");
 
-    // given stubs for book and member
+    // Given stubs for book and member
     IBook book = stubBook();
     IMember borrower = stubMember();
     Date borrowDate = null;
@@ -294,9 +309,10 @@ public class TestLoan
   @Test
   public void constructNewLoanIDEqualsZeroThrows()
   {
+    // Expect exception to be thrown
     thrown.expect(IllegalArgumentException.class);
 
-    // given stubs for book and member
+    // Given stubs for book and member
     IBook book = stubBook();
     IMember borrower = stubMember();
     Date borrowDate = null;
@@ -322,9 +338,10 @@ public class TestLoan
   @Test
   public void constructNewLoanIDNegativeThrows()
   {
+    // Expect exception to be thrown
     thrown.expect(IllegalArgumentException.class);
 
-    // given stubs for book and member
+    // Given stubs for book and member
     IBook book = stubBook();
     IMember borrower = stubMember();
     Date borrowDate = null;
@@ -350,11 +367,12 @@ public class TestLoan
   @Test
   public void checkExceptionMessageWhenInvalidID()
   {
+    // Expect exception to be thrown
     thrown.expect(IllegalArgumentException.class);
-    thrown.expectMessage( "Cannot create a new Loan with an ID less than or " +
-                              "equal to zero." );
+    thrown.expectMessage("Cannot create a new Loan with an ID less than or " +
+                         "equal to zero.");
 
-    // given stubs for book and member
+    // Given stubs for book and member
     IBook book = stubBook();
     IMember borrower = stubMember();
     Date borrowDate = null;
@@ -382,7 +400,7 @@ public class TestLoan
   @Test
   public void getBorrowerFromLoan()
   {
-    // given stubs for book and member
+    // Given stubs for book and member
     IBook book = stubBook();
     IMember borrower = stubMember();
 
@@ -391,13 +409,12 @@ public class TestLoan
     Date dueDate = new Date(2);
     int iD = 1;
 
-    // when create a loan
-    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD );
+    // When create a loan
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
 
-    // then can return borrower and verify it is same Member as local instance
+    // Then can return borrower and verify it is same Member as local instance
     IMember loanBorrower = loan.getBorrower();
     assertSame(loanBorrower, borrower);
   }
-
 
 }

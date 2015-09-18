@@ -36,8 +36,8 @@ public class Loan
     throwIfObjectNull("Borrower.", borrower);
     throwIfObjectNull("Borrowing Date.", borrowDate);
     throwIfObjectNull("Return Date.", dueDate);
-    throwIfReturnDateIsNotAfterBorrowDate( borrowDate, dueDate );
-    throwIfIDLessThanOrEqualToZero( iD );
+    throwIfReturnDateIsNotAfterBorrowDate(borrowDate, dueDate);
+    throwIfIDLessThanOrEqualToZero(iD);
 
     book_ = book;
     borrower_ = borrower;
