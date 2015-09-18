@@ -56,7 +56,7 @@ public class TestLoan
   public ExpectedException thrown = ExpectedException.none();
 
   // ==========================================================================
-  // Constructor Testing
+  // Constructor Testing - with stubs
   // ==========================================================================
 
   @Test
@@ -409,6 +409,8 @@ public class TestLoan
     ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
   }
 
+
+
   @Test
   public void constructInvalidLoanDoesNotInstantiate()
   {
@@ -434,7 +436,7 @@ public class TestLoan
   }
 
   // ==========================================================================
-  // Getters & setters testing
+  // Getters & setters testing - with stubs
   // ==========================================================================
 
   @Test
@@ -458,5 +460,75 @@ public class TestLoan
   }
 
 
+
+  @Test
+  public void getBorrowerFirstNameFromLoan()
+  {
+    // Given stubs for book and member
+    IBook book = stubBook();
+    IMember borrower = stubMember();
+    String borrowerFirstName = "Jim";
+    when(borrower.getFirstName()).thenReturn(borrowerFirstName);
+
+    // With valid dates and ID
+    Date borrowDate = new Date(1);
+    Date dueDate = new Date(2);
+    int iD = 1;
+
+    // When create a loan
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
+
+    // Then can return borrower and verify it is same Member as local instance
+    IMember loanBorrower = loan.getBorrower();
+    String loanBorrowerFirstName = loanBorrower.getFirstName();
+    assertSame(loanBorrower, borrower);
+    assertEquals(loanBorrowerFirstName, borrowerFirstName);
+  }
+
+
+
+  @Test
+  public void getBookFromLoan()
+  {
+    // Given stubs for book and member
+    IBook book = stubBook();
+    String author = "Charles Dickens";
+    when(book.getAuthor()).thenReturn(author);
+    IMember borrower = stubMember();
+
+    // With valid dates and ID
+    Date borrowDate = new Date(1);
+    Date dueDate = new Date(2);
+    int iD = 1;
+
+    // When create a loan
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
+
+    // Then can return book and verify it is same Member as local instance
+    IBook loanBook = loan.getBook();
+    String loanBookAuthor = loanBook.getAuthor();
+    assertSame(loanBook, book);
+    assertEquals(loanBookAuthor, author);
+  }
+
+
+  @Test
+  public void getID()
+  {
+    // Given stubs for book and member
+    IBook book = stubBook();
+    IMember borrower = stubMember();
+    // With valid dates and ID
+    Date borrowDate = new Date(1);
+    Date dueDate = new Date(2);
+    int iD = 125;
+
+    // When create a loan
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
+
+    // Then can return ID
+    int loanID = loan.getID();
+    assertEquals(loanID, iD);
+  }
 
 }
