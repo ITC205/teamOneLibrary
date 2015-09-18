@@ -62,7 +62,6 @@ public class TestLoan
   @Test
   public void constructNewLoan()
   {
-    try {
       // Given stubs for book and member
       IBook book = stubBook();
       IMember borrower = stubMember();
@@ -75,14 +74,8 @@ public class TestLoan
       // When create a loan
       ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
 
-      // Then can (naively) check that loan was created
+      // Then can (possibly naively) check that loan was created
       assertTrue(loan instanceof ILoan);
-    }
-    catch (Exception exception) {
-      fail(exception.getMessage());
-    }
-
-
   }
 
 
@@ -391,7 +384,7 @@ public class TestLoan
     // Expect exception to be thrown
     thrown.expect(IllegalArgumentException.class);
     thrown.expectMessage("Cannot create a new Loan with an ID less than or " +
-                         "equal to zero.");
+                             "equal to zero.");
 
     // Given stubs for book and member
     IBook book = stubBook();
@@ -414,6 +407,30 @@ public class TestLoan
 
     // When create a loan, then exception is thrown
     ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
+  }
+
+  @Test
+  public void constructInvalidLoanDoesNotInstantiate()
+  {
+    ILoan loan = null;
+    try {
+      // Given stubs for book and member
+      IBook book = stubBook();
+      IMember borrower = stubMember();
+      // with valid dates to be assigned
+      Date borrowDate = new Date(1);
+      Date dueDate = new Date(2);
+      // and negative ID
+      int iD = -1;
+
+      // When create a loan, exception will be thrown
+       loan = new Loan(book, borrower, borrowDate, dueDate, iD);
+    }
+    catch (IllegalArgumentException exception) {
+      // verify loan remains null
+      assertTrue(loan == null);
+      assertFalse(loan instanceof ILoan);
+    }
   }
 
   // ==========================================================================
@@ -441,16 +458,5 @@ public class TestLoan
   }
 
 
-
-  @Test
-  public void test()
-  {
-    // Given
-
-    // When
-
-    // Then
-
-  }
 
 }
