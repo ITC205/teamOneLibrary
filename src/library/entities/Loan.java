@@ -131,14 +131,14 @@ public class Loan
   //===========================================================================
 
   /**
-   * sets the current state of the Loan to CURRENT calls book.borrow with
-   * itself as parameter
-   * calls borrower.addloan with itself as parameter
-   * throws a RuntimeException if:
-   * the loan’s current LoanState is not PENDING
-
+   * Commits this pending Loan in the system:
+   *  - sets the state of this Loan to CURRENT
+   *  - records Loan instance on Book instance: book.borrow(loan)
+   *  - adds Loan instance to Borrower instance: borrower.addLoan(loan)
+   * Throws a RuntimeException if this LoanState is not PENDING
+   * @param iD int The ID of this Loan.
    */
-  public void commit(int id)
+  public void commit(int iD)
   {
 
   }

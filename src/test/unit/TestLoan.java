@@ -17,6 +17,8 @@ import org.junit.rules.ExpectedException;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+import static test.unit.TestLoanBuilder.*;
+
 /**
  * Unit tests for Loan entity.
  */
@@ -531,5 +533,26 @@ public class TestLoan
     int loanID = loan.getID();
     assertEquals(loanID, iD);
   }
+
+  // ==========================================================================
+  // Primary methods testing - with stubs & TestLoanBuilder
+  // ==========================================================================
+
+  @Test
+  public void testCommitPendingLoan()
+  {
+    // Given valid loan
+    ILoan loan = newLoan().build();
+
+    // When
+
+    // Then
+
+  }
+
+
+
+
+
 
 }
