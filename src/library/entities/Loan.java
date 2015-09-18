@@ -184,7 +184,7 @@ public class Loan
    */
   public boolean checkOverDue(Date currentDate)
   {
-    return false;
+    return currentDate.after(dueDate_);
   }
 
 }

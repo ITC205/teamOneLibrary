@@ -123,16 +123,16 @@ public class TestLoanBuilder
 
 
 
-  public TestLoanBuilder withBorrowDate(Date borrowDate)
+  public TestLoanBuilder withBorrowDate(int day, int month, int year)
   {
-    borrowDate_ = borrowDate;
+    borrowDate_ = dateBuilder(day, month, year);
     return this;
   }
 
 
-  public TestLoanBuilder withDueDate(Date dueDate)
+  public TestLoanBuilder withDueDate(int day, int month, int year)
   {
-    dueDate_ = dueDate;
+    dueDate_ = dateBuilder(day, month, year);
     return this;
   }
 
