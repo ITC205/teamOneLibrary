@@ -535,7 +535,7 @@ public class TestLoan
   }
 
   // ==========================================================================
-  // Primary methods testing - with stubs & TestLoanBuilder
+  // Primary methods testing - with stubs, TestLoanBuilder & dateBuilder
   // ==========================================================================
 
   @Test
@@ -544,46 +544,51 @@ public class TestLoan
   // Given a manually set overdue loan
     ILoan loan = newLoan().isOverDue().build();
 
-    // check if overdue
+    // Then loan state should be overdue
     boolean isOverdue = loan.isOverDue();
     assertTrue(isOverdue);
   }
 
 
+
   @Test
   public void testNewLoanIsNotOverDue()
   {
-    // Given a manually set overdue loan
+    // Given a default loan (state is not overdue)
     ILoan loan = newLoan().build();
 
-    // check if overdue
+    // Then loan state should not be overdue
     boolean isOverdue = loan.isOverDue();
     assertFalse(isOverdue);
   }
+
+
 
   @Test
   public void testCurrentLoanIsNotOverDue()
   {
-    // Given a manually set overdue loan
+    // Given a loan with a manually set status of current
     ILoan loan = newLoan().isCurrent().build();
 
-    // check if overdue
+    // Then loan state should not be overdue
     boolean isOverdue = loan.isOverDue();
     assertFalse(isOverdue);
   }
 
+  // TODO: check status of items after isOverdue() changes status etc
 
   @Test
   public void testHundredYearLoanIsNotOverDue()
   {
-    // Given a new 100 year loan
+    // Given a new 100 year loan!
     ILoan loan = newLoan().withBorrowDate(1,0,2010)
                           .withDueDate(1,0,2110).build();
     Date today = new Date();
-    // check if overdue
+    // Then loan should not be overdue
     boolean checkOverdue = loan.checkOverDue(today);
     assertFalse(checkOverdue);
   }
+
 
 
   @Test
@@ -599,6 +604,8 @@ public class TestLoan
     assertFalse(checkOverdue);
   }
 
+
+
   @Test
   public void testLoanDueSameDayIsNotOverDue()
   {
@@ -611,6 +618,7 @@ public class TestLoan
     boolean checkOverdue = loan.checkOverDue(today);
     assertFalse(checkOverdue);
   }
+
 
 
   @Test
@@ -626,9 +634,11 @@ public class TestLoan
     assertTrue(checkOverdue);
   }
 
-  
+
 
   // TODO: check if loan is always meant to be constructed with default loan
   // period - in which case need to test that behavior
+
+  // TODO: check using dates with hours and seconds set
 
 }
