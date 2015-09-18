@@ -131,6 +131,7 @@ public class Loan
   }
 
 
+  // TODO: remove and use reflection?
   /**
    * Sets the state of this loan.
    * @param state  ELoanState Enum state of this loan.
@@ -138,6 +139,18 @@ public class Loan
   public void setState(ELoanState state)
   {
     state_ = state;
+  }
+
+
+
+  // TODO: remove and use reflection?
+  /**
+   * Returns the state of this loan.
+   * @return state  ELoanState Enum state of this loan.
+   */
+  public ELoanState getState()
+  {
+    return state_;
   }
 
   //===========================================================================
@@ -164,7 +177,15 @@ public class Loan
    */
   public void complete()
   {
+    boolean isLoanIsCurrentOrOverDue =
+        (state_ == ELoanState.CURRENT || state_ == ELoanState.OVERDUE);
 
+    if (isLoanIsCurrentOrOverDue) {
+        setState(ELoanState.COMPLETE);
+    } else {
+      throw new RuntimeException("Completing a Loan that is not Current or " +
+                                 "OverDue is invalid.");
+    }
   }
 
 

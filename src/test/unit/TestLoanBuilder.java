@@ -10,7 +10,6 @@ import library.interfaces.entities.ELoanState;
 
 import library.entities.Loan;
 
-
 import static org.mockito.Mockito.mock;
 
 /**
@@ -27,6 +26,7 @@ public class TestLoanBuilder
   public static final Date DEFAULT_BORROW_DATE = dateBuilder(1, 0, 2015);
   public static final Date DEFAULT_DUE_DATE = dateBuilder(2, 0, 2015);
   public static final int DEFAULT_ID = 125;
+
   public static final ELoanState DEFAULT_STATE = ELoanState.PENDING;
 
   private IBook book_ = DEFAULT_BOOK;
@@ -34,6 +34,7 @@ public class TestLoanBuilder
   private Date borrowDate_ = DEFAULT_BORROW_DATE;
   private Date dueDate_ = DEFAULT_DUE_DATE;
   private int id_ = DEFAULT_ID;
+
   private ELoanState state_ = DEFAULT_STATE;
 
   // ==========================================================================
@@ -78,7 +79,6 @@ public class TestLoanBuilder
   {
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
     String dateString = dateFormat.format(date);
-    System.out.println(dateString);
     return dateString;
   }
 
@@ -104,7 +104,7 @@ public class TestLoanBuilder
 
   public Loan build()
   {
-    //TODO: check ok to return Loan rather that ILoan
+    //TODO: check ok to return Loan rather that ILoan (or use reflection)
     Loan loan = new Loan(book_, borrower_, borrowDate_, dueDate_, id_);
     // TODO: check if need to remove setter & use reflection for state
     loan.setState(state_);
@@ -115,9 +115,9 @@ public class TestLoanBuilder
   // Helper methods
   //===========================================================================
 
-  public TestLoanBuilder withID(int iD)
+  public TestLoanBuilder withID(int id)
   {
-    id_ = iD;
+    id_ = id;
     return this;
   }
 
@@ -130,6 +130,7 @@ public class TestLoanBuilder
   }
 
 
+
   public TestLoanBuilder withDueDate(int day, int month, int year)
   {
     dueDate_ = dateBuilder(day, month, year);
@@ -138,7 +139,7 @@ public class TestLoanBuilder
 
 
 
-  public TestLoanBuilder isOverDue()
+  public TestLoanBuilder makeOverDue()
   {
     state_ = ELoanState.OVERDUE;
     return this;
@@ -146,7 +147,7 @@ public class TestLoanBuilder
 
 
 
-  public TestLoanBuilder isCurrent()
+  public TestLoanBuilder makeCurrent()
   {
     state_ = ELoanState.CURRENT;
     return this;
@@ -154,7 +155,7 @@ public class TestLoanBuilder
 
 
 
-  public TestLoanBuilder isCompleted()
+  public TestLoanBuilder makeComplete()
   {
     state_ = ELoanState.COMPLETE;
     return this;
@@ -162,7 +163,7 @@ public class TestLoanBuilder
 
 
 
-  public TestLoanBuilder isPending()
+  public TestLoanBuilder makePending()
   {
     state_ = ELoanState.PENDING;
     return this;
