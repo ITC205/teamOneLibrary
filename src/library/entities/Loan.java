@@ -184,7 +184,19 @@ public class Loan
    */
   public boolean checkOverDue(Date currentDate)
   {
-    return currentDate.after(dueDate_);
+    boolean checkLoanOnlyIfCurrentOrOverDue =
+        (state_ == ELoanState.CURRENT || state_ == ELoanState.OVERDUE);
+
+    if (checkLoanOnlyIfCurrentOrOverDue) {
+      boolean isOverDue = currentDate.after(dueDate_);
+      if (isOverDue) {
+        setState(ELoanState.OVERDUE);
+      }
+      return isOverDue;
+    } else {
+      throw new RuntimeException("Checking a Loan that is not Current or " +
+                                     "OverDue is invalid.");
+    }
   }
 
 }

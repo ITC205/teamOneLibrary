@@ -582,11 +582,12 @@ public class TestLoan
   {
     // Given a new 100 year loan!
     ILoan loan = newLoan().withBorrowDate(1,0,2010)
-                          .withDueDate(1,0,2110).build();
+                          .withDueDate(1,0,2110)
+                          .isCurrent().build();
     Date today = new Date();
     // Then loan should not be overdue
-    boolean checkOverdue = loan.checkOverDue(today);
-    assertFalse(checkOverdue);
+    boolean checkOverDue = loan.checkOverDue(today);
+    assertFalse(checkOverDue);
   }
 
 
@@ -596,12 +597,13 @@ public class TestLoan
   {
     // Given a new loan with due date 1st January
     ILoan loan = newLoan().withBorrowDate(20,11,2015)
-                          .withDueDate(1,0,2016).build();
+                          .withDueDate(1,0,2016)
+                          .isCurrent().build();
     // When today's date is 31st December
     Date today = dateBuilder(31,11,2015);
     // Then loan should not be overdue
-    boolean checkOverdue = loan.checkOverDue(today);
-    assertFalse(checkOverdue);
+    boolean checkOverDue = loan.checkOverDue(today);
+    assertFalse(checkOverDue);
   }
 
 
@@ -611,12 +613,13 @@ public class TestLoan
   {
     // Given a new loan with due date 1st January
     ILoan loan = newLoan().withBorrowDate(20,11,2015)
-                          .withDueDate(1,0,2016).build();
+                          .withDueDate(1,0,2016)
+                          .isCurrent().build();
     // When today's date is 1st January
     Date today = dateBuilder(31,11,2015);
     // Then loan should not be overdue
-    boolean checkOverdue = loan.checkOverDue(today);
-    assertFalse(checkOverdue);
+    boolean checkOverDue = loan.checkOverDue(today);
+    assertFalse(checkOverDue);
   }
 
 
@@ -626,14 +629,130 @@ public class TestLoan
   {
     // Given a new loan with due date 31st December
     ILoan loan = newLoan().withBorrowDate(20,11,2015)
-                          .withDueDate(31,11,2015).build();
+                          .withDueDate(31,11,2015)
+                          .isCurrent().build();
     // When today's date is 1st January
     Date today = dateBuilder(1,1,2016);
     // Then loan should be overdue
-    boolean checkOverdue = loan.checkOverDue(today);
-    assertTrue(checkOverdue);
+    boolean checkOverDue = loan.checkOverDue(today);
+    assertTrue(checkOverDue);
   }
 
+
+  @Test
+  public void testLoanDuePreviousWeekIsOverDue()
+  {
+    // Given a new loan with due date 31st December
+    ILoan loan = newLoan().withBorrowDate(20,11,2015)
+                          .withDueDate(25,11,2015)
+                          .isOverDue().build();
+    // When today's date is 1st January
+    Date today = dateBuilder(1,1,2016);
+    // Then loan should be overdue
+    boolean checkOverDue = loan.checkOverDue(today);
+    assertTrue(checkOverDue);
+  }
+
+
+
+
+  @Test
+  public void testLoanNotDueWithCurrentStateDoesNotChangeToOverDue()
+  {
+    // Given a new current loan with due date 31st December
+    ILoan loan = newLoan().withBorrowDate(20, 11, 2015)
+                          .withDueDate(31, 11, 2015)
+                          .isCurrent().build();
+    // When today's date is 31st December
+    Date today = dateBuilder(31,11,2015);
+    // Then loan status should not be overdue
+    boolean isOverdue = loan.isOverDue();
+    assertFalse(isOverdue);
+    // and loan should not be overdue
+    boolean checkOverDue = loan.checkOverDue(today);
+    assertFalse(checkOverDue);
+    // and loan state should not be overdue now (after checkOverDue)
+    isOverdue = loan.isOverDue();
+    assertFalse(isOverdue);
+  }
+
+
+
+  @Test
+  public void testLoanDueWithCurrentStateDoesChangeToOverDue()
+  {
+    // Given a new current loan with due date 31st December
+    ILoan loan = newLoan().withBorrowDate(20,11,2015)
+                          .withDueDate(31,11,2015)
+                          .isCurrent().build();
+    // When today's date is 1st January
+    Date today = dateBuilder(1, 0, 2016);
+    // and loan state is not yet overdue (check has not been run)
+    boolean isOverdue = loan.isOverDue();
+    assertFalse(isOverdue);
+    // but loan should be overdue
+    boolean checkOverDue = loan.checkOverDue(today);
+    assertTrue(checkOverDue);
+    // and loan state should now be overdue (after checkOverDue)
+    isOverdue = loan.isOverDue();
+    assertTrue(isOverdue);
+  }
+
+
+
+  @Test
+  public void testLoanDueWithOverDueStateDoesNotChange()
+  {
+    // Given an overdue loan with due date 31st December
+    ILoan loan = newLoan().withBorrowDate(20,11,2015)
+                          .withDueDate(31,11,2015)
+                          .isOverDue().build();
+    // When today's date is 1st January
+    Date today = dateBuilder(1, 0, 2016);
+    // loan state is overdue
+    boolean isOverdue = loan.isOverDue();
+    assertTrue(isOverdue);
+    // and loan should be overdue
+    boolean checkOverDue = loan.checkOverDue(today);
+    assertTrue(checkOverDue);
+    // and loan state should still be overdue (after checkOverDue)
+    isOverdue = loan.isOverDue();
+    assertTrue(isOverdue);
+  }
+
+
+
+  @Test
+  public void testLoanCompletedThrowsOnCheckOverDue()
+  {
+    thrown.expect(RuntimeException.class);
+    // Given an old loan that was completed
+    ILoan loan = newLoan().withBorrowDate(20,11,2014)
+                          .withDueDate(31,11,2014)
+                          .isCompleted().build();
+    // When today's date is 1st January
+    Date today = dateBuilder(1, 0, 2016);
+
+    // Then checkOverDue should throw exception
+    boolean checkOverDue = loan.checkOverDue(today);
+  }
+
+
+
+  @Test
+  public void testLoanPendingThrowsOnCheckOverDue()
+  {
+    thrown.expect(RuntimeException.class);
+    // Given an old loan that was completed
+    ILoan loan = newLoan().withBorrowDate(20,11,2014)
+                          .withDueDate(31,11,2014)
+                          .isPending().build();
+    // When today's date is 20th December (borrowing date)
+    Date today = dateBuilder(20, 11, 2014);
+
+    // Then checkOverDue should throw exception
+    boolean checkOverDue = loan.checkOverDue(today);
+  }
 
 
   // TODO: check if loan is always meant to be constructed with default loan

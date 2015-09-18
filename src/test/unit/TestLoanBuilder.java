@@ -145,9 +145,26 @@ public class TestLoanBuilder
   }
 
 
+
   public TestLoanBuilder isCurrent()
   {
     state_ = ELoanState.CURRENT;
+    return this;
+  }
+
+
+
+  public TestLoanBuilder isCompleted()
+  {
+    state_ = ELoanState.COMPLETE;
+    return this;
+  }
+
+
+
+  public TestLoanBuilder isPending()
+  {
+    state_ = ELoanState.PENDING;
     return this;
   }
 
