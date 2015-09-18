@@ -1,15 +1,15 @@
 package test.unit;
 
 import java.util.Date;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.text.SimpleDateFormat;
 
 import library.interfaces.entities.IBook;
 import library.interfaces.entities.IMember;
 import library.interfaces.entities.ILoan;
+import library.interfaces.entities.ELoanState;
 
 import library.entities.Loan;
+
 
 import static org.mockito.Mockito.mock;
 
@@ -27,12 +27,14 @@ public class TestLoanBuilder
   public static final Date DEFAULT_BORROW_DATE = dateBuilder(1, 0, 2015);
   public static final Date DEFAULT_DUE_DATE = dateBuilder(2, 0, 2015);
   public static final int DEFAULT_ID = 125;
+  public static final ELoanState DEFAULT_STATE = ELoanState.PENDING;
 
   private IBook book_ = DEFAULT_BOOK;
   private IMember borrower_ = DEFAULT_BORROWER;
   private Date borrowDate_ = DEFAULT_BORROW_DATE;
   private Date dueDate_ = DEFAULT_DUE_DATE;
-  private int iD_ = DEFAULT_ID;
+  private int id_ = DEFAULT_ID;
+  private ELoanState state_ = DEFAULT_STATE;
 
   // ==========================================================================
   // Stub helpers
@@ -100,9 +102,13 @@ public class TestLoanBuilder
 
 
 
-  public ILoan build()
+  public Loan build()
   {
-    return new Loan(book_, borrower_, borrowDate_, dueDate_, iD_);
+    //TODO: check ok to return Loan rather that ILoan
+    Loan loan = new Loan(book_, borrower_, borrowDate_, dueDate_, id_);
+    // TODO: check if need to remove setter & use reflection for state
+    loan.setState(state_);
+    return loan;
   }
 
   //===========================================================================
@@ -111,7 +117,30 @@ public class TestLoanBuilder
 
   public TestLoanBuilder withID(int iD)
   {
-    iD_ = iD;
+    id_ = iD;
+    return this;
+  }
+
+
+
+  public TestLoanBuilder withBorrowDate(Date borrowDate)
+  {
+    borrowDate_ = borrowDate;
+    return this;
+  }
+
+
+  public TestLoanBuilder withDueDate(Date dueDate)
+  {
+    dueDate_ = dueDate;
+    return this;
+  }
+
+
+
+  public TestLoanBuilder isOverDue()
+  {
+    state_ = ELoanState.OVERDUE;
     return this;
   }
 

@@ -71,10 +71,10 @@ public class TestLoan
       Date borrowDate = new Date(1);
       Date dueDate = new Date(2);
       // and valid ID
-      int iD = 1;
+      int id = 1;
 
       // When create a loan
-      ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
+      ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
 
       // Then can (possibly naively) check that loan was created
       assertTrue(loan instanceof ILoan);
@@ -95,10 +95,10 @@ public class TestLoan
     Date borrowDate = new Date(1);
     Date dueDate = new Date(2);
     // and valid ID
-    int iD = 1;
+    int id = 1;
 
     // When create a loan, then exception is thrown
-    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
   }
 
 
@@ -116,10 +116,10 @@ public class TestLoan
     Date borrowDate = new Date(1);
     Date dueDate = new Date(2);
     // and valid ID
-    int iD = 1;
+    int id = 1;
 
     // When create a loan, then exception is thrown
-    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
   }
 
 
@@ -137,10 +137,10 @@ public class TestLoan
     Date borrowDate = null;
     Date dueDate = new Date(2);
     // and valid ID
-    int iD = 1;
+    int id = 1;
 
     // When create a loan, then exception is thrown
-    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
   }
 
 
@@ -158,10 +158,10 @@ public class TestLoan
     Date borrowDate = new Date(1);
     Date dueDate = null;
     // and valid ID
-    int iD = 1;
+    int id = 1;
 
     // When create a loan, then exception is thrown
-    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
   }
 
 
@@ -180,10 +180,10 @@ public class TestLoan
     Date borrowDate = new Date(1);
     Date dueDate = new Date(2);
     // and valid ID
-    int iD = 1;
+    int id = 1;
 
     // When create a loan, then exception is thrown
-    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
   }
 
 
@@ -198,7 +198,7 @@ public class TestLoan
     Date borrowDate = null;
     Date dueDate = null;
     // and valid ID
-    int iD = 1;
+    int id = 1;
 
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -211,7 +211,7 @@ public class TestLoan
     }
 
     // When create a loan
-    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
 
     // Then can (naively) check that loan was created
     assertTrue(loan instanceof ILoan);
@@ -232,7 +232,7 @@ public class TestLoan
     Date borrowDate = null;
     Date dueDate = null;
     // and valid ID
-    int iD = 1;
+    int id = 1;
 
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -246,7 +246,7 @@ public class TestLoan
     }
 
     // When create a loan, then exception is thrown
-    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
   }
 
 
@@ -264,7 +264,7 @@ public class TestLoan
     Date borrowDate = null;
     Date dueDate = null;
     // and valid ID
-    int iD = 1;
+    int id = 1;
 
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -278,7 +278,7 @@ public class TestLoan
     }
 
     // When create a loan, then exception is thrown
-    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
   }
 
 
@@ -298,7 +298,7 @@ public class TestLoan
     Date borrowDate = null;
     Date dueDate = null;
     // and valid ID
-    int iD = 1;
+    int id = 1;
 
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -312,7 +312,7 @@ public class TestLoan
     }
 
     // When create a loan, then exception is thrown
-    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
   }
 
   // TODO: need to check if borrow date later than return date - but same day?
@@ -331,7 +331,7 @@ public class TestLoan
     Date borrowDate = null;
     Date dueDate = null;
     // and ID equals zero
-    int iD = 0;
+    int id = 0;
 
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -344,7 +344,7 @@ public class TestLoan
     }
 
     // When create a loan, then exception is thrown
-    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
   }
 
 
@@ -362,7 +362,7 @@ public class TestLoan
     Date borrowDate = null;
     Date dueDate = null;
     // and negative ID
-    int iD = -1;
+    int id = -1;
 
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -375,7 +375,7 @@ public class TestLoan
     }
 
     // When create a loan, then exception is thrown
-    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
   }
 
 
@@ -395,7 +395,7 @@ public class TestLoan
     Date borrowDate = null;
     Date dueDate = null;
     // and negative ID
-    int iD = -1;
+    int id = -1;
 
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -408,7 +408,7 @@ public class TestLoan
     }
 
     // When create a loan, then exception is thrown
-    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
   }
 
 
@@ -425,10 +425,10 @@ public class TestLoan
       Date borrowDate = new Date(1);
       Date dueDate = new Date(2);
       // and negative ID
-      int iD = -1;
+      int id = -1;
 
       // When create a loan, exception will be thrown
-       loan = new Loan(book, borrower, borrowDate, dueDate, iD);
+       loan = new Loan(book, borrower, borrowDate, dueDate, id);
     }
     catch (IllegalArgumentException exception) {
       // verify loan remains null
@@ -451,10 +451,10 @@ public class TestLoan
     // With valid dates and ID
     Date borrowDate = new Date(1);
     Date dueDate = new Date(2);
-    int iD = 1;
+    int id = 1;
 
     // When create a loan
-    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
 
     // Then can return borrower and verify it is same Member as local instance
     IMember loanBorrower = loan.getBorrower();
@@ -475,10 +475,10 @@ public class TestLoan
     // With valid dates and ID
     Date borrowDate = new Date(1);
     Date dueDate = new Date(2);
-    int iD = 1;
+    int id = 1;
 
     // When create a loan
-    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
 
     // Then can return borrower and verify it is same Member as local instance
     IMember loanBorrower = loan.getBorrower();
@@ -501,10 +501,10 @@ public class TestLoan
     // With valid dates and ID
     Date borrowDate = new Date(1);
     Date dueDate = new Date(2);
-    int iD = 1;
+    int id = 1;
 
     // When create a loan
-    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
 
     // Then can return book and verify it is same Member as local instance
     IBook loanBook = loan.getBook();
@@ -524,14 +524,14 @@ public class TestLoan
     // With valid dates and ID
     Date borrowDate = new Date(1);
     Date dueDate = new Date(2);
-    int iD = 125;
+    int id = 125;
 
     // When create a loan
-    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, iD);
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
 
     // Then can return ID
     int loanID = loan.getID();
-    assertEquals(loanID, iD);
+    assertEquals(loanID, id);
   }
 
   // ==========================================================================
@@ -539,15 +539,14 @@ public class TestLoan
   // ==========================================================================
 
   @Test
-  public void testCommitPendingLoan()
+  public void testOverdueLoanReturnsTrue()
   {
-    // Given valid loan
-    ILoan loan = newLoan().build();
+  // Given a manually set overdue loan
+    ILoan loan = newLoan().isOverDue().build();
 
-    // When
-
-    // Then
-
+    // check if overdue
+    boolean isOverdue = loan.isOverDue();
+    assertTrue(isOverdue);
   }
 
 

@@ -5,6 +5,7 @@ import java.util.Date;
 import library.interfaces.entities.IBook;
 import library.interfaces.entities.IMember;
 import library.interfaces.entities.ILoan;
+import library.interfaces.entities.ELoanState;
 
 /**
  *
@@ -20,7 +21,10 @@ public class Loan
   private IMember borrower_;
   private Date borrowDate_;
   private Date dueDate_;
-  private int iD_;
+  private int id_;
+
+  private boolean overDue_;
+  private ELoanState state_;
 
   //===========================================================================
   // Constructor (& helpers)
@@ -32,14 +36,14 @@ public class Loan
    * @param borrower IMember
    * @param borrowDate Date
    * @param dueDate Date
-   * @param iD int
+   * @param id int
    * Throws an IllegalArgumentException if:
    *  - any of book, borrower, borrowDate, or dueDate are null
    *  - dueDate is less than borrowDate
    *  - loanID is less than or equal to zero
    */
   public Loan(IBook book, IMember borrower, Date borrowDate, Date dueDate,
-              int iD)
+              int id)
     throws IllegalArgumentException
   {
     throwIfObjectNull("Book.", book);
@@ -47,13 +51,13 @@ public class Loan
     throwIfObjectNull("Borrowing Date.", borrowDate);
     throwIfObjectNull("Return Date.", dueDate);
     throwIfReturnDateIsNotAfterBorrowDate(borrowDate, dueDate);
-    throwIfIDLessThanOrEqualToZero(iD);
+    throwIfIDLessThanOrEqualToZero(id);
 
     book_ = book;
     borrower_ = borrower;
     borrowDate_ = borrowDate;
     dueDate_ = dueDate;
-    iD_ = iD;
+    id_ = id;
   }
 
 
@@ -82,10 +86,10 @@ public class Loan
 
 
 
-  private void throwIfIDLessThanOrEqualToZero(int iD)
+  private void throwIfIDLessThanOrEqualToZero(int id)
     throws IllegalArgumentException
   {
-    if (iD <= 0) {
+    if (id <= 0) {
       throw new IllegalArgumentException("Cannot create a new Loan with an " +
                                          "ID less than or equal to zero.");
     }
@@ -123,7 +127,17 @@ public class Loan
    */
   public int getID()
   {
-    return iD_;
+    return id_;
+  }
+
+
+  /**
+   * Sets the state of this loan.
+   * @param state  ELoanState Enum state of this loan.
+   */
+  public void setState(ELoanState state)
+  {
+    state_ = state;
   }
 
   //===========================================================================
@@ -160,7 +174,7 @@ public class Loan
    */
   public boolean isOverDue()
   {
-    return false;
+    return (state_ == ELoanState.OVERDUE);
   }
 
 
