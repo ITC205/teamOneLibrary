@@ -15,7 +15,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import static org.junit.Assert.*;
+
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import static test.unit.TestLoanBuilder.*;
@@ -63,7 +64,7 @@ public class TestLoan
   // ==========================================================================
 
   @Test
-  public void constructNewLoan()
+  public void createLoan()
   {
       // Given stubs for book and member
       IBook book = stubBook();
@@ -74,21 +75,18 @@ public class TestLoan
       // and valid ID
       int id = 1;
 
-      // When create a loan
+      // When create a valid loan
       ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
 
-      // Then can (possibly naively) check that loan was created
-      assertTrue(loan instanceof ILoan);
+      // Then loan is instantiated and a valid Loan instance
+      assertThat(loan).isInstanceOf(ILoan.class);
   }
 
 
 
   @Test
-  public void constructNewLoanWithNullBookThrows()
+  public void createLoanWithNullBookThrows()
   {
-    // Expect exception to be thrown
-    thrown.expect(IllegalArgumentException.class);
-
     // Given null book and stub for member
     IBook book = null;
     IMember borrower = stubMember();
@@ -98,18 +96,21 @@ public class TestLoan
     // and valid ID
     int id = 1;
 
-    // When create a loan, then exception is thrown
-    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
+    // When create a loan
+    try {
+      ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
+    }
+
+    // Then exception should be thrown
+    catch (Exception exception) {
+      assertThat(exception).isInstanceOf(IllegalArgumentException.class);
+    }
   }
 
 
-
   @Test
-  public void constructNewLoanWithNullBorrowerThrows()
+  public void createLoanWithNullBorrowerThrows()
   {
-    // Expect exception to be thrown
-    thrown.expect(IllegalArgumentException.class);
-
     // Given stub for book and null member
     IBook book = stubBook();
     IMember borrower = null;
@@ -119,18 +120,21 @@ public class TestLoan
     // and valid ID
     int id = 1;
 
-    // When create a loan, then exception is thrown
-    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
+    // When create a loan
+    try {
+      ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
+    }
+
+    // Then exception should be thrown
+    catch (Exception exception) {
+      assertThat(exception).isInstanceOf(IllegalArgumentException.class);
+    }
   }
 
 
-
   @Test
-  public void constructNewLoanWithNullBorrowDateThrows()
+  public void createLoanWithNullBorrowDateThrows()
   {
-    // Expect exception to be thrown
-    thrown.expect(IllegalArgumentException.class);
-
     // Given stubs for book and member
     IBook book = stubBook();
     IMember borrower = stubMember();
@@ -140,18 +144,22 @@ public class TestLoan
     // and valid ID
     int id = 1;
 
-    // When create a loan, then exception is thrown
-    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
+    // When create a loan
+    try {
+      ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
+    }
+
+    // Then exception should be thrown
+    catch (Exception exception) {
+      assertThat(exception).isInstanceOf(IllegalArgumentException.class);
+    }
   }
 
 
 
   @Test
-  public void constructNewLoanWithNullDueDateThrows()
+  public void createLoanWithNullDueDateThrows()
   {
-    // Expect exception to be thrown
-    thrown.expect(IllegalArgumentException.class);
-
     // Given stubs for book and member
     IBook book = stubBook();
     IMember borrower = stubMember();
@@ -161,19 +169,22 @@ public class TestLoan
     // and valid ID
     int id = 1;
 
-    // When create a loan, then exception is thrown
-    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
+    // When create a loan
+    try {
+      ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
+    }
+
+    // Then exception should be thrown
+    catch (Exception exception) {
+      assertThat(exception).isInstanceOf(IllegalArgumentException.class);
+    }
   }
 
 
 
   @Test
-  public void checkExceptionMessageWhenBookNull()
+  public void createLoanWithNullBookThrowsWithCorrectMessage()
   {
-    // Expect exception to be thrown
-    thrown.expect(IllegalArgumentException.class);
-    thrown.expectMessage("Cannot create a new Loan with a null Book.");
-
     // Given null book and stub for member
     IBook book = null;
     IMember borrower = stubMember();
@@ -183,14 +194,22 @@ public class TestLoan
     // and valid ID
     int id = 1;
 
-    // When create a loan, then exception is thrown
-    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
+    // When create a loan
+    try {
+      ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
+    }
+
+    // Then exception should be thrown
+    catch (Exception exception) {
+      assertThat(exception).hasMessage("Cannot create a new Loan with a " +
+                                           "null Book.");
+    }
   }
 
 
 
   @Test
-  public void constructNewLoanWithValidDates()
+  public void createLoanWithNicelyFormattedDates()
   {
     // Given stubs for book and member
     IBook book = stubBook();
@@ -211,232 +230,180 @@ public class TestLoan
       fail(exception.getMessage());
     }
 
+    // NOTE in later tests, will simply propagate ParseException
+
     // When create a loan
     ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
 
-    // Then can (naively) check that loan was created
-    assertTrue(loan instanceof ILoan);
+    // Then loan is instantiated, and a valid ILoan instance
+    assertThat(loan).isInstanceOf(ILoan.class);
   }
 
 
 
   @Test
-  public void constructNewLoanDueDateBeforeBorrowDateThrows()
+  public void createLoanWithDueDateBeforeBorrowDateThrows()
+      throws java.text.ParseException
   {
-    // Expect exception to be thrown
-    thrown.expect(IllegalArgumentException.class);
-
     // Given stubs for book and member
     IBook book = stubBook();
     IMember borrower = stubMember();
-    // with formatted dates to be assigned
-    Date borrowDate = null;
-    Date dueDate = null;
+    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+    Date borrowDate = dateFormat.parse("17/09/2015");
+    // and dueDate is before the borrowDate
+    Date dueDate = dateFormat.parse("16/09/2015");
     // and valid ID
     int id = 1;
 
-    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-
+    // When create a loan
     try {
-      borrowDate = dateFormat.parse("17/09/2015");
-      // dueDate is before the borrowDate
-      dueDate = dateFormat.parse("16/09/2015");
-    }
-    catch (ParseException exception) {
-      fail(exception.getMessage());
+      ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
     }
 
-    // When create a loan, then exception is thrown
-    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
+    // Then exception should be thrown
+    catch (Exception exception) {
+      assertThat(exception).isInstanceOf(IllegalArgumentException.class);
+    }
   }
 
 
 
   @Test
-  public void constructNewLoanDueDateSameAsBorrowDateThrows()
+  public void createLoanWithDueDateSameAsBorrowDateThrows()
+      throws java.text.ParseException
   {
-    // Expect exception to be thrown
-    thrown.expect(IllegalArgumentException.class);
-
     // Given stubs for book and member
     IBook book = stubBook();
     IMember borrower = stubMember();
-    // with formatted dates to be assigned
-    Date borrowDate = null;
-    Date dueDate = null;
+    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+    Date borrowDate = dateFormat.parse("17/09/2015");
+    // dueDate is same as the borrowDate
+    Date dueDate = dateFormat.parse("17/09/2015");
     // and valid ID
     int id = 1;
 
-    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-
+    // When create a loan
     try {
-      borrowDate = dateFormat.parse("17/09/2015");
-      // dueDate is same as the borrowDate
-      dueDate = dateFormat.parse("17/09/2015");
-    }
-    catch (ParseException exception) {
-      fail(exception.getMessage());
+      ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
     }
 
-    // When create a loan, then exception is thrown
-    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
+    // Then exception should be thrown
+    catch (Exception exception) {
+      assertThat(exception).isInstanceOf(IllegalArgumentException.class);
+    }
   }
 
 
 
   @Test
-  public void checkExceptionMessageWhenInvalidDueDate()
+  public void createLoanWithDueDateSameAsBorrowDateThrowsWithCorrectMessage()
+      throws java.text.ParseException
   {
-    // Expect exception to be thrown
-    thrown.expect(IllegalArgumentException.class);
-    thrown.expectMessage("Cannot create a new Loan when the Return Date is " +
-                         "before or the same as the Borrowing Date.");
-
     // Given stubs for book and member
     IBook book = stubBook();
     IMember borrower = stubMember();
-    // with formatted dates to be assigned
-    Date borrowDate = null;
-    Date dueDate = null;
+    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+    Date borrowDate = dateFormat.parse("17/09/2015");
+    // dueDate is same the borrowDate
+    Date dueDate = dateFormat.parse("17/09/2015");
     // and valid ID
     int id = 1;
 
-    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-
+    // When create a loan
     try {
-      borrowDate = dateFormat.parse("17/09/2015");
-      // dueDate is before the borrowDate
-      dueDate = dateFormat.parse("16/09/2015");
-    }
-    catch (ParseException exception) {
-      fail(exception.getMessage());
+      ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
     }
 
-    // When create a loan, then exception is thrown
-    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
+    // Then exception should be thrown
+    catch (Exception exception) {
+      assertThat(exception).hasMessage("Cannot create a new Loan when the " +
+                                       "Return Date is before or the same as " +
+                                       "the Borrowing Date.");
+    }
   }
 
   // TODO: need to check if borrow date later than return date - but same day?
 
 
   @Test
-  public void constructNewLoanIDEqualsZeroThrows()
+  public void createLoanWithZeroIdThrows()
+      throws java.text.ParseException
   {
-    // Expect exception to be thrown
-    thrown.expect(IllegalArgumentException.class);
-
     // Given stubs for book and member
     IBook book = stubBook();
     IMember borrower = stubMember();
-    // with valid dates to be assigned
-    Date borrowDate = null;
-    Date dueDate = null;
+    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+    Date borrowDate = dateFormat.parse("01/01/2015");
+    Date dueDate = dateFormat.parse("12/01/2015");
     // and ID equals zero
     int id = 0;
 
-    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-
+    // When create a loan
     try {
-      borrowDate = dateFormat.parse("01/01/2015");
-      dueDate = dateFormat.parse("01/01/2025");
-    }
-    catch (ParseException exception) {
-      fail(exception.getMessage());
+      ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
     }
 
-    // When create a loan, then exception is thrown
-    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
+    // Then exception should be thrown
+    catch (Exception exception) {
+      assertThat(exception).isInstanceOf(IllegalArgumentException.class);
+    }
   }
 
 
 
   @Test
-  public void constructNewLoanIDNegativeThrows()
+  public void createLoanWithNegativeIdThrows()
+      throws java.text.ParseException
   {
-    // Expect exception to be thrown
-    thrown.expect(IllegalArgumentException.class);
+    // Given stubs for book and member
+    IBook book = stubBook();
+    IMember borrower = stubMember();
+    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+    Date borrowDate = dateFormat.parse("01/01/2015");
+    Date dueDate = dateFormat.parse("12/01/2015");
+    // and ID is negative
+    int id = -1;
 
+    // When create a loan
+    try {
+      ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
+    }
+
+    // Then exception should be thrown
+    catch (Exception exception) {
+      assertThat(exception).isInstanceOf(IllegalArgumentException.class);
+    }
+  }
+
+
+
+  @Test
+  public void createLoanWithNegativeIdThrowsWithCorrectMessage()
+    throws java.text.ParseException
+  {
     // Given stubs for book and member
     IBook book = stubBook();
     IMember borrower = stubMember();
     // with valid dates to be assigned
-    Date borrowDate = null;
-    Date dueDate = null;
+    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+    Date borrowDate = dateFormat.parse("01/01/2015");
+    Date dueDate = dateFormat.parse("12/01/2015");
     // and negative ID
     int id = -1;
 
-    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-
+    // When create a loan
     try {
-      borrowDate = dateFormat.parse("01/01/2015");
-      dueDate = dateFormat.parse("01/01/2025");
-    }
-    catch (ParseException exception) {
-      fail(exception.getMessage());
+      ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
     }
 
-    // When create a loan, then exception is thrown
-    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
+    // Then exception should be thrown
+    catch (Exception exception) {
+      assertThat(exception).hasMessage("Cannot create a new Loan with an ID " +
+                                       "less than or equal to zero.");
+    }
   }
 
 
-
-  @Test
-  public void checkExceptionMessageWhenInvalidID()
-  {
-    // Expect exception to be thrown
-    thrown.expect(IllegalArgumentException.class);
-    thrown.expectMessage("Cannot create a new Loan with an ID less than or " +
-                             "equal to zero.");
-
-    // Given stubs for book and member
-    IBook book = stubBook();
-    IMember borrower = stubMember();
-    // with valid dates to be assigned
-    Date borrowDate = null;
-    Date dueDate = null;
-    // and negative ID
-    int id = -1;
-
-    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-
-    try {
-      borrowDate = dateFormat.parse("01/01/2015");
-      dueDate = dateFormat.parse("01/01/2025");
-    }
-    catch (ParseException exception) {
-      fail(exception.getMessage());
-    }
-
-    // When create a loan, then exception is thrown
-    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
-  }
-
-
-
-  @Test
-  public void constructInvalidLoanDoesNotInstantiate()
-  {
-    ILoan loan = null;
-    try {
-      // Given stubs for book and member
-      IBook book = stubBook();
-      IMember borrower = stubMember();
-      // with valid dates to be assigned
-      Date borrowDate = new Date(1);
-      Date dueDate = new Date(2);
-      // and negative ID
-      int id = -1;
-
-      // When create a loan, exception will be thrown
-       loan = new Loan(book, borrower, borrowDate, dueDate, id);
-    }
-    catch (IllegalArgumentException exception) {
-      // verify loan remains null
-      assertTrue(loan == null);
-      assertFalse(loan instanceof ILoan);
-    }
-  }
 
   // ==========================================================================
   // Getters & setters testing - with stubs
@@ -459,7 +426,7 @@ public class TestLoan
 
     // Then can return borrower and verify it is same Member as local instance
     IMember loanBorrower = loan.getBorrower();
-    assertSame(loanBorrower, borrower);
+    assertThat(loanBorrower).isSameAs(borrower);
   }
 
 
@@ -484,8 +451,8 @@ public class TestLoan
     // Then can return borrower and verify it is same Member as local instance
     IMember loanBorrower = loan.getBorrower();
     String loanBorrowerFirstName = loanBorrower.getFirstName();
-    assertSame(loanBorrower, borrower);
-    assertEquals(loanBorrowerFirstName, borrowerFirstName);
+    assertThat(loanBorrower).isSameAs(borrower);
+    assertThat(loanBorrowerFirstName).isEqualTo(borrowerFirstName);
   }
 
 
@@ -510,8 +477,8 @@ public class TestLoan
     // Then can return book and verify it is same Member as local instance
     IBook loanBook = loan.getBook();
     String loanBookAuthor = loanBook.getAuthor();
-    assertSame(loanBook, book);
-    assertEquals(loanBookAuthor, author);
+    assertThat(loanBook).isSameAs(book);
+    assertThat(loanBookAuthor).isEqualTo(author);
   }
 
 
@@ -532,7 +499,7 @@ public class TestLoan
 
     // Then can return ID
     int loanID = loan.getID();
-    assertEquals(loanID, id);
+    assertThat(loanID).isEqualTo(id);
   }
 
   // ==========================================================================
@@ -540,219 +507,226 @@ public class TestLoan
   // ==========================================================================
 
   @Test
-  public void testOverDueLoan()
+  public void isOverDueWhenStateOverDueIsTrue()
   {
   // Given a manually set overdue loan
     ILoan loan = newLoan().makeOverDue().build();
 
     // Then loan state should be overdue
     boolean isStateOverDue = loan.isOverDue();
-    assertTrue(isStateOverDue);
+    assertThat(isStateOverDue).isTrue();
   }
 
 
 
   @Test
-  public void testNewLoanIsNotOverDue()
+  public void isOverDueWhenDefaultLoanIsFalse()
   {
     // Given a default loan (state is not overdue)
     ILoan loan = newLoan().build();
 
     // Then loan state should not be overdue
     boolean isStateOverDue = loan.isOverDue();
-    assertFalse(isStateOverDue);
+    assertThat(isStateOverDue).isFalse();
   }
 
 
 
   @Test
-  public void testCurrentLoanIsNotOverDue()
+  public void isOverDueWhenStateCurrentIsFalse()
   {
     // Given a loan with a manually set status of current
     ILoan loan = newLoan().makeCurrent().build();
 
     // Then loan state should not be overdue
     boolean isStateOverDue = loan.isOverDue();
-    assertFalse(isStateOverDue);
+    assertThat(isStateOverDue).isFalse();
   }
 
   // TODO: check status of items after isOverdue() changes status etc
 
   @Test
-  public void testHundredYearLoanIsNotOverDue()
+  public void checkOverDueWhenLoanDueNextCenturyIsFalse()
   {
     // Given a new 100 year loan!
     ILoan loan = newLoan().withBorrowDate(1,0,2010)
                           .withDueDate(1,0,2110)
                           .makeCurrent().build();
-    Date today = new Date();
+
+    // When today's date is the borrow date
+    Date today = dateBuilder(1,0,2010);
+
     // Then loan should not be overdue
-    boolean isOverDue = loan.checkOverDue(today);
-    assertFalse(isOverDue);
+    boolean shouldSetStatusToOverDue = loan.checkOverDue(today);
+    assertThat(shouldSetStatusToOverDue).isFalse();
   }
 
 
 
   @Test
-  public void testLoanDueNextDayIsNotOverDue()
+  public void checkOverDueWhenLoanDueNextDayIsFalse()
   {
     // Given a new loan with due date 1st January
     ILoan loan = newLoan().withBorrowDate(20,11,2015)
                           .withDueDate(1,0,2016)
                           .makeCurrent().build();
+
     // When today's date is 31st December
     Date today = dateBuilder(31,11,2015);
+
     // Then loan should not be overdue
-    boolean isOverDue = loan.checkOverDue(today);
-    assertFalse(isOverDue);
+    boolean shouldSetStatusToOverDue = loan.checkOverDue(today);
+    assertThat(shouldSetStatusToOverDue).isFalse();
   }
 
 
 
   @Test
-  public void testLoanDueSameDayIsNotOverDue()
+  public void checkOverDueWhenLoanDueSameDayIsFalse()
   {
     // Given a new loan with due date 1st January
     ILoan loan = newLoan().withBorrowDate(20,11,2015)
                           .withDueDate(1,0,2016)
                           .makeCurrent().build();
+
     // When today's date is 1st January
     Date today = dateBuilder(31,11,2015);
+
     // Then loan should not be overdue
-    boolean isOverDue = loan.checkOverDue(today);
-    assertFalse(isOverDue);
+    boolean shouldSetStatusToOverDue = loan.checkOverDue(today);
+    assertThat(shouldSetStatusToOverDue).isFalse();
   }
 
 
 
   @Test
-  public void testLoanDuePreviousDayIsOverDue()
+  public void checkOverDueWhenLoanDuePreviousDayIsTrue()
   {
     // Given a new loan with due date 31st December
     ILoan loan = newLoan().withBorrowDate(20,11,2015)
-                          .withDueDate(31,11,2015)
+                          .withDueDate(31, 11,2015)
                           .makeCurrent().build();
+
     // When today's date is 1st January
     Date today = dateBuilder(1,1,2016);
+
     // Then loan should be overdue
-    boolean isOverDue = loan.checkOverDue(today);
-    assertTrue(isOverDue);
+    boolean shouldSetStatusToOverDue = loan.checkOverDue(today);
+    assertThat(shouldSetStatusToOverDue).isTrue();
   }
 
 
   @Test
-  public void testLoanDuePreviousWeekIsOverDue()
+  public void checkOverDueWhenLoanDuePreviousWeekIsTrue()
   {
     // Given a new loan with due date 31st December
     ILoan loan = newLoan().withBorrowDate(20,11,2015)
                           .withDueDate(25,11,2015)
                           .makeOverDue().build();
+
     // When today's date is 1st January
     Date today = dateBuilder(1,1,2016);
+
     // Then loan should be overdue
-    boolean isOverDue = loan.checkOverDue(today);
-    assertTrue(isOverDue);
+    boolean shouldSetStatusToOverDue = loan.checkOverDue(today);
+    assertThat(shouldSetStatusToOverDue).isTrue();
   }
 
 
 
-
   @Test
-  public void testLoanNotDueWithCurrentStateDoesNotChangeToOverDue()
+  public void checkOverDueWhenStateCurrentAndLoanNotDueLeavesStateCurrent()
   {
     // Given a new current loan with due date 31st December
     ILoan loan = newLoan().withBorrowDate(20, 11, 2015)
                           .withDueDate(31, 11, 2015)
                           .makeCurrent().build();
+
     // When today's date is 31st December
     Date today = dateBuilder(31,11,2015);
     // Then loan status should not be overdue
     boolean isStateOverDue = loan.isOverDue();
-    assertFalse(isStateOverDue);
+    assertThat(isStateOverDue).isFalse();
     // and loan should not be overdue
-    boolean isOverDue = loan.checkOverDue(today);
-    assertFalse(isOverDue);
-    // and loan state should not be overdue now (after checkOverDue)
+    boolean shouldSetStatusToOverDue = loan.checkOverDue(today);
+    assertThat(shouldSetStatusToOverDue).isFalse();
+
+    // Then loan state should not be overdue now (after checkOverDue)
     isStateOverDue = loan.isOverDue();
-    assertFalse(isStateOverDue);
+    assertThat(isStateOverDue).isFalse();
   }
 
 
 
   @Test
-  public void testLoanDueWithCurrentStateDoesChangeToOverDue()
+  public void checkOverDueWhenStateCurrentButPastDueDateSetsStateOverDue()
   {
     // Given a new current loan with due date 31st December
     ILoan loan = newLoan().withBorrowDate(20,11,2015)
                           .withDueDate(31,11,2015)
                           .makeCurrent().build();
+
     // When today's date is 1st January
     Date today = dateBuilder(1, 0, 2016);
     // and loan state is not yet overdue (check has not been run)
     boolean isStateOverDue = loan.isOverDue();
-    assertFalse(isStateOverDue);
-    // but loan should be overdue
-    boolean isOverDue = loan.checkOverDue(today);
-    assertTrue(isOverDue);
-    // and loan state should now be overdue (after checkOverDue)
+    assertThat(isStateOverDue).isFalse();
+    // and loan is actually overdue
+    boolean shouldSetStatusToOverDue = loan.checkOverDue(today);
+    assertThat(shouldSetStatusToOverDue).isTrue();
+
+    // Then loan state should now be overdue (after checkOverDue)
     isStateOverDue = loan.isOverDue();
-    assertTrue(isStateOverDue);
+    assertThat(isStateOverDue).isTrue();
   }
 
 
 
   @Test
-  public void testLoanDueWithOverDueStateDoesNotChange()
+  public void checkOverDueWhenStateCompleteThrows()
   {
-    // Given an overdue loan with due date 31st December
-    ILoan loan = newLoan().withBorrowDate(20,11,2015)
-                          .withDueDate(31,11,2015)
-                          .makeOverDue().build();
-    // When today's date is 1st January
-    Date today = dateBuilder(1, 0, 2016);
-    // loan state is overdue
-    boolean isStateOverDue = loan.isOverDue();
-    assertTrue(isStateOverDue);
-    // and loan should be overdue
-    boolean isOverDue = loan.checkOverDue(today);
-    assertTrue(isOverDue);
-    // and loan state should still be overdue (after checkOverDue)
-    isStateOverDue = loan.isOverDue();
-    assertTrue(isStateOverDue);
-  }
-
-
-
-  @Test
-  public void checkOverDueOnCompletedLoanThrows()
-  {
-    thrown.expect(RuntimeException.class);
     // Given an old loan that was completed
     ILoan loan = newLoan().withBorrowDate(20,11,2014)
                           .withDueDate(31,11,2014)
                           .makeComplete().build();
+
     // When today's date is 1st January
     Date today = dateBuilder(1, 0, 2016);
 
-    // Then checkOverDue should throw exception
-    boolean isOverDue = loan.checkOverDue(today);
+    // When checkOverDue
+    try {
+      boolean isOverDue = loan.checkOverDue(today);
+    }
+
+    // Then exception should be thrown
+    catch (Exception exception) {
+      assertThat(exception).isInstanceOf(RuntimeException.class);
+    }
   }
 
 
 
+
   @Test
-  public void checkOverDueOnPendingLoanThrows()
+  public void checkOverDueWhenStatePendingThrows()
   {
-    thrown.expect(RuntimeException.class);
     // Given a pending loan
     ILoan loan = newLoan().withBorrowDate(20,11,2014)
                           .withDueDate(31,11,2014)
                           .makePending().build();
+
     // When today's date is 20th December (borrowing date)
     Date today = dateBuilder(20, 11, 2014);
 
-    // Then checkOverDue should throw exception
-    boolean isOverDue = loan.checkOverDue(today);
+    // When checkOverDue
+    try {
+      boolean isOverDue = loan.checkOverDue(today);
+    }
+
+    // Then exception should be thrown
+    catch (Exception exception) {
+      assertThat(exception).isInstanceOf(RuntimeException.class);
+    }
   }
 
 
@@ -767,7 +741,7 @@ public class TestLoan
   // TODO : remove use of setter and use reflection
   // TODO: return ILoan
   @Test
-  public void completeCurrentLoanSetsStateToComplete()
+  public void completeWhenStateCurrentSetsStateToComplete()
   {
     // Given a new current loan with due date 31st December
     Loan loan = newLoan().withBorrowDate(20,11,2015)
@@ -779,15 +753,15 @@ public class TestLoan
 
     // Then loan state should change to complete
     boolean isLoanStateComplete =
-        loan.getState() == ELoanState.COMPLETE;
-    assertTrue(isLoanStateComplete);
+            loan.getState() == ELoanState.COMPLETE;
+    assertThat(isLoanStateComplete).isTrue();
   }
 
 
   // TODO : remove use of setter and use reflection
   // TODO: return ILoan
   @Test
-  public void completeOverDueLoanSetsStateToComplete()
+  public void completeWhenStateOverDueSetsStateToComplete()
   {
     // Given an overdue loan with due date 31st December
     Loan loan = newLoan().withBorrowDate(20,11,2015)
@@ -799,40 +773,50 @@ public class TestLoan
 
     // Then loan state should change to complete
     boolean isLoanStateComplete =
-      loan.getState() == ELoanState.COMPLETE;
-    assertTrue(isLoanStateComplete);
+            loan.getState() == ELoanState.COMPLETE;
+    assertThat(isLoanStateComplete).isTrue();
   }
 
 
 
   @Test
-  public void completeCompletedLoanThrows()
+  public void completeWhenStateCompleteThrows()
   {
-    thrown.expect(RuntimeException.class);
-
     // Given an old loan that was completed
     ILoan loan = newLoan().withBorrowDate(20,11,2014)
                           .withDueDate(31,11,2014)
                           .makeComplete().build();
 
-    // Attempting to complete loan (again) should throw exception
-    loan.complete();
+    // When attempting to complete loan
+    try {
+      loan.complete();
+    }
+
+    // Then exception should be thrown
+    catch (Exception exception) {
+      assertThat(exception).isInstanceOf(RuntimeException.class);
+    }
   }
 
 
 
   @Test
-  public void completePendingLoanThrows()
+  public void completeWhenStatePendingThrows()
   {
-    thrown.expect(RuntimeException.class);
-
     // Given a pending loan
     ILoan loan = newLoan().withBorrowDate(20,11,2014)
                           .withDueDate(31,11,2014)
                           .makePending().build();
 
-    // Attempting to complete pending loan should throw exception
-    loan.complete();
+    // When attempting to complete loan
+    try {
+      loan.complete();
+    }
+
+    // Then exception should be thrown
+    catch (Exception exception) {
+      assertThat(exception).isInstanceOf(RuntimeException.class);
+    }
   }
 
 
