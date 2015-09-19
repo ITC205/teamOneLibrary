@@ -172,7 +172,14 @@ public class TestMember extends TestCase
   
   public void testHasReachedLoanLimit()
   {
-    
+    ILoan loan = Mockito.mock(ILoan.class);
+    validMember.addLoan(loan);
+    assertFalse(validMember.hasReachedLoanLimit());
+    for (int n = 1; n <= 5; n++)
+    {
+      validMember.addLoan(loan);
+    }
+    assertTrue(validMember.hasReachedLoanLimit());
   }
   
   

@@ -3,7 +3,6 @@ package library.entities;
 import java.util.ArrayList;
 import java.util.Date;
 
-import library.interfaces.daos.ILoanDAO;
 import library.interfaces.entities.EMemberState;
 import library.interfaces.entities.ILoan;
 import library.interfaces.entities.IMember;
@@ -44,7 +43,7 @@ public class Member
   
   public void addLoan(ILoan loan) throws IllegalArgumentException
   {
-    if ((loan != null) && (getState() != EMemberState.BORROWING_DISALLOWED))
+    if ((loan != null) && (borrowingAllowed()))
     {
       loanList_.add(loan);
     }
@@ -115,7 +114,7 @@ public class Member
   
   public boolean hasReachedLoanLimit()
   {
-    if (loanList_.size() >= IMember.LOAN_LIMIT)
+    if (loanList_.size() > IMember.LOAN_LIMIT)
     {
       return true;
     }
@@ -204,6 +203,17 @@ public class Member
   {
     return totalFines_;
   }
+  
+  
+  
+  private boolean borrowingAllowed()
+  {
+    if (memberState_ == EMemberState.BORROWING_ALLOWED)
+    {
+       return true;
+    }
+    else return false;
+  }
 
 
 
@@ -212,6 +222,7 @@ public class Member
   {
     boolean hasOverDueLoans = false;
     Date currentDate = new Date();
+    
     for(ILoan loan: loanList_)
     {
       if (loan.checkOverDue(currentDate))
@@ -225,8 +236,29 @@ public class Member
 
 
   @Override
-  public void removeLoan(ILoan loan)
+  public void removeLoan(ILoan loan) throws IllegalArgumentException
   {
-    loanList_.remove(loan);
+    if ((loan != null) && (loanList_.contains(loan)))
+    {
+      loanList_.remove(loan);
+    }
+    else
+    {
+      throw new IllegalArgumentException("Loan is null or is not in list");
+    }
+  }
+  
+  
+  
+  private void updateState()
+  {
+    if (memberState_ == EMemberState.BORROWING_ALLOWED)
+    {
+      memberState_ = EMemberState.BORROWING_DISALLOWED;
+    }
+    else
+    {
+      memberState_ = EMemberState.BORROWING_ALLOWED;
+    }
   }
 }
