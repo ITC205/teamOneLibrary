@@ -23,7 +23,6 @@ public class Loan
   private Date dueDate_;
   private int id_;
 
-  private boolean overDue_;
   private ELoanState state_;
 
   //===========================================================================
