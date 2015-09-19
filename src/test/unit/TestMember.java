@@ -19,6 +19,8 @@ public class TestMember extends TestCase
   
   Member validMember = new Member(validFirstName, validLastName, validContactPhone, validEmailAddress, validId);
   
+  ILoan loan = Mockito.mock(ILoan.class);
+  
   
   
   public TestMember(String name) 
@@ -151,7 +153,6 @@ public class TestMember extends TestCase
   
   public void testAddLoan()
   {
-    ILoan loan = Mockito.mock(ILoan.class);
     validMember.addLoan(loan);
     assertTrue(validMember.getLoans().size() > 0);
 
@@ -172,7 +173,6 @@ public class TestMember extends TestCase
   
   public void testHasReachedLoanLimit()
   {
-    ILoan loan = Mockito.mock(ILoan.class);
     validMember.addLoan(loan);
     assertFalse(validMember.hasReachedLoanLimit());
     for (int n = 1; n <= 5; n++)
