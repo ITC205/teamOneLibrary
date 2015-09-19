@@ -18,6 +18,12 @@ public class TestMemberHelper extends TestCase
   {
     IMember newMember = helper.makeMember("Jane", "Doe", "01234567", "jdoe@email.com", 1);
     assertTrue(newMember != null);
+    
+    assertEquals("Jane", newMember.getFirstName());
+    assertEquals("Doe", newMember.getLastName());
+    assertEquals("01234567", newMember.getContactPhone());
+    assertEquals("jdoe@email.com", newMember.getEmailAddress());
+    assertEquals(1, newMember.getId());
   }
   
 }
