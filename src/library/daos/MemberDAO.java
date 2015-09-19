@@ -12,6 +12,10 @@ public class MemberDAO
 {
   
   private IMemberHelper helper_;
+  private Map<Integer, IMember> memberMap_;
+  //Is memberMap keyed by ID? ID is included in Member object
+  private static int nextId_;
+
 
   public MemberDAO(IMemberHelper helper)
   {
@@ -29,23 +33,43 @@ public class MemberDAO
   
   public MemberDAO(IMemberHelper helper, Map<Integer, IMember> memberMap)
   {
-
+    helper_ = helper;
+    memberMap_ = memberMap;
   }
   
   
   
   @Override
   public IMember addMember(String firstName, String lastName,
-      String ContactPhone, String emailAddress) {
-    // TODO Auto-generated method stub
-    return null;
+      String contactPhone, String emailAddress)
+  {
+    while(memberMap_.get(nextId_) != null)
+    {
+      nextId_ += 1;
+    }
+    IMember newMember = helper_.makeMember(firstName, lastName, contactPhone, emailAddress, nextId_);
+    memberMap_.put(nextId_, newMember);
+    nextId_ += 1;
+    return newMember;
   }
 
+  
+  
   @Override
-  public IMember getMemberByID(int id) {
-    // TODO Auto-generated method stub
+  public IMember getMemberByID(int id) 
+  {
+    IMember member = memberMap_.get(id);
+    if (memberMap_.get(id) != null)
+    {
+      return member;
+    }
+    else
+    {
     return null;
+    }
   }
+  
+  
 
   @Override
   public List<IMember> listMembers() {
