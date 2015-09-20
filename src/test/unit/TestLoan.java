@@ -57,20 +57,20 @@ public class TestLoan
   @Test
   public void createLoan()
   {
-      // Given stubs for book and member
-      IBook book = stubBook();
-      IMember borrower = stubMember();
-      // With valid, but very simple dates in millis
-      Date borrowDate = new Date(1);
-      Date dueDate = new Date(2);
-      // and valid ID
-      int id = 1;
+    // Given stubs for book and member
+    IBook book = stubBook();
+    IMember borrower = stubMember();
+    // With valid, but very simple dates in millis
+    Date borrowDate = new Date(1);
+    Date dueDate = new Date(2);
+    // and valid ID
+    int id = 1;
 
-      // When create a valid loan
-      ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
+    // When create a valid loan
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
 
-      // Then loan is instantiated and a valid Loan instance
-      assertThat(loan).isInstanceOf(ILoan.class);
+    // Then loan is instantiated and a valid Loan instance
+    assertThat(loan).isInstanceOf(ILoan.class);
   }
 
 
@@ -527,7 +527,7 @@ public class TestLoan
   @Test
   public void isOverDueWhenStateOverDueIsTrue()
   {
-  // Given a manually set overdue loan
+    // Given a manually set overdue loan
     ILoan loan = newLoan().makeOverDue().build();
 
     // Then loan state should be overdue
