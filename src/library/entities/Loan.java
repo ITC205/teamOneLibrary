@@ -7,6 +7,8 @@ import library.interfaces.entities.IMember;
 import library.interfaces.entities.ILoan;
 import library.interfaces.entities.ELoanState;
 
+import java.text.SimpleDateFormat;
+
 /**
  *
  */
@@ -230,6 +232,32 @@ public class Loan
       throw new RuntimeException("Checking a Loan that is not Current or " +
                                  "OverDue is invalid.");
     }
+  }
+
+
+
+  // TODO: are there getters for dates?
+  @Override
+  public String toString()
+  {
+    StringBuffer loanString = new StringBuffer();
+    loanString.append("Loan ID:  " + getID() + "\n")
+              .append("Author:   " + getBook().getAuthor() + "\n")
+              .append("Title:    " + getBook().getTitle() + "\n")
+              .append("Borrower: " + getBorrower().getFirstName() + " " +
+                                     getBorrower().getLastName() + "\n")
+              .append("Borrowed: " + formattedDate(borrowDate_) + "\n")
+              .append("Due Date: " + formattedDate(dueDate_));
+
+    return loanString.toString();
+  }
+
+
+  private static String formattedDate(Date date)
+  {
+    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+    String dateString = dateFormat.format(date);
+    return dateString;
   }
 
 }
