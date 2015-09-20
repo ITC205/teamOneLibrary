@@ -99,8 +99,8 @@ public class Loan
   //===========================================================================
 
   /**
-   * Returns the borrower associated with this loan.
-   * @return IMember The borrower associated with this loan.
+   * Returns the borrower associated with this Loan.
+   * @return IMember The borrower associated with this Loan.
    */
   public IMember getBorrower()
   {
@@ -110,8 +110,8 @@ public class Loan
 
 
   /**
-   * Returns the book associated with this loan.
-   * @return IBook The book associated with this loan.
+   * Returns the Book associated with this Loan.
+   * @return IBook The Book associated with this Loan.
    */
   public IBook getBook()
   {
@@ -121,8 +121,8 @@ public class Loan
 
 
   /**
-   * Returns the this loan's ID.
-   * @return int The ID of this loan.
+   * Returns the this Loan's ID.
+   * @return int The ID of this Loan.
    */
   public int getID()
   {
@@ -132,8 +132,8 @@ public class Loan
 
   // TODO: remove and use reflection?
   /**
-   * Sets the state of this loan.
-   * @param state  ELoanState Enum state of this loan.
+   * Sets the state of this Loan.
+   * @param state ELoanState The state (enum) of this Loan.
    */
   public void setState(ELoanState state)
   {
@@ -145,7 +145,7 @@ public class Loan
   // TODO: remove and use reflection?
   /**
    * Returns the state of this loan.
-   * @return state  ELoanState Enum state of this loan.
+   * @return ELoanState The state (enum) of this Loan.
    */
   public ELoanState getState()
   {
@@ -159,20 +159,21 @@ public class Loan
   /**
    * Commits this pending Loan in the system:
    *  - sets the state of this Loan to CURRENT
-   *  - records Loan instance on Book instance: book.borrow(loan)
-   *  - adds Loan instance to Borrower instance: borrower.addLoan(loan)
-   * Throws a RuntimeException if this LoanState is not PENDING
+   *  - records this Loan on Book instance
+   *  - records this Loan on Member instance
+   * Throws a RuntimeException if this Loan's state is not (initially) PENDING.
    * @param iD int The ID of this Loan.
    */
   public void commit(int iD)
   {
-
+    
   }
 
 
 
   /**
-   *
+   * Sets this Loan state to COMPLETE.
+   * Throws a RuntimeException if this Loan's state is not CURRENT or OVERDUE.
    */
   public void complete()
   {
@@ -190,7 +191,8 @@ public class Loan
 
 
   /**
-   *
+   * Returns true if this Loan state is OVERDUE.
+   * @return boolean true if Loan state is OVERDUE.
    */
   public boolean isOverDue()
   {
@@ -200,7 +202,9 @@ public class Loan
 
 
   /**
-   *
+   * Returns true if current date is past due date of this Loan.
+   * @param currentDate Date current date.
+   * @return boolean true if current date is past due date of this Loan.
    */
   public boolean checkOverDue(Date currentDate)
   {
@@ -215,7 +219,7 @@ public class Loan
       return isOverDue;
     } else {
       throw new RuntimeException("Checking a Loan that is not Current or " +
-                                     "OverDue is invalid.");
+                                 "OverDue is invalid.");
     }
   }
 
