@@ -1,7 +1,5 @@
 package test.unit;
 
-import org.mockito.Mock;
-
 import junit.framework.*;
 import static org.mockito.Mockito.*;
 import library.daos.MemberDAO;
@@ -16,17 +14,9 @@ public class TestMemberDAO extends TestCase
   Throwable exception = null;
   
   
-  public void createMocks()
+  protected void createMocks()
   {
-    mockHelper = mock(IMemberHelper.class);
-    mockValidMember = mock(IMember.class);
 
-    when(mockValidMember.getFirstName()).thenReturn("Joe");
-    when(mockValidMember.getLastName()).thenReturn("Bloggs");
-    when(mockValidMember.getContactPhone()).thenReturn("7654321");
-    when(mockValidMember.getEmailAddress()).thenReturn("jbloggs@myemail.com");
-    when(mockValidMember.getId()).thenReturn(1);
-    when(mockHelper.makeMember("Joe", "Bloggs", "76543210", "jbloggs@myemail.com", 1)).thenReturn(mockValidMember);
   }
   
   
@@ -49,11 +39,20 @@ public class TestMemberDAO extends TestCase
   
   public void testAddMember()
   {
+    mockHelper = mock(IMemberHelper.class);
+    mockValidMember = mock(IMember.class);
 
-    mockHelper.makeMember("Joe", "Bloggs", "76543210", "jbloggs@myemail.com", 1);
+    when(mockValidMember.getFirstName()).thenReturn("Joe");
+    when(mockValidMember.getLastName()).thenReturn("Bloggs");
+    when(mockValidMember.getContactPhone()).thenReturn("7654321");
+    when(mockValidMember.getEmailAddress()).thenReturn("jbloggs@myemail.com");
+    when(mockValidMember.getId()).thenReturn(1);
+    when(mockHelper.makeMember("Joe", "Bloggs", "76543210", "jbloggs@myemail.com", 1)).thenReturn(mockValidMember);
+    
+    IMember validMember = mockHelper.makeMember("Joe", "Bloggs", "76543210", "jbloggs@myemail.com", 1);
     MemberDAO validMemberDAO = new MemberDAO(mockHelper);
     IMember testMember = validMemberDAO.addMember("Joe", "Bloggs", "76543210", "jbloggs@myemail.com");
-    assertEquals("Joe", testMember.getFirstName());
+    assertEquals(validMember.getFirstName(), testMember.getFirstName());
     
   }
   
