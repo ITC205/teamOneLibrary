@@ -7,8 +7,7 @@ import library.interfaces.entities.IMember;
 import library.interfaces.entities.ILoan;
 import library.interfaces.entities.ELoanState;
 
-import library.interfaces.entities.ELoanState;
-
+import java.util.Calendar;
 import java.text.SimpleDateFormat;
 
 /**
@@ -198,16 +197,17 @@ public class Loan
    */
   public boolean checkOverDue(Date currentDate)
   {
-    boolean checkLoanOnlyIfCurrentOrOverDue =
-        (state_ == ELoanState.CURRENT || state_ == ELoanState.OVERDUE);
+    boolean isLoanCurrentOrOverDue =
+      (state_ == ELoanState.CURRENT || state_ == ELoanState.OVERDUE);
 
-    if (checkLoanOnlyIfCurrentOrOverDue) {
-      boolean isOverDue = currentDate.after(dueDate_);
-      if (isOverDue) {
+    if (isLoanCurrentOrOverDue) {
+      boolean isAfterDueDate = isAfterDueDate(currentDate);
+      if (isAfterDueDate) {
         state_ = ELoanState.OVERDUE;
       }
-      return isOverDue;
-    } else {
+      return isAfterDueDate;
+    }
+    else {
       throw new RuntimeException("Checking a Loan that is not Current or " +
                                  "OverDue is invalid.");
     }
@@ -232,11 +232,38 @@ public class Loan
   }
 
 
+
   private static String formattedDate(Date date)
   {
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
     String dateString = dateFormat.format(date);
     return dateString;
   }
+
+
+
+  public boolean isAfterDueDate(Date currentDate)
+  {
+    Date today = ignoreTime(currentDate);
+    Date due = ignoreTime(dueDate_);
+    return today.after(due);
+  }
+
+
+
+  private Date ignoreTime(Date date)
+  {
+    Calendar calendar = Calendar.getInstance();
+
+    calendar.setTime(date);
+    calendar.set(java.util.Calendar.HOUR_OF_DAY, 0);
+    calendar.set(java.util.Calendar.MINUTE, 0);
+    calendar.set(java.util.Calendar.SECOND, 0);
+    calendar.set(java.util.Calendar.MILLISECOND, 0);
+
+    return calendar.getTime();
+  }
+
+
 
 }
