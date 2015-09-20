@@ -11,11 +11,8 @@ import library.interfaces.entities.ELoanState;
 
 import library.entities.Loan;
 
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.Ignore;
-import org.junit.rules.ExpectedException;
-
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -52,7 +49,7 @@ public class TestLoan
   {
     return mock(IMember.class);
   }
-  
+
   // ==========================================================================
   // Constructor Testing - with stubs
   // ==========================================================================
