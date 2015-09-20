@@ -169,6 +169,19 @@ public class TestLoanBuilder
     return this;
   }
 
+
+  public TestLoanBuilder withBook(IBook book)
+  {
+    book_ = book;
+    return this;
+  }
+
+  public TestLoanBuilder withBorrower(IMember borrower)
+  {
+    borrower_ = borrower;
+    return this;
+  }
+
 }
 
 
