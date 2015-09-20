@@ -132,15 +132,7 @@ public class Loan
   }
 
 
-  // TODO: remove and use reflection?
-  /**
-   * Sets the state of this Loan.
-   * @param state ELoanState The state (enum) of this Loan.
-   */
-  public void setState(ELoanState state)
-  {
-    state_ = state;
-  }
+
 
 
 
@@ -192,7 +184,7 @@ public class Loan
         (state_ == ELoanState.CURRENT || state_ == ELoanState.OVERDUE);
 
     if (isLoanIsCurrentOrOverDue) {
-        setState(ELoanState.COMPLETE);
+        state_ = ELoanState.COMPLETE;
     } else {
       throw new RuntimeException("Completing a Loan that is not Current or " +
                                  "OverDue is invalid.");
@@ -225,7 +217,7 @@ public class Loan
     if (checkLoanOnlyIfCurrentOrOverDue) {
       boolean isOverDue = currentDate.after(dueDate_);
       if (isOverDue) {
-        setState(ELoanState.OVERDUE);
+        state_ = ELoanState.OVERDUE;
       }
       return isOverDue;
     } else {
