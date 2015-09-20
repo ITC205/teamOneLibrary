@@ -868,7 +868,7 @@ public class TestLoan
   @Test
   public void commitWhenStateCompleteThrows()
   {
-    // Given an overdue loan with due date 31st December
+    // Given a complete loan 
     Loan loan = newLoan().withBorrowDate(20, 11, 2015)
                          .withDueDate(31, 11, 2015)
                          .makeComplete().build();
@@ -893,8 +893,8 @@ public class TestLoan
     // Given mock Book and Member
     IBook mockBook = mock(IBook.class);
     IMember mockBorrower = mock(IMember.class);
-    //
-    // a current loan with due date 31st December
+
+    // as part of a pending loan
     Loan loan = newLoan().withBook(mockBook)
                          .withBorrower(mockBorrower)
                          .withBorrowDate(20, 11, 2015)
@@ -915,8 +915,8 @@ public class TestLoan
     // Given mock Book and Member
     IBook mockBook = mock(IBook.class);
     IMember mockBorrower = mock(IMember.class);
-    //
-    // a current loan with due date 31st December
+
+    // as part of a pending loan
     Loan loan = newLoan().withBook(mockBook)
                          .withBorrower(mockBorrower)
                          .withBorrowDate(20, 11, 2015)
@@ -937,8 +937,8 @@ public class TestLoan
     // Given mock Book and Member
     IBook mockBook = mock(IBook.class);
     IMember mockBorrower = mock(IMember.class);
-    //
-    // a current loan with due date 31st December
+
+    // as part of a pending loan
     Loan loan = newLoan().withBook(mockBook)
                          .withBorrower(mockBorrower)
                          .withBorrowDate(20, 11, 2015)
