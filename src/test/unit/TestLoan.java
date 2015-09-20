@@ -819,5 +819,139 @@ public class TestLoan
     }
   }
 
+  // ==========================================================================
+  // Commit() testing - with stubs, mocks & TestLoanBuilder
+  // ==========================================================================
+
+  @Test
+  public void commitWhenStateCurrentThrows()
+  {
+    // Given a current loan with due date 31st December
+    Loan loan = newLoan().withBorrowDate(20, 11, 2015)
+                         .withDueDate(31, 11, 2015)
+                         .makeCurrent().build();
+
+    // When attempting to complete loan
+    try {
+      loan.commit(999);
+    }
+
+    // Then exception should be thrown
+    catch (Exception exception) {
+      assertThat(exception).isInstanceOf(IllegalArgumentException.class);
+    }
+  }
+
+
+
+  @Test
+  public void commitWhenStateOverDueThrows()
+  {
+    // Given an overdue loan with due date 31st December
+    Loan loan = newLoan().withBorrowDate(20, 11, 2015)
+                         .withDueDate(31, 11, 2015)
+                         .makeOverDue().build();
+
+    // When attempting to complete loan
+    try {
+      loan.commit(999);
+    }
+
+    // Then exception should be thrown
+    catch (Exception exception) {
+      assertThat(exception).isInstanceOf(IllegalArgumentException.class);
+    }
+  }
+
+
+
+  @Test
+  public void commitWhenStateCompleteThrows()
+  {
+    // Given an overdue loan with due date 31st December
+    Loan loan = newLoan().withBorrowDate(20, 11, 2015)
+                         .withDueDate(31, 11, 2015)
+                         .makeComplete().build();
+
+    // When attempting to complete loan
+    try {
+      loan.commit(999);
+    }
+
+    // Then exception should be thrown
+    catch (Exception exception) {
+      assertThat(exception).isInstanceOf(IllegalArgumentException.class);
+    }
+  }
+
+
+  // TODO: public void commitWhenStatePendingSetsStateCurrent() : reflection
+
+  @Test
+  public void commitWhenStatePendingSetsId()
+  {
+    // Given mock Book and Member
+    IBook mockBook = mock(IBook.class);
+    IMember mockBorrower = mock(IMember.class);
+    //
+    // a current loan with due date 31st December
+    Loan loan = newLoan().withBook(mockBook)
+                         .withBorrower(mockBorrower)
+                         .withBorrowDate(20, 11, 2015)
+                         .withDueDate(31, 11, 2015)
+                         .makePending().build();
+    int id = 999;
+    loan.commit(id);
+
+    // Then loan id should be set
+    assertThat(loan.getID()).isEqualTo(999);
+  }
+
+
+
+  @Test
+  public void commitWhenStatePendingCallsBookBorrow()
+  {
+    // Given mock Book and Member
+    IBook mockBook = mock(IBook.class);
+    IMember mockBorrower = mock(IMember.class);
+    //
+    // a current loan with due date 31st December
+    Loan loan = newLoan().withBook(mockBook)
+                         .withBorrower(mockBorrower)
+                         .withBorrowDate(20, 11, 2015)
+                         .withDueDate(31, 11, 2015)
+                         .makePending().build();
+    int id = 999;
+    loan.commit(id);
+
+    // Then expect book.borrow called correctly
+    verify(mockBook).borrow(loan);
+  }
+
+
+
+  @Test
+  public void commitWhenStatePendingCallsBorrowerAddLoan()
+  {
+    // Given mock Book and Member
+    IBook mockBook = mock(IBook.class);
+    IMember mockBorrower = mock(IMember.class);
+    //
+    // a current loan with due date 31st December
+    Loan loan = newLoan().withBook(mockBook)
+                         .withBorrower(mockBorrower)
+                         .withBorrowDate(20, 11, 2015)
+                         .withDueDate(31, 11, 2015)
+                         .makePending().build();
+    int id = 999;
+    loan.commit(id);
+
+    // Then expect borrower.addLoan called correctly
+    verify(mockBorrower).addLoan(loan);
+  }
+
+
+
 
 }
