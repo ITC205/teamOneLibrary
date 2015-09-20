@@ -1,6 +1,7 @@
 package test.unit;
 
 import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 
@@ -252,6 +253,33 @@ public class TestLoan
 
     // Then loan is instantiated, and a valid ILoan instance
     assertThat(loan).isInstanceOf(ILoan.class);
+  }
+
+
+
+  @Test
+  public void toSt()
+  {
+    // Given stubs for book and member
+    IBook book = stubBook();
+    when(book.getAuthor()).thenReturn("Charles Dickens");
+    when(book.getTitle()).thenReturn("Great Expectations");
+
+    IMember borrower = stubMember();
+    when(borrower.getFirstName()).thenReturn("Neil");
+    when(borrower.getLastName()).thenReturn("Armstrong");
+
+    ILoan loan = newLoan().withBook(book)
+                          .withBorrower(borrower)
+                          .withBorrowDate(20, 11, 2015, 10, 45, 00)
+                          .withDueDate(31, 11, 2015, 22, 45, 10)
+                          .withID(99)
+                          .makeCurrent().build();
+
+    Date today = dateBuilder(1, 0, 2010, 22, 45, 20);
+    boolean check = loan.checkOverDue(today);
+
+    assertThat(check).isFalse();
   }
 
 
@@ -567,12 +595,12 @@ public class TestLoan
   public void checkOverDueWhenLoanDueNextCenturyIsFalse()
   {
     // Given a new 100 year loan!
-    ILoan loan = newLoan().withBorrowDate(1,0,2010)
-                          .withDueDate(1,0,2110)
+    ILoan loan = newLoan().withBorrowDate(1, 0, 2010)
+                          .withDueDate(1, 0, 2110)
                           .makeCurrent().build();
 
     // When today's date is the borrow date
-    Date today = dateBuilder(1,0,2010);
+    Date today = dateBuilder(1, 0, 2010);
 
     // Then loan should not be overdue
     boolean shouldSetStatusToOverDue = loan.checkOverDue(today);
@@ -585,12 +613,12 @@ public class TestLoan
   public void checkOverDueWhenLoanDueNextDayIsFalse()
   {
     // Given a new loan with due date 1st January
-    ILoan loan = newLoan().withBorrowDate(20,11,2015)
-                          .withDueDate(1,0,2016)
+    ILoan loan = newLoan().withBorrowDate(20, 11, 2015)
+                          .withDueDate(1, 0, 2016)
                           .makeCurrent().build();
 
     // When today's date is 31st December
-    Date today = dateBuilder(31,11,2015);
+    Date today = dateBuilder(31, 11, 2015);
 
     // Then loan should not be overdue
     boolean shouldSetStatusToOverDue = loan.checkOverDue(today);
@@ -600,15 +628,35 @@ public class TestLoan
 
 
   @Test
-  public void checkOverDueWhenLoanDueSameDayIsFalse()
+  public void checkOverDueWhenLoanDueLaterSameDayIsFalse()
   {
-    // Given a new loan with due date 1st January
-    ILoan loan = newLoan().withBorrowDate(20,11,2015)
-                          .withDueDate(1,0,2016)
+    // Given a new loan with due date 31st December (@ 8pm)
+    ILoan loan = newLoan().withBorrowDate(20, 11, 2015)
+                          .withDueDate(31, 11, 2015, 20, 0, 0)
+                          .withID(99)
                           .makeCurrent().build();
 
-    // When today's date is 1st January
-    Date today = dateBuilder(31,11,2015);
+    // When today's date is 31st December (@ 10am)
+    Date today = dateBuilder(31, 11, 2015, 10, 0, 0);
+
+    // Then loan should not be overdue
+    boolean shouldSetStatusToOverDue = loan.checkOverDue(today);
+    assertThat(shouldSetStatusToOverDue).isFalse();
+  }
+
+
+
+  @Test
+  public void checkOverDueWhenLoanDueEarlierSameDayIsFalse()
+  {
+    // Given a new loan with due date 31st December (@ 2:45am)
+    ILoan loan = newLoan().withBorrowDate(20, 11, 2015, 10, 45, 00)
+                          .withDueDate(31, 11, 2015, 2, 45, 00)
+                          .withID(99)
+                          .makeCurrent().build();
+
+    // When today's date is 31st December (@ 11:55pm)
+    Date today = dateBuilder(31, 11, 2015, 23, 55, 00);
 
     // Then loan should not be overdue
     boolean shouldSetStatusToOverDue = loan.checkOverDue(today);
@@ -621,12 +669,12 @@ public class TestLoan
   public void checkOverDueWhenLoanDuePreviousDayIsTrue()
   {
     // Given a new loan with due date 31st December
-    ILoan loan = newLoan().withBorrowDate(20,11,2015)
-                          .withDueDate(31, 11,2015)
+    ILoan loan = newLoan().withBorrowDate(20, 11, 2015)
+                          .withDueDate(31, 11, 2015)
                           .makeCurrent().build();
 
     // When today's date is 1st January
-    Date today = dateBuilder(1,1,2016);
+    Date today = dateBuilder(1, 0, 2016);
 
     // Then loan should be overdue
     boolean shouldSetStatusToOverDue = loan.checkOverDue(today);
@@ -634,16 +682,17 @@ public class TestLoan
   }
 
 
+
   @Test
   public void checkOverDueWhenLoanDuePreviousWeekIsTrue()
   {
     // Given a new loan with due date 31st December
-    ILoan loan = newLoan().withBorrowDate(20,11,2015)
-                          .withDueDate(25,11,2015)
+    ILoan loan = newLoan().withBorrowDate(20, 11, 2015)
+                          .withDueDate(25, 11, 2015)
                           .makeOverDue().build();
 
     // When today's date is 1st January
-    Date today = dateBuilder(1,1,2016);
+    Date today = dateBuilder(1, 0, 2016);
 
     // Then loan should be overdue
     boolean shouldSetStatusToOverDue = loan.checkOverDue(today);
@@ -657,11 +706,11 @@ public class TestLoan
   {
     // Given a new current loan with due date 31st December
     ILoan loan = newLoan().withBorrowDate(20, 11, 2015)
-                          .withDueDate(31, 11, 2015)
+                          .withDueDate(31, 11, 2015, 0, 0, 0)
                           .makeCurrent().build();
 
     // When today's date is 31st December
-    Date today = dateBuilder(31,11,2015);
+    Date today = dateBuilder(31, 11, 2015, 15, 45, 00);
     // Then loan status should not be overdue
     boolean isStateOverDue = loan.isOverDue();
     assertThat(isStateOverDue).isFalse();
@@ -680,8 +729,8 @@ public class TestLoan
   public void checkOverDueWhenStateCurrentButPastDueDateSetsStateOverDue()
   {
     // Given a new current loan with due date 31st December
-    ILoan loan = newLoan().withBorrowDate(20,11,2015)
-                          .withDueDate(31,11,2015)
+    ILoan loan = newLoan().withBorrowDate(20, 11, 2015)
+                          .withDueDate(31, 11, 2015)
                           .makeCurrent().build();
 
     // When today's date is 1st January
@@ -704,8 +753,8 @@ public class TestLoan
   public void checkOverDueWhenStateCompleteThrows()
   {
     // Given an old loan that was completed
-    ILoan loan = newLoan().withBorrowDate(20,11,2014)
-                          .withDueDate(31,11,2014)
+    ILoan loan = newLoan().withBorrowDate(20, 11, 2014)
+                          .withDueDate(31, 11, 2014)
                           .makeComplete().build();
 
     // When today's date is 1st January
@@ -729,8 +778,8 @@ public class TestLoan
   public void checkOverDueWhenStatePendingThrows()
   {
     // Given a pending loan
-    ILoan loan = newLoan().withBorrowDate(20,11,2014)
-                          .withDueDate(31,11,2014)
+    ILoan loan = newLoan().withBorrowDate(20, 11, 2014)
+                          .withDueDate(31, 11, 2014)
                           .makePending().build();
 
     // When today's date is 20th December (borrowing date)
@@ -752,16 +801,13 @@ public class TestLoan
   // TODO: check if loan is always meant to be constructed with default loan
   // period - in which case need to test that behavior
 
-  // TODO: check using dates with hours and seconds set
-
-
 
   @Test
   public void completeWhenStateCurrentSetsStateToComplete()
   {
     // Given a new current loan with due date 31st December
-    ILoan loan = newLoan().withBorrowDate(20,11,2015)
-                          .withDueDate(31,11,2015)
+    ILoan loan = newLoan().withBorrowDate(20, 11, 2015)
+                          .withDueDate(31, 11, 2015)
                           .makeCurrent().build();
 
     // When complete loan
@@ -780,8 +826,8 @@ public class TestLoan
   public void completeWhenStateOverDueSetsStateToComplete()
   {
     // Given an overdue loan with due date 31st December
-    ILoan loan = newLoan().withBorrowDate(20,11,2015)
-                          .withDueDate(31,11,2015)
+    ILoan loan = newLoan().withBorrowDate(20, 11, 2015)
+                          .withDueDate(31, 11, 2015)
                           .makeOverDue().build();
 
     // When complete loan
@@ -800,8 +846,8 @@ public class TestLoan
   public void completeWhenStateCompleteThrows()
   {
     // Given an old loan that was completed
-    ILoan loan = newLoan().withBorrowDate(20,11,2014)
-                          .withDueDate(31,11,2014)
+    ILoan loan = newLoan().withBorrowDate(20, 11, 2014)
+                          .withDueDate(31, 11, 2014)
                           .makeComplete().build();
 
     // When attempting to complete loan
@@ -821,8 +867,8 @@ public class TestLoan
   public void completeWhenStatePendingThrows()
   {
     // Given a pending loan
-    ILoan loan = newLoan().withBorrowDate(20,11,2014)
-                          .withDueDate(31,11,2014)
+    ILoan loan = newLoan().withBorrowDate(20, 11, 2014)
+                          .withDueDate(31, 11, 2014)
                           .makePending().build();
 
     // When attempting to complete loan
@@ -1068,6 +1114,25 @@ public class TestLoan
       fail("Exception should not occur");
     }
     return null;
+  }
+
+
+
+
+  @Test
+  public void test()
+  {
+
+    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+    SimpleDateFormat dateAndTimeFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+    Calendar calendar = new java.util.GregorianCalendar(2013,0,31,22,45);
+    Date date1 =  calendar.getTime();
+    Calendar calendar2 = new java.util.GregorianCalendar(2013,0,31,23,45);
+    Date date2 =  calendar2.getTime();
+    System.out.println(dateFormat.format(date1));
+    System.out.println(dateAndTimeFormat.format(date1));
+    calendar.setTime(date1);
+
   }
 
 }
