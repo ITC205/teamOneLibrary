@@ -52,7 +52,7 @@ public class Loan
     throwIfObjectNull("Borrowing Date.", borrowDate);
     throwIfObjectNull("Return Date.", dueDate);
     throwIfReturnDateIsNotAfterBorrowDate(borrowDate, dueDate);
-    throwIfIDLessThanOrEqualToZero(id);
+    throwIfIDLessThanZero(id);
 
     book_ = book;
     borrower_ = borrower;
@@ -87,10 +87,10 @@ public class Loan
 
 
 
-  private void throwIfIDLessThanOrEqualToZero(int id)
+  private void throwIfIDLessThanZero(int id)
     throws IllegalArgumentException
   {
-    if (id <= 0) {
+    if (id < 0) {
       throw new IllegalArgumentException("Cannot create a new Loan with an " +
                                          "ID less than or equal to zero.");
     }
