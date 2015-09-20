@@ -13,7 +13,10 @@ import library.entities.Loan;
 import static org.mockito.Mockito.mock;
 
 /**
- *
+ * Helper class for building customized Loans for test cases.
+ * Provides a fluent API, and allows all parameters of Loan constructor - as
+ * well as private state to be passed in.
+ *  - e.g.: IBook book = newLoan().withBook(book).withBorrower(borrower).build()
  */
 public class TestLoanBuilder
 {
@@ -25,7 +28,7 @@ public class TestLoanBuilder
   public static final IMember DEFAULT_BORROWER = stubMember();
   public static final Date DEFAULT_BORROW_DATE = dateBuilder(1, 0, 2015);
   public static final Date DEFAULT_DUE_DATE = dateBuilder(2, 0, 2015);
-  public static final int DEFAULT_ID = 125;
+  public static final int DEFAULT_ID = 0;
 
   public static final ELoanState DEFAULT_STATE = ELoanState.PENDING;
 
