@@ -13,6 +13,7 @@ import library.entities.Loan;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.Ignore;
 import org.junit.rules.ExpectedException;
 
 
@@ -230,8 +231,6 @@ public class TestLoan
       fail(exception.getMessage());
     }
 
-    // NOTE in later tests, will simply propagate ParseException
-
     // When create a loan
     ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
 
@@ -240,7 +239,8 @@ public class TestLoan
   }
 
 
-
+  // NOTE in following tests, simply propagating ParseException as this is
+  // irrelevant for these tests (and proven ok in above test)
   @Test
   public void createLoanWithDueDateBeforeBorrowDateThrows()
       throws java.text.ParseException
@@ -324,7 +324,6 @@ public class TestLoan
 
   // TODO: need to check if borrow date later than return date - but same day?
 
-
   @Test
   public void createLoanWithZeroIdThrows()
       throws java.text.ParseException
@@ -402,8 +401,6 @@ public class TestLoan
                                        "less than or equal to zero.");
     }
   }
-
-
 
   // ==========================================================================
   // Getters & setters testing - with stubs
@@ -868,7 +865,7 @@ public class TestLoan
   @Test
   public void commitWhenStateCompleteThrows()
   {
-    // Given a complete loan 
+    // Given a complete loan
     Loan loan = newLoan().withBorrowDate(20, 11, 2015)
                          .withDueDate(31, 11, 2015)
                          .makeComplete().build();
@@ -952,6 +949,67 @@ public class TestLoan
   }
 
 
+    @Test
+      public void toStringWhenStateCurrent()
+      {
+        // Given stubs for book and member
+        IBook book = stubBook();
+        when(book.getAuthor()).thenReturn("Charles Dickens");
+        when(book.getTitle()).thenReturn("Great Expectations");
+
+        IMember borrower = stubMember();
+        when(borrower.getFirstName()).thenReturn("Neil");
+        when(borrower.getLastName()).thenReturn("Armstrong");
+
+        Loan loan = newLoan().withBook(book)
+                             .withBorrower(borrower)
+                             .withBorrowDate(20, 11, 2015)
+                             .withDueDate(31, 11, 2015)
+                             .withID(99)
+                             .makeCurrent().build();
+        // When
+        String loanString = loan.toString();
+
+        // Then expect loanString to match (note differences in Date months)
+        String expectedString = "Loan ID:  99\n" +
+                                "Author:   Charles Dickens\n" +
+                                "Title:    Great Expectations\n" +
+                                "Borrower: Neil Armstrong\n" +
+                                "Borrowed: 20/12/2015\n" +
+                                "Due Date: 31/12/2015";
+        assertThat(loanString).isEqualTo(expectedString);
+      }
+
+
+  @Test
+  public void toStringWhenStatePending()
+  {
+    // Given stubs for book and member
+    IBook book = stubBook();
+    when(book.getAuthor()).thenReturn("Charles Dickens");
+    when(book.getTitle()).thenReturn("Great Expectations");
+
+    IMember borrower = stubMember();
+    when(borrower.getFirstName()).thenReturn("Neil");
+    when(borrower.getLastName()).thenReturn("Armstrong");
+
+    Loan loan = newLoan().withBook(book)
+                         .withBorrower(borrower)
+                         .withBorrowDate(20, 11, 2015)
+                         .withDueDate(31, 11, 2015)
+                         .makePending().build();
+    // When
+    String loanString = loan.toString();
+
+    // Then expect loanString to match (note differences in Date months)
+    String expectedString = "Loan ID:  99\n" +
+                                "Author:   Charles Dickens\n" +
+                                "Title:    Great Expectations\n" +
+                                "Borrower: Neil Armstrong\n" +
+                                "Borrowed: 20/12/2015\n" +
+                                "Due Date: 31/12/2015";
+    assertThat(loanString).isEqualTo(expectedString);
+  }
 
 
 }
