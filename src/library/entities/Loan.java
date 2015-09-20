@@ -50,7 +50,7 @@ public class Loan
     throwIfObjectNull("Book.", book);
     throwIfObjectNull("Borrower.", borrower);
     throwIfObjectNull("Borrowing Date.", borrowDate);
-    throwIfObjectNull("Return Date.", dueDate);
+    throwIfObjectNull("Due Date.", dueDate);
     throwIfReturnDateIsNotAfterBorrowDate(borrowDate, dueDate);
     throwIfIDLessThanZero(id);
 
