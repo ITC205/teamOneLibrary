@@ -51,7 +51,7 @@ public class TestLoan
   }
 
   // ==========================================================================
-  // Constructor Testing - with stubs
+  // Constructor Testing - with stubs & helper (to check state)
   // ==========================================================================
 
   @Test
@@ -71,6 +71,30 @@ public class TestLoan
 
       // Then loan is instantiated and a valid Loan instance
       assertThat(loan).isInstanceOf(ILoan.class);
+  }
+
+
+
+  @Test
+  public void newLoanHasPendingState()
+  {
+    // Given stubs for book and member
+    IBook book = stubBook();
+    IMember borrower = stubMember();
+    // With valid, but very simple dates in millis
+    Date borrowDate = new Date(1);
+    Date dueDate = new Date(2);
+    // and valid ID
+    int id = 1;
+
+    // When create a valid loan
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
+
+    // Then loan is instantiated with pending state
+    // (have to use reflection to access private variable)
+    // which is why this test was added at end :-)
+    ELoanState loanState = getPrivateState((Loan)loan);
+    assertThat(loanState).isEqualTo(ELoanState.PENDING);
   }
 
 
@@ -99,6 +123,7 @@ public class TestLoan
   }
 
 
+
   @Test
   public void createLoanWithNullBorrowerThrows()
   {
@@ -121,6 +146,7 @@ public class TestLoan
       assertThat(exception).isInstanceOf(IllegalArgumentException.class);
     }
   }
+
 
 
   @Test
@@ -229,11 +255,13 @@ public class TestLoan
   }
 
 
+
   // NOTE in following tests, simply propagating ParseException as this is
   // irrelevant for these tests (and proven ok in above test)
+
   @Test
   public void createLoanWithDueDateBeforeBorrowDateThrows()
-      throws java.text.ParseException
+    throws java.text.ParseException
   {
     // Given stubs for book and member
     IBook book = stubBook();
@@ -260,7 +288,7 @@ public class TestLoan
 
   @Test
   public void createLoanWithDueDateSameAsBorrowDateThrows()
-      throws java.text.ParseException
+    throws java.text.ParseException
   {
     // Given stubs for book and member
     IBook book = stubBook();
@@ -287,7 +315,7 @@ public class TestLoan
 
   @Test
   public void createLoanWithDueDateSameAsBorrowDateThrowsWithCorrectMessage()
-      throws java.text.ParseException
+    throws java.text.ParseException
   {
     // Given stubs for book and member
     IBook book = stubBook();
@@ -319,7 +347,7 @@ public class TestLoan
   // incorrect, as pending loans are created with an id of zero
   @Ignore
   public void createLoanWithZeroIdThrows()
-      throws java.text.ParseException
+    throws java.text.ParseException
   {
     // Given stubs for book and member
     IBook book = stubBook();
@@ -345,7 +373,7 @@ public class TestLoan
 
   @Test
   public void createLoanWithNegativeIdThrows()
-      throws java.text.ParseException
+    throws java.text.ParseException
   {
     // Given stubs for book and member
     IBook book = stubBook();
@@ -747,8 +775,7 @@ public class TestLoan
   }
 
 
-  // TODO : remove use of setter and use reflection
-  // TODO: return ILoan
+
   @Test
   public void completeWhenStateOverDueSetsStateToComplete()
   {
@@ -976,45 +1003,49 @@ public class TestLoan
 
 
 
-    @Test
-      public void toStringWhenStateCurrent()
-      {
-        // Given stubs for book and member
-        IBook book = stubBook();
-        when(book.getAuthor()).thenReturn("Charles Dickens");
-        when(book.getTitle()).thenReturn("Great Expectations");
+  @Test
+  public void toStringWhenStateCurrent()
+  {
+    // Given stubs for book and member
+    IBook book = stubBook();
+    when(book.getAuthor()).thenReturn("Charles Dickens");
+    when(book.getTitle()).thenReturn("Great Expectations");
 
-        IMember borrower = stubMember();
-        when(borrower.getFirstName()).thenReturn("Neil");
-        when(borrower.getLastName()).thenReturn("Armstrong");
+    IMember borrower = stubMember();
+    when(borrower.getFirstName()).thenReturn("Neil");
+    when(borrower.getLastName()).thenReturn("Armstrong");
 
-        ILoan loan = newLoan().withBook(book)
-                             .withBorrower(borrower)
-                             .withBorrowDate(20, 11, 2015)
-                             .withDueDate(31, 11, 2015)
-                             .withID(99)
-                             .makeCurrent().build();
-        // When
-        String loanString = loan.toString();
+    ILoan loan = newLoan().withBook(book)
+                         .withBorrower(borrower)
+                         .withBorrowDate(20, 11, 2015)
+                         .withDueDate(31, 11, 2015)
+                         .withID(99)
+                         .makeCurrent().build();
+    // When
+    String loanString = loan.toString();
 
-        // Then expect loanString to match (note differences in Date months)
-        // including explicitly set id
-        String expectedString = "Loan ID:  99\n" +
-                                "Author:   Charles Dickens\n" +
-                                "Title:    Great Expectations\n" +
-                                "Borrower: Neil Armstrong\n" +
-                                "Borrowed: 20/12/2015\n" +
-                                "Due Date: 31/12/2015";
-        assertThat(loanString).isEqualTo(expectedString);
-      }
+    // Then expect loanString to match (note differences in Date months)
+    // including explicitly set id
+    String expectedString = "Loan ID:  99\n" +
+                            "Author:   Charles Dickens\n" +
+                            "Title:    Great Expectations\n" +
+                            "Borrower: Neil Armstrong\n" +
+                            "Borrowed: 20/12/2015\n" +
+                            "Due Date: 31/12/2015";
+    assertThat(loanString).isEqualTo(expectedString);
+  }
 
 
+
+  // ==========================================================================
+  // Helper to check state - uses reflection
+  // ==========================================================================
 
   /*
    * Uses Reflection API to directly access Loan's private state.
    */
-  private ELoanState getPrivateState(Loan loan) {
-
+  private ELoanState getPrivateState(Loan loan)
+  {
     try {
       Class<?> loanClass = loan.getClass();
       java.lang.reflect.Field state = loanClass.getDeclaredField("state_");
