@@ -4,8 +4,7 @@ import junit.framework.*;
 import library.entities.Member;
 import library.interfaces.entities.*;
 
-import org.mockito.Mockito;
-import org.mockito.Mockito.*;
+import static org.mockito.Mockito.*;
 
 public class TestMember extends TestCase
 {
@@ -19,14 +18,7 @@ public class TestMember extends TestCase
   
   Member validMember = new Member(validFirstName, validLastName, validContactPhone, validEmailAddress, validId);
   
-  ILoan loan = Mockito.mock(ILoan.class);
-  
-  
-  
-  public TestMember(String name) 
-  { 
-    super(name);
-  }
+  ILoan loan = mock(ILoan.class);
   
   
   

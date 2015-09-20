@@ -8,10 +8,6 @@ public class TestMemberHelper extends TestCase
 {
   MemberHelper helper = new MemberHelper();
 
-  public TestMemberHelper(String name) 
-  { 
-    super(name);
-  }
 
 
   public void testMakeMember()

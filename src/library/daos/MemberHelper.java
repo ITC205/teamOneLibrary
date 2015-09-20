@@ -17,7 +17,7 @@ public class MemberHelper
                              String contactPhone, 
                              String emailAddress, int id)
   {
-    Member newMember = new Member(firstName, lastName, contactPhone, emailAddress, id);
+    IMember newMember = new Member(firstName, lastName, contactPhone, emailAddress, id);
     return newMember;
   }
 }
