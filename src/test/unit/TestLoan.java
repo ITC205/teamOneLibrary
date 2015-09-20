@@ -220,7 +220,7 @@ public class TestLoan
     // Then exception should be thrown
     catch (Exception exception) {
       assertThat(exception).hasMessage("Cannot create a new Loan with a " +
-                                           "null Book.");
+                                       "null Book.");
     }
   }
 
@@ -254,34 +254,6 @@ public class TestLoan
     // Then loan is instantiated, and a valid ILoan instance
     assertThat(loan).isInstanceOf(ILoan.class);
   }
-
-
-
-  @Test
-  public void toSt()
-  {
-    // Given stubs for book and member
-    IBook book = stubBook();
-    when(book.getAuthor()).thenReturn("Charles Dickens");
-    when(book.getTitle()).thenReturn("Great Expectations");
-
-    IMember borrower = stubMember();
-    when(borrower.getFirstName()).thenReturn("Neil");
-    when(borrower.getLastName()).thenReturn("Armstrong");
-
-    ILoan loan = newLoan().withBook(book)
-                          .withBorrower(borrower)
-                          .withBorrowDate(20, 11, 2015, 10, 45, 00)
-                          .withDueDate(31, 11, 2015, 22, 45, 10)
-                          .withID(99)
-                          .makeCurrent().build();
-
-    Date today = dateBuilder(1, 0, 2010, 22, 45, 20);
-    boolean check = loan.checkOverDue(today);
-
-    assertThat(check).isFalse();
-  }
-
 
 
   // NOTE in following tests, simply propagating ParseException as this is
@@ -1081,8 +1053,6 @@ public class TestLoan
     assertThat(loanString).isEqualTo(expectedString);
   }
 
-
-
   // ==========================================================================
   // Helper to check state - uses reflection
   // ==========================================================================
@@ -1116,23 +1086,5 @@ public class TestLoan
     return null;
   }
 
-
-
-
-  @Test
-  public void test()
-  {
-
-    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-    SimpleDateFormat dateAndTimeFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-    Calendar calendar = new java.util.GregorianCalendar(2013,0,31,22,45);
-    Date date1 =  calendar.getTime();
-    Calendar calendar2 = new java.util.GregorianCalendar(2013,0,31,23,45);
-    Date date2 =  calendar2.getTime();
-    System.out.println(dateFormat.format(date1));
-    System.out.println(dateAndTimeFormat.format(date1));
-    calendar.setTime(date1);
-
-  }
 
 }
