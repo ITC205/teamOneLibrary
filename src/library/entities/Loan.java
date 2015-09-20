@@ -7,6 +7,8 @@ import library.interfaces.entities.IMember;
 import library.interfaces.entities.ILoan;
 import library.interfaces.entities.ELoanState;
 
+import library.interfaces.entities.ELoanState;
+
 import java.text.SimpleDateFormat;
 
 /**
@@ -25,7 +27,7 @@ public class Loan
   private Date dueDate_;
   private int id_;
 
-  private ELoanState state_;
+  private ELoanState state_ = ELoanState.PENDING; // default state of new Loan
 
   //===========================================================================
   // Constructor (& helpers)
@@ -130,7 +132,7 @@ public class Loan
   {
     return id_;
   }
-  
+
   //===========================================================================
   // Primary methods
   //===========================================================================
