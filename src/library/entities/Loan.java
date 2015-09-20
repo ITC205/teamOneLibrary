@@ -11,7 +11,8 @@ import java.util.Calendar;
 import java.text.SimpleDateFormat;
 
 /**
- *
+ * Loan instance is used to associate a borrower (Member) with the Book being
+ * borrowed, the dates of the loan and the state of the loan itself.
  */
 public class Loan
   implements ILoan
@@ -191,7 +192,8 @@ public class Loan
 
 
   /**
-   * Returns true if current date is past due date of this Loan.
+   * Returns true if current date is past due date of this Loan (ignoring any
+   * time portion of the dates being compared).
    * @param currentDate Date current date.
    * @return boolean true if current date is past due date of this Loan.
    */
