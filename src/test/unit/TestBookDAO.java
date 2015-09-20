@@ -20,6 +20,7 @@ public class TestBookDAO extends TestCase
   private IBook mockedBook;
   private IBook mockedBookTwo;
   private IBook mockedBookThree;
+  private IBook mockedBookFour;
   
   protected void setUp() 
   {
@@ -42,6 +43,13 @@ public class TestBookDAO extends TestCase
     when(mockedBookThree.getTitle()).thenReturn("Go Set a Watchman");
     when(mockedBookThree.getCallNumber()).thenReturn("982.441 LEE");
     
+    
+    mockedBookFour = mock(IBook.class);
+    when(mockedBookFour.getID()).thenReturn(4);
+    when(mockedBookFour.getAuthor()).thenReturn("Donald Duck");
+    when(mockedBookFour.getTitle()).thenReturn("Great Expectations");
+    when(mockedBookFour.getCallNumber()).thenReturn("124.41 DUCK");
+    
     // Fixed ID value means that 'Great Expectations' should always be used as
     // the first mockedBook
     when(mockedHelper.makeBook("Charles Dickens", "Great Expectations", 
@@ -57,6 +65,11 @@ public class TestBookDAO extends TestCase
     when(mockedHelper.makeBook("Harper Lee", "Go Set a Watchman", 
                                "982.441 LEE", 3))
                      .thenReturn(mockedBookThree);
+    
+    // Donald Duck 'Great Expectations' should be used as the fourth book
+    when(mockedHelper.makeBook("Donald Duck", "Great Expectations", 
+                               "124.41 DUCK", 4))
+                     .thenReturn(mockedBookFour);
   }
   
   protected void tearDown()
@@ -477,10 +490,130 @@ public class TestBookDAO extends TestCase
     assertEquals("Great Expectations", book.getTitle()); 
   }
   
+  public void testFindBooksByTitleEmptyTitle() {
+    BookDAO testBookDAO = new BookDAO(mockedHelper);
+    
+    // Add a book
+    testBookDAO.addBook("Charles Dickens", "Great Expectations", 
+                        "82.023 275 [2011]");
+
+    try {
+      testBookDAO.findBooksByTitle("");
+      fail("Should have thrown IllegalArgumentException");
+    }
+    catch (IllegalArgumentException iae) {
+      assertTrue(true);
+    }
+  }
   
+  public void testFindBooksByTitleNullTitle() {
+    BookDAO testBookDAO = new BookDAO(mockedHelper);
+    
+    // Add a book
+    testBookDAO.addBook("Charles Dickens", "Great Expectations", 
+                        "82.023 275 [2011]");
+    
+    try {
+      testBookDAO.findBooksByTitle(null);
+      fail("Should have thrown IllegalArgumentException");
+    }
+    catch(IllegalArgumentException iae) {
+      assertTrue(true);
+    }
+  }
+  
+  public void testFindBooksByTitleNonExistentTitle() {
+    {
+      BookDAO testBookDAO = new BookDAO(mockedHelper);
+      
+      // Add two books 
+      testBookDAO.addBook("Charles Dickens", "Great Expectations", 
+                          "82.023 275 [2011]");
+      
+      testBookDAO.addBook("Harper Lee", "To Kill a Mockingbird", "813.54 TOKI");
+      
+      // Try to find 'Digital Fortress' book
+      List<IBook> bookListByTitle = testBookDAO.findBooksByTitle("Digital "
+                                                                 + "Fortress");
+      
+      // Confirm list empty
+      assertTrue(bookListByTitle.isEmpty());
+    }
+  }
+  
+  public void testFindBooksByTitleNoBooks() {
+    BookDAO testBookDAO = new BookDAO(mockedHelper);
+    
+    // Try to find 'Great Expectations' book
+    List<IBook> bookListByTitle = testBookDAO.findBooksByTitle("Great "
+                                                              + "Expectations");
+    
+    // Confirm list empty
+    assertTrue(bookListByTitle.isEmpty());
+  }
+  
+  public void testFindBooksByTitleMultipleBooksSameTitle() {
+    BookDAO testBookDAO = new BookDAO(mockedHelper);
+    
+    // Add four books 
+    testBookDAO.addBook("Charles Dickens", "Great Expectations", 
+                        "82.023 275 [2011]");
+    
+    testBookDAO.addBook("Harper Lee", "To Kill a Mockingbird", "813.54 TOKI");
+    
+    testBookDAO.addBook("Harper Lee", "Go Set a Watchman", "982.441 LEE");
+    
+    testBookDAO.addBook("Donald Duck", "Great Expectations", "124.41 DUCK");
+    
+    // Try to find 'Great Expectations' books
+    List<IBook> bookListByTitle = testBookDAO.findBooksByTitle("Great "
+                                                              + "Expectations");
+    // Confirm list contains both books
+    assertEquals(2, bookListByTitle.size());
+    
+    // Confirm the two books are the expected books
+    assertTrue(bookListByTitle.contains(mockedBook));     // Charles Dickens
+    assertTrue(bookListByTitle.contains(mockedBookFour)); // Donald Duck
+  }
   
   
   // ==========================================================================
   // Testing findBooksByAuthorTitle(String author, String title) method
   // ==========================================================================
+  
+  public void testFindBooksByAuthorTitleDefault() {
+    BookDAO testBookDAO = new BookDAO(mockedHelper);
+    
+    // Add four books 
+    testBookDAO.addBook("Charles Dickens", "Great Expectations", 
+                        "82.023 275 [2011]");
+    
+    testBookDAO.addBook("Harper Lee", "To Kill a Mockingbird", "813.54 TOKI");
+    
+    testBookDAO.addBook("Harper Lee", "Go Set a Watchman", "982.441 LEE");
+    
+    testBookDAO.addBook("Donald Duck", "Great Expectations", "124.41 DUCK");
+    
+    // Try to find 'Go Set a Watchman' book
+    List<IBook> bookListByTitleAndAuthor = testBookDAO.findBooksByAuthorTitle(
+                                          "Harper Lee", "Go Set a Watchman");
+    
+    // Confirm list contains only one element
+    assertEquals(1, bookListByTitleAndAuthor.size());
+    
+    // Confirm book inside list is the expected book
+    assertTrue(bookListByTitleAndAuthor.contains(mockedBookThree));
+    
+    // Try to find Donald Duck 'Great Expectations' book
+    bookListByTitleAndAuthor = testBookDAO.findBooksByAuthorTitle(
+                               "Donald Duck", "Great Expectations");
+    
+    // Confirm list contains only one element
+    assertEquals(1, bookListByTitleAndAuthor.size());
+    
+    // Confirm book inside list is the expected book
+    assertTrue(bookListByTitleAndAuthor.contains(mockedBookFour));
+    
+  }
+  
 }
