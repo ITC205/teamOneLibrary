@@ -952,37 +952,6 @@ public class TestLoan
   }
 
 
-    @Test
-      public void toStringWhenStateCurrent()
-      {
-        // Given stubs for book and member
-        IBook book = stubBook();
-        when(book.getAuthor()).thenReturn("Charles Dickens");
-        when(book.getTitle()).thenReturn("Great Expectations");
-
-        IMember borrower = stubMember();
-        when(borrower.getFirstName()).thenReturn("Neil");
-        when(borrower.getLastName()).thenReturn("Armstrong");
-
-        Loan loan = newLoan().withBook(book)
-                             .withBorrower(borrower)
-                             .withBorrowDate(20, 11, 2015)
-                             .withDueDate(31, 11, 2015)
-                             .withID(99)
-                             .makeCurrent().build();
-        // When
-        String loanString = loan.toString();
-
-        // Then expect loanString to match (note differences in Date months)
-        String expectedString = "Loan ID:  99\n" +
-                                "Author:   Charles Dickens\n" +
-                                "Title:    Great Expectations\n" +
-                                "Borrower: Neil Armstrong\n" +
-                                "Borrowed: 20/12/2015\n" +
-                                "Due Date: 31/12/2015";
-        assertThat(loanString).isEqualTo(expectedString);
-      }
-
 
   @Test
   public void toStringWhenStatePending()
@@ -1005,14 +974,52 @@ public class TestLoan
     String loanString = loan.toString();
 
     // Then expect loanString to match (note differences in Date months)
-    String expectedString = "Loan ID:  99\n" +
+    // and loan id is 0 (default)
+    String expectedString = "Loan ID:  0\n" +
+                            "Author:   Charles Dickens\n" +
+                            "Title:    Great Expectations\n" +
+                            "Borrower: Neil Armstrong\n" +
+                            "Borrowed: 20/12/2015\n" +
+                            "Due Date: 31/12/2015";
+    assertThat(loanString).isEqualTo(expectedString);
+  }
+
+
+
+    @Test
+      public void toStringWhenStateCurrent()
+      {
+        // Given stubs for book and member
+        IBook book = stubBook();
+        when(book.getAuthor()).thenReturn("Charles Dickens");
+        when(book.getTitle()).thenReturn("Great Expectations");
+
+        IMember borrower = stubMember();
+        when(borrower.getFirstName()).thenReturn("Neil");
+        when(borrower.getLastName()).thenReturn("Armstrong");
+
+        Loan loan = newLoan().withBook(book)
+                             .withBorrower(borrower)
+                             .withBorrowDate(20, 11, 2015)
+                             .withDueDate(31, 11, 2015)
+                             .withID(99)
+                             .makeCurrent().build();
+        // When
+        String loanString = loan.toString();
+
+        // Then expect loanString to match (note differences in Date months)
+        // including explicitly set id
+        String expectedString = "Loan ID:  99\n" +
                                 "Author:   Charles Dickens\n" +
                                 "Title:    Great Expectations\n" +
                                 "Borrower: Neil Armstrong\n" +
                                 "Borrowed: 20/12/2015\n" +
                                 "Due Date: 31/12/2015";
-    assertThat(loanString).isEqualTo(expectedString);
-  }
+        assertThat(loanString).isEqualTo(expectedString);
+      }
+
+
+
 
 
 }
