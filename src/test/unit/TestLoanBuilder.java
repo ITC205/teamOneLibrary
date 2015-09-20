@@ -10,6 +10,7 @@ import library.interfaces.entities.ELoanState;
 
 import library.entities.Loan;
 
+import static org.assertj.core.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -98,19 +99,28 @@ public class TestLoanBuilder
   // Primary methods
   //===========================================================================
 
+  /*
+   * Provides a new TestLoanBuilder instance that can then be customized
+   * through the use of the helper methods to set desired attributes of the
+   * Loan to be built. Usage example:
+   *   IBook book = newLoan().withBook(book).withBorrower(borrower).build()
+   */
   public static TestLoanBuilder newLoan()
   {
     return new TestLoanBuilder();
   }
 
+  
 
-
-  public Loan build()
+  /*
+   * Generates the Loan to be built. Usage example:
+   *   IBook book = newLoan().withBook(book).withBorrower(borrower).build()
+   */
+  public ILoan build()
   {
-    //TODO: check ok to return Loan rather that ILoan (or use reflection)
-    Loan loan = new Loan(book_, borrower_, borrowDate_, dueDate_, id_);
-    // TODO: check if need to remove setter & use reflection for state
-    loan.setState(state_);
+    ILoan loan = new Loan(book_, borrower_, borrowDate_, dueDate_, id_);
+    // use helper to set state of new Loan
+    setState(loan, state_);
     return loan;
   }
 
@@ -173,16 +183,48 @@ public class TestLoanBuilder
   }
 
 
+
   public TestLoanBuilder withBook(IBook book)
   {
     book_ = book;
     return this;
   }
 
+
+
   public TestLoanBuilder withBorrower(IMember borrower)
   {
     borrower_ = borrower;
     return this;
+  }
+
+
+
+  /*
+   * Uses Reflection API to directly set Loan's private state.
+   */
+  private void setState(ILoan loan, ELoanState newState) {
+
+    try {
+      Class<?> loanClass = loan.getClass();
+      java.lang.reflect.Field state = loanClass.getDeclaredField("state_");
+
+      // Enable direct modification of private field
+      if (!state.isAccessible()) {
+        state.setAccessible(true);
+      }
+
+      state.set(loan, newState);
+    }
+    catch (NoSuchFieldException exception) {
+      fail("NoSuchFieldException should not occur");
+    }
+    catch (IllegalAccessException exception) {
+      fail("IllegalAccessException should not occur");
+    }
+    catch (Exception exception) {
+      fail("Exception should not occur");
+    }
   }
 
 }
