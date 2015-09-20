@@ -845,8 +845,8 @@ public class TestLoan
   {
     // Given a current loan with due date 31st December
     ILoan loan = newLoan().withBorrowDate(20, 11, 2015)
-                         .withDueDate(31, 11, 2015)
-                         .makeCurrent().build();
+                          .withDueDate(31, 11, 2015)
+                          .makeCurrent().build();
 
     // When attempting to complete loan
     try {
@@ -866,8 +866,8 @@ public class TestLoan
   {
     // Given an overdue loan with due date 31st December
     ILoan loan = newLoan().withBorrowDate(20, 11, 2015)
-                         .withDueDate(31, 11, 2015)
-                         .makeOverDue().build();
+                          .withDueDate(31, 11, 2015)
+                          .makeOverDue().build();
 
     // When attempting to complete loan
     try {
@@ -887,8 +887,8 @@ public class TestLoan
   {
     // Given a complete loan
     ILoan loan = newLoan().withBorrowDate(20, 11, 2015)
-                         .withDueDate(31, 11, 2015)
-                         .makeComplete().build();
+                          .withDueDate(31, 11, 2015)
+                          .makeComplete().build();
 
     // When attempting to complete loan
     try {
@@ -913,10 +913,10 @@ public class TestLoan
 
     // as part of a pending loan
     ILoan loan = newLoan().withBook(mockBook)
-                         .withBorrower(mockBorrower)
-                         .withBorrowDate(20, 11, 2015)
-                         .withDueDate(31, 11, 2015)
-                         .makePending().build();
+                          .withBorrower(mockBorrower)
+                          .withBorrowDate(20, 11, 2015)
+                          .withDueDate(31, 11, 2015)
+                          .makePending().build();
     int id = 999;
     loan.commit(id);
 
@@ -935,10 +935,10 @@ public class TestLoan
 
     // as part of a pending loan
     ILoan loan = newLoan().withBook(mockBook)
-                         .withBorrower(mockBorrower)
-                         .withBorrowDate(20, 11, 2015)
-                         .withDueDate(31, 11, 2015)
-                         .makePending().build();
+                          .withBorrower(mockBorrower)
+                          .withBorrowDate(20, 11, 2015)
+                          .withDueDate(31, 11, 2015)
+                          .makePending().build();
     int id = 999;
     loan.commit(id);
 
@@ -957,10 +957,10 @@ public class TestLoan
 
     // as part of a pending loan
     ILoan loan = newLoan().withBook(mockBook)
-                         .withBorrower(mockBorrower)
-                         .withBorrowDate(20, 11, 2015)
-                         .withDueDate(31, 11, 2015)
-                         .makePending().build();
+                          .withBorrower(mockBorrower)
+                          .withBorrowDate(20, 11, 2015)
+                          .withDueDate(31, 11, 2015)
+                          .makePending().build();
     int id = 999;
     loan.commit(id);
 
@@ -983,10 +983,10 @@ public class TestLoan
     when(borrower.getLastName()).thenReturn("Armstrong");
 
     ILoan loan = newLoan().withBook(book)
-                         .withBorrower(borrower)
-                         .withBorrowDate(20, 11, 2015)
-                         .withDueDate(31, 11, 2015)
-                         .makePending().build();
+                          .withBorrower(borrower)
+                          .withBorrowDate(20, 11, 2015)
+                          .withDueDate(31, 11, 2015)
+                          .makePending().build();
     // When
     String loanString = loan.toString();
 
@@ -1016,11 +1016,11 @@ public class TestLoan
     when(borrower.getLastName()).thenReturn("Armstrong");
 
     ILoan loan = newLoan().withBook(book)
-                         .withBorrower(borrower)
-                         .withBorrowDate(20, 11, 2015)
-                         .withDueDate(31, 11, 2015)
-                         .withID(99)
-                         .makeCurrent().build();
+                          .withBorrower(borrower)
+                          .withBorrowDate(20, 11, 2015)
+                          .withDueDate(31, 11, 2015)
+                          .withID(99)
+                          .makeCurrent().build();
     // When
     String loanString = loan.toString();
 
