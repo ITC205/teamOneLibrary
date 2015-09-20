@@ -166,7 +166,16 @@ public class Loan
    */
   public void commit(int iD)
   {
-    
+    if (state_ == ELoanState.PENDING) {
+      state_ = ELoanState.CURRENT;
+      id_ = iD;
+      book_.borrow(this);
+      borrower_.addLoan(this);
+    }
+    else {
+      throw new IllegalArgumentException("Committing a Loan that is not " +
+                                         "Pending is invalid.");
+    }
   }
 
 
