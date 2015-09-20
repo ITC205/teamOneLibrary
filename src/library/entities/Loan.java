@@ -130,22 +130,7 @@ public class Loan
   {
     return id_;
   }
-
-
-
-
-
-
-  // TODO: remove and use reflection?
-  /**
-   * Returns the state of this loan.
-   * @return ELoanState The state (enum) of this Loan.
-   */
-  public ELoanState getState()
-  {
-    return state_;
-  }
-
+  
   //===========================================================================
   // Primary methods
   //===========================================================================
