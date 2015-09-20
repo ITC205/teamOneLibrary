@@ -738,13 +738,11 @@ public class TestLoan
 
 
 
-  // TODO : remove use of setter and use reflection
-  // TODO: return ILoan
   @Test
   public void completeWhenStateCurrentSetsStateToComplete()
   {
     // Given a new current loan with due date 31st December
-    Loan loan = newLoan().withBorrowDate(20,11,2015)
+    ILoan loan = newLoan().withBorrowDate(20,11,2015)
                           .withDueDate(31,11,2015)
                           .makeCurrent().build();
 
@@ -752,8 +750,9 @@ public class TestLoan
     loan.complete();
 
     // Then loan state should change to complete
+    // (have to use reflection to access private variable)
     boolean isLoanStateComplete =
-            loan.getState() == ELoanState.COMPLETE;
+            getPrivateState((Loan)loan) == ELoanState.COMPLETE;
     assertThat(isLoanStateComplete).isTrue();
   }
 
@@ -764,7 +763,7 @@ public class TestLoan
   public void completeWhenStateOverDueSetsStateToComplete()
   {
     // Given an overdue loan with due date 31st December
-    Loan loan = newLoan().withBorrowDate(20,11,2015)
+    ILoan loan = newLoan().withBorrowDate(20,11,2015)
                           .withDueDate(31,11,2015)
                           .makeOverDue().build();
 
@@ -772,8 +771,9 @@ public class TestLoan
     loan.complete();
 
     // Then loan state should change to complete
+    // (have to use reflection to access private variable)
     boolean isLoanStateComplete =
-            loan.getState() == ELoanState.COMPLETE;
+            getPrivateState((Loan)loan) == ELoanState.COMPLETE;
     assertThat(isLoanStateComplete).isTrue();
   }
 
@@ -820,14 +820,14 @@ public class TestLoan
   }
 
   // ==========================================================================
-  // Commit() testing - with stubs, mocks & TestLoanBuilder
+  // Commit() testing - with stubs, simple mocks & TestLoanBuilder
   // ==========================================================================
 
   @Test
   public void commitWhenStateCurrentThrows()
   {
     // Given a current loan with due date 31st December
-    Loan loan = newLoan().withBorrowDate(20, 11, 2015)
+    ILoan loan = newLoan().withBorrowDate(20, 11, 2015)
                          .withDueDate(31, 11, 2015)
                          .makeCurrent().build();
 
@@ -848,7 +848,7 @@ public class TestLoan
   public void commitWhenStateOverDueThrows()
   {
     // Given an overdue loan with due date 31st December
-    Loan loan = newLoan().withBorrowDate(20, 11, 2015)
+    ILoan loan = newLoan().withBorrowDate(20, 11, 2015)
                          .withDueDate(31, 11, 2015)
                          .makeOverDue().build();
 
@@ -869,7 +869,7 @@ public class TestLoan
   public void commitWhenStateCompleteThrows()
   {
     // Given a complete loan
-    Loan loan = newLoan().withBorrowDate(20, 11, 2015)
+    ILoan loan = newLoan().withBorrowDate(20, 11, 2015)
                          .withDueDate(31, 11, 2015)
                          .makeComplete().build();
 
@@ -895,7 +895,7 @@ public class TestLoan
     IMember mockBorrower = mock(IMember.class);
 
     // as part of a pending loan
-    Loan loan = newLoan().withBook(mockBook)
+    ILoan loan = newLoan().withBook(mockBook)
                          .withBorrower(mockBorrower)
                          .withBorrowDate(20, 11, 2015)
                          .withDueDate(31, 11, 2015)
@@ -917,7 +917,7 @@ public class TestLoan
     IMember mockBorrower = mock(IMember.class);
 
     // as part of a pending loan
-    Loan loan = newLoan().withBook(mockBook)
+    ILoan loan = newLoan().withBook(mockBook)
                          .withBorrower(mockBorrower)
                          .withBorrowDate(20, 11, 2015)
                          .withDueDate(31, 11, 2015)
@@ -939,7 +939,7 @@ public class TestLoan
     IMember mockBorrower = mock(IMember.class);
 
     // as part of a pending loan
-    Loan loan = newLoan().withBook(mockBook)
+    ILoan loan = newLoan().withBook(mockBook)
                          .withBorrower(mockBorrower)
                          .withBorrowDate(20, 11, 2015)
                          .withDueDate(31, 11, 2015)
@@ -965,7 +965,7 @@ public class TestLoan
     when(borrower.getFirstName()).thenReturn("Neil");
     when(borrower.getLastName()).thenReturn("Armstrong");
 
-    Loan loan = newLoan().withBook(book)
+    ILoan loan = newLoan().withBook(book)
                          .withBorrower(borrower)
                          .withBorrowDate(20, 11, 2015)
                          .withDueDate(31, 11, 2015)
@@ -998,7 +998,7 @@ public class TestLoan
         when(borrower.getFirstName()).thenReturn("Neil");
         when(borrower.getLastName()).thenReturn("Armstrong");
 
-        Loan loan = newLoan().withBook(book)
+        ILoan loan = newLoan().withBook(book)
                              .withBorrower(borrower)
                              .withBorrowDate(20, 11, 2015)
                              .withDueDate(31, 11, 2015)
@@ -1020,6 +1020,33 @@ public class TestLoan
 
 
 
+  /*
+   * Uses Reflection API to directly access Loan's private state.
+   */
+  private ELoanState getPrivateState(Loan loan) {
 
+    try {
+      Class<?> loanClass = loan.getClass();
+      java.lang.reflect.Field state = loanClass.getDeclaredField("state_");
+
+      // Enable direct modification of private field
+      if (!state.isAccessible()) {
+        state.setAccessible(true);
+      }
+
+      return (ELoanState)state.get(loan);
+    }
+
+    catch (NoSuchFieldException exception) {
+      fail("NoSuchFieldException should not occur");
+    }
+    catch (IllegalAccessException exception) {
+      fail("IllegalAccessException should not occur");
+    }
+    catch (Exception exception) {
+      fail("Exception should not occur");
+    }
+    return null;
+  }
 
 }
