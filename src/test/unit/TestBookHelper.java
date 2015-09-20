@@ -7,6 +7,9 @@ import library.interfaces.entities.IBook;
 /**
  * TestBookHelper class
  * 
+ * Isolated test class for the BookHelper class 
+ * Mock objects not necessary
+ * 
  * @author Josh Kent
  *
  */

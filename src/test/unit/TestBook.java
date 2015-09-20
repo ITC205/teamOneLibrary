@@ -11,6 +11,10 @@ import static org.mockito.Mockito.*;
 
 /**
  * TestBook class
+ * 
+ * Isolated test class for the Book class
+ * Mock objects not necessary
+ * 
  * @author Josh Kent
  *
  */

@@ -11,6 +11,10 @@ import java.util.List;
 
 /**
  * TestBookDAO class
+ * 
+ * Isolated test class for the BookDAO class (uses 
+ * mock IBook and IBookHelper objects where necessary)
+ * 
  * @author Josh Kent
  *
  */
