@@ -26,6 +26,7 @@ public class TestBookDAO extends TestCase
   private IBook mockedBookThree;
   private IBook mockedBookFour;
 
+  @Override
   protected void setUp() 
   {
     mockedHelper = mock(IBookHelper.class);
@@ -76,9 +77,14 @@ public class TestBookDAO extends TestCase
     .thenReturn(mockedBookFour);
   }
 
+  @Override
   protected void tearDown()
   {
     mockedHelper = null;
+    mockedBook = null;
+    mockedBookTwo = null;
+    mockedBookThree = null;
+    mockedBookFour = null;
   }
 
   // ==========================================================================
