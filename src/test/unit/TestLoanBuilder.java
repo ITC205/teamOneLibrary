@@ -152,7 +152,7 @@ public class TestLoanBuilder
   {
     ILoan loan = new Loan(book_, borrower_, borrowDate_, dueDate_, id_);
     // use helper to set state of new Loan
-    setState(loan, state_);
+    setPrivateState(loan, state_);
     return loan;
   }
 
@@ -253,7 +253,7 @@ public class TestLoanBuilder
   /*
    * Uses Reflection API to directly set Loan's private state.
    */
-  private void setState(ILoan loan, ELoanState newState) {
+  private void setPrivateState(ILoan loan, ELoanState newState) {
 
     try {
       Class<?> loanClass = loan.getClass();
