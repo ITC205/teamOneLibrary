@@ -19,6 +19,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import static test.unit.TestLoanBuilder.*;
+import static test.unit.TestLoanReflection.*;
 
 /**
  * Unit tests for Loan entity.
@@ -52,7 +53,7 @@ public class TestLoan
   }
 
   // ==========================================================================
-  // Constructor Testing - with stubs & helper (to check state)
+  // Constructor Testing - with stubs & helper (to check state via reflection)
   // ==========================================================================
 
   @Test
@@ -1070,39 +1071,6 @@ public class TestLoan
                             "Borrowed: 20/12/2015\n" +
                             "Due Date: 31/12/2015";
     assertThat(loanString).isEqualTo(expectedString);
-  }
-
-  // ==========================================================================
-  // Helper to check state - uses reflection
-  // ==========================================================================
-
-  /*
-   * Uses Reflection API to directly access Loan's private state.
-   */
-  private ELoanState getPrivateState(Loan loan)
-  {
-    try {
-      Class<?> loanClass = loan.getClass();
-      java.lang.reflect.Field state = loanClass.getDeclaredField("state_");
-
-      // Enable direct modification of private field
-      if (!state.isAccessible()) {
-        state.setAccessible(true);
-      }
-
-      return (ELoanState)state.get(loan);
-    }
-
-    catch (NoSuchFieldException exception) {
-      fail("NoSuchFieldException should not occur");
-    }
-    catch (IllegalAccessException exception) {
-      fail("IllegalAccessException should not occur");
-    }
-    catch (Exception exception) {
-      fail("Exception should not occur");
-    }
-    return null;
   }
   
 }
