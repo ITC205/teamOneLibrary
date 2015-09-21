@@ -1,6 +1,8 @@
 package test.integration;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import junit.framework.TestCase;
 import library.daos.BookDAO;
@@ -29,11 +31,13 @@ public class TestBookFamily extends TestCase
   private IBookHelper helper;
   private IBookDAO bookDAO;
   
+  // Deliberately contains one duplicate book
   private final static String[] AUTHORS = {"Harper Lee",
                                            "Harper Lee",
                                            "Charles Dickens",
                                            "Donald Duck",
                                            "Dan Brown",
+                                           "Matthew Reilly",
                                            "Matthew Reilly"};
   
   private static final String[] TITLES = {"To Kill a Mockingbird",
@@ -41,13 +45,15 @@ public class TestBookFamily extends TestCase
                                           "Great Expectations",
                                           "Great Expectations",
                                           "Angels and Demons",
-                                          "Hover Car Racer"};
+                                          "Hover Car Racer",
+                                          "Hover Car Racer"}; 
 
   private static final String[] CALL_NUMBERS = {"123.11 LEE",
                                                 "442.11 LEE",
                                                 "453.92 DIC",
                                                 "478.11 DUC",
                                                 "889.02 BRO",
+                                                "773.21 REI",
                                                 "773.21 REI"};
   
   
@@ -129,7 +135,7 @@ public class TestBookFamily extends TestCase
   public void testGetBookByIDDefault() {
     
     // Adds six test books to bookDAO (see String[] constant variables)
-    createTestBooks();
+    addTestBooks();
     
     // Fetch book with ID = 2
     IBook returnedBook = bookDAO.getBookByID(2);
@@ -144,10 +150,10 @@ public class TestBookFamily extends TestCase
   public void testGetBookByIDOutOfRangeID() {
     
     // Adds six test books to bookDAO (see String[] constant variables)
-    createTestBooks();
+    addTestBooks();
     
-    // Fetch book with ID = 7 (highest ID should be 6)
-    IBook returnedBook = bookDAO.getBookByID(7);
+    // Fetch book with ID = 8 (highest ID should be 7)
+    IBook returnedBook = bookDAO.getBookByID(8);
     
     // Confirm null is returned
     assertNull(returnedBook);
@@ -157,7 +163,7 @@ public class TestBookFamily extends TestCase
   public void testFindBooksByAuthorDefault() {
     
     // Adds six test books to bookDAO (see String[] constant variables)
-    createTestBooks();
+    addTestBooks();
     
     // Try to find Harper Lee books
     List<IBook> booksByAuthor = bookDAO.findBooksByAuthor("Harper Lee");
@@ -185,7 +191,7 @@ public class TestBookFamily extends TestCase
   public void testFindBooksByAuthorNoBooksByAuthor() {
     
     // Adds six test books to bookDAO (see String[] constant variables)
-    createTestBooks();
+    addTestBooks();
     
     // Try to find Dean Koontz books
     List<IBook> booksByAuthor = bookDAO.findBooksByAuthor("Dean Koontz");
@@ -206,7 +212,7 @@ public class TestBookFamily extends TestCase
   public void testFindBooksByTitleDefault() {
     
     // Adds six test books to bookDAO (see String[] constant variables)
-    createTestBooks();
+    addTestBooks();
     
     // Try to find Harper Lee books
     List<IBook> booksByTitle = bookDAO.findBooksByTitle("Great Expectations");
@@ -233,7 +239,7 @@ public class TestBookFamily extends TestCase
   public void testFindBooksByTitleNoBooksWithTitle() {
     
     // Adds six test books to bookDAO (see String[] constant variables)
-    createTestBooks();
+    addTestBooks();
     
     // Try to find Dean Koontz books
     List<IBook> booksByTitle = bookDAO.findBooksByTitle("Bone Season");
@@ -251,13 +257,53 @@ public class TestBookFamily extends TestCase
   }
   
   
+  public void testFindBooksByAuthorTitleDefault() {
+    
+   // Adds six test books to bookDAO (see String[] constant variables)
+   addTestBooks(); 
+   
+   // Search for the two 'Hover Car Racer' books
+   List<IBook> booksByAuthorAndTitle = bookDAO.findBooksByAuthorTitle(
+                                               "Matthew Reilly", 
+                                               "Hover Car Racer");
+   
+   // Confirm list contains both books
+   assertEquals(2, booksByAuthorAndTitle.size());
+   
+   // Create a set to hold each ID
+   Set<Integer> ids = new HashSet<Integer>();
+   
+   // Confirm book details as expected
+   for(IBook book : booksByAuthorAndTitle) {
+     if(book.getAuthor().equals("Matthew Reilly")) {
+       assertTrue(true);
+     }
+     else {
+       fail("Unexpected author"); 
+     }
+     
+     if(book.getTitle().equals("Hover Car Racer")) {
+       assertTrue(true);
+     }
+     else {
+       fail("Unexpected title");
+     }
+     ids.add(book.getID());
+   }
+   
+   // Confirm that every book is different book with a different ID (there 
+   // should not be actual duplicate books, even if they have the same author 
+   // and title
+   assertEquals(ids.size(), booksByAuthorAndTitle.size());
+  }
+  
   // ==========================================================================
   // Helper Methods
   // ==========================================================================
   
   
   
-  private void createTestBooks() {
+  private void addTestBooks() {
     
     for(int i = 0; i < AUTHORS.length; i++) {
       bookDAO.addBook(AUTHORS[i], TITLES[i], CALL_NUMBERS[i]);
