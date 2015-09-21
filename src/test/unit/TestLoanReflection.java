@@ -1,5 +1,7 @@
 package test.unit;
 
+import java.lang.reflect.Constructor;
+
 import library.interfaces.entities.ILoan;
 import library.interfaces.entities.ELoanState;
 
@@ -10,15 +12,11 @@ import library.daos.LoanHelper;
 import static org.assertj.core.api.Assertions.fail;
 
 /**
- *
+ * Provides static helper methods that use reflection to access and set private
+ * state of a given Loan, and to instantiate a LoanHelper.
  */
 public class TestLoanReflection
 {
-  //===========================================================================
-  // Variables
-  //===========================================================================
-
-
   //===========================================================================
   // Constructors
   //===========================================================================
@@ -32,7 +30,10 @@ public class TestLoanReflection
   //===========================================================================
 
   /*
-   * Uses Reflection API to directly access Loan's private state.
+   * Uses Reflection API to directly access Loan's private state and return
+   * the current state of the Loan.
+   * @param loan Loan The loan under test.
+   * @return ELoanState The current state of the Loan.
    */
   protected static ELoanState getPrivateState(Loan loan)
   {
@@ -63,10 +64,12 @@ public class TestLoanReflection
 
 
   /*
-  * Uses Reflection API to directly set Loan's private state.
-  */
-  protected static void setPrivateState(ILoan loan, ELoanState newState) {
-
+   * Uses Reflection API to directly set the Loan's private state.
+   * @param loan ILoan The loan under test.
+   * @param ELoanState The state to set on the Loan.
+   */
+  protected static void setPrivateState(ILoan loan, ELoanState newState)
+  {
     try {
       Class<?> loanClass = loan.getClass();
       java.lang.reflect.Field state = loanClass.getDeclaredField("state_");
@@ -92,15 +95,17 @@ public class TestLoanReflection
 
 
   /*
-  * Uses Reflection API to directly access LoanHelper's private constructor.
+  * Uses Reflection API to directly access LoanHelper's private constructor
+  * and return a new LoanHelper.
+  * @return LoanHelper.
   */
-  protected static library.daos.LoanHelper createLoanHelperWithPrivateConstructor()
+  protected static LoanHelper createLoanHelperWithPrivateConstructor()
   {
     try {
-      java.lang.reflect.Constructor<library.daos.LoanHelper> constructor =
-          library.daos.LoanHelper.class.getDeclaredConstructor();
+      java.lang.reflect.Constructor<LoanHelper> constructor =
+          LoanHelper.class.getDeclaredConstructor();
       constructor.setAccessible(true);
-      library.daos.LoanHelper loanHelper = constructor.newInstance();
+      LoanHelper loanHelper = constructor.newInstance();
       return loanHelper;
     }
 
