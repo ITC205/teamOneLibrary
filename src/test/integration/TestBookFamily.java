@@ -91,6 +91,7 @@ public class TestBookFamily extends TestCase
   }
   
   
+  
   public void testAddBook() {
     
     List<IBook> allBooks = bookDAO.listBooks();
@@ -132,6 +133,7 @@ public class TestBookFamily extends TestCase
   }
   
   
+  
   public void testGetBookByIDDefault() {
     
     // Adds six test books to bookDAO (see String[] constant variables)
@@ -147,6 +149,8 @@ public class TestBookFamily extends TestCase
     assertEquals(2, returnedBook.getID());    
   }
   
+  
+  
   public void testGetBookByIDOutOfRangeID() {
     
     // Adds six test books to bookDAO (see String[] constant variables)
@@ -158,6 +162,7 @@ public class TestBookFamily extends TestCase
     // Confirm null is returned
     assertNull(returnedBook);
   }
+  
   
   
   public void testFindBooksByAuthorDefault() {
@@ -188,6 +193,8 @@ public class TestBookFamily extends TestCase
     }
   }
   
+  
+  
   public void testFindBooksByAuthorNoBooksByAuthor() {
     
     // Adds six test books to bookDAO (see String[] constant variables)
@@ -200,6 +207,8 @@ public class TestBookFamily extends TestCase
     assertTrue(booksByAuthor.isEmpty());
   }
   
+  
+  
   public void testFindBooksByAuthorNoBooks() {
     
     // Try to find Dean Koontz books
@@ -208,6 +217,8 @@ public class TestBookFamily extends TestCase
     // Confirm list is empty (no books have been added)
     assertTrue(booksByAuthor.isEmpty());
   }
+  
+  
   
   public void testFindBooksByTitleDefault() {
     
@@ -236,6 +247,8 @@ public class TestBookFamily extends TestCase
     }
   }
   
+  
+  
   public void testFindBooksByTitleNoBooksWithTitle() {
     
     // Adds six test books to bookDAO (see String[] constant variables)
@@ -248,6 +261,8 @@ public class TestBookFamily extends TestCase
     assertTrue(booksByTitle.isEmpty());
   }
   
+  
+  
   public void testFindBooksByTitleNoBooks() {
     
     // Try to find 'Angels and Demons'
@@ -256,6 +271,7 @@ public class TestBookFamily extends TestCase
     // Confirm list is empty (no books have been added)
     assertTrue(booksByTitle.isEmpty());
   }
+  
   
   
   public void testFindBooksByAuthorTitleDefault() {
@@ -299,6 +315,7 @@ public class TestBookFamily extends TestCase
   }
   
   
+  
   public void testFindBooksByAuthorTitleNoBooksByAuthor() {
     
     // Adds six test books to bookDAO (see String[] constant variables)
@@ -312,6 +329,8 @@ public class TestBookFamily extends TestCase
     // Confirm no results (title matched but not author)
     assertTrue(booksByAuthorAndTitle.isEmpty());
   }
+  
+  
   
   public void testFindBooksByAuthorTitleNoBooksWithTitle() {
     
@@ -327,6 +346,8 @@ public class TestBookFamily extends TestCase
     assertTrue(booksByAuthorAndTitle.isEmpty());
   }
   
+  
+  
   public void testFindBooksByAuthorTitleNoBooks() {
     
     // Try to find 'To Kill a Mockingbird' book
@@ -336,6 +357,7 @@ public class TestBookFamily extends TestCase
     // No books should be found as no book were added to bookDAO 
     assertTrue(booksByAuthorAndTitle.isEmpty());
   }
+  
   
   
   // ==========================================================================

@@ -15,6 +15,12 @@ import library.interfaces.entities.IBook;
  */
 public class TestBookHelper extends TestCase
 {
+  // ==========================================================================
+  // Constructor
+  // ==========================================================================
+  
+  
+  
   public TestBookHelper(String methodName)
   {
     super(methodName);
@@ -35,7 +41,7 @@ public class TestBookHelper extends TestCase
     assertEquals(15, testBook.getID());
 
     testBook = helper.makeBook("Harper Lee", "To Kill a Mockingbird",
-            "813.54 TOKI", 338);
+                               "813.54 TOKI", 338);
 
     assertEquals("Harper Lee", testBook.getAuthor());
     assertEquals("To Kill a Mockingbird", testBook.getTitle());

@@ -13,13 +13,19 @@ import static org.mockito.Mockito.*;
  * TestBook class
  * 
  * Isolated test class for the Book class
- * Mock objects not necessary
+ * Mock loans used where necessary
  * 
  * @author Josh Kent
  *
  */
 public class TestBook extends TestCase
 {
+  // ==========================================================================
+  // Constructor
+  // ==========================================================================
+  
+  
+  
   public TestBook(String methodName)
   {
     super(methodName);

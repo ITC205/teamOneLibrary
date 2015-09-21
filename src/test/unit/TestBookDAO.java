@@ -12,20 +12,34 @@ import java.util.List;
 /**
  * TestBookDAO class
  * 
- * Isolated test class for the BookDAO class (uses 
- * mock IBook and IBookHelper objects where necessary)
+ * Isolated test class for the BookDAO class 
+ * Mock IBook and IBookHelper objects used where necessary
  * 
  * @author Josh Kent
  *
  */
 public class TestBookDAO extends TestCase
 {
+  // ==========================================================================
+  // Variables
+  // ==========================================================================
+  
+  
+  
   private IBookHelper mockedHelper;
   private IBook mockedBook;
   private IBook mockedBookTwo;
   private IBook mockedBookThree;
   private IBook mockedBookFour;
 
+  
+  
+  // ==========================================================================
+  // Per-test Set-Up and Tear Down
+  // ==========================================================================
+  
+  
+  
   @Override
   protected void setUp() 
   {
@@ -87,15 +101,21 @@ public class TestBookDAO extends TestCase
     mockedBookFour = null;
   }
 
+  
+  
   // ==========================================================================
   // Constructor Testing
   // ==========================================================================
 
+  
+  
   public void testConstructorDefault()
   {
     new BookDAO(mockedHelper);
 
   }
+  
+  
 
   public void testConstructorHelperNull() 
   {
@@ -108,10 +128,14 @@ public class TestBookDAO extends TestCase
     }
   }
 
+  
+  
   // ==========================================================================
   // Testing addBook(String author, String title, String callNumber) method
   // ==========================================================================
 
+  
+  
   public void testAddBookDefault() 
   {
     BookDAO testBookDAO = new BookDAO(mockedHelper);
@@ -122,6 +146,8 @@ public class TestBookDAO extends TestCase
     assertEquals(mockedBook, returnedBook);
   }
 
+  
+  
   public void testAddBookNullAuthor() 
   {
     BookDAO testBookDAO = new BookDAO(mockedHelper);
@@ -133,6 +159,8 @@ public class TestBookDAO extends TestCase
       assertTrue(true);
     }
   }
+  
+  
 
   public void testAddBookEmptyAuthor() 
   {
@@ -145,6 +173,8 @@ public class TestBookDAO extends TestCase
       assertTrue(true);
     }
   }
+  
+  
 
   public void testAddBookNullTitle() 
   {
@@ -158,6 +188,8 @@ public class TestBookDAO extends TestCase
     }
   }
 
+  
+  
   public void testAddBookEmptyTitle() 
   {
     BookDAO testBookDAO = new BookDAO(mockedHelper);
@@ -169,6 +201,8 @@ public class TestBookDAO extends TestCase
       assertTrue(true);
     }
   }
+  
+  
 
   public void testAddBookNullCallNumber() 
   {
@@ -182,6 +216,8 @@ public class TestBookDAO extends TestCase
     }
   }
 
+  
+  
   public void testAddBookEmptyCallNumber()
   {
     BookDAO testBookDAO = new BookDAO(mockedHelper);
@@ -193,11 +229,15 @@ public class TestBookDAO extends TestCase
       assertTrue(true);
     }
   }
+  
+  
 
   // ==========================================================================
   // Testing getBookByID(int bookID) method
   // ==========================================================================
 
+  
+  
   public void testGetBookDefault() 
   {
     BookDAO testBookDAO = new BookDAO(mockedHelper);
@@ -220,6 +260,8 @@ public class TestBookDAO extends TestCase
     assertEquals(2, returnedBook.getID());
   }
 
+  
+  
   public void testGetBookByIDNegativeId() 
   {
     BookDAO testBookDAO = new BookDAO(mockedHelper);
@@ -233,6 +275,8 @@ public class TestBookDAO extends TestCase
       assertTrue(true);
     }
   }
+  
+  
 
   public void testGetBookByIDZeroId()
   {
@@ -248,6 +292,8 @@ public class TestBookDAO extends TestCase
     }
   }
 
+  
+  
   public void testGetBookByIDNonExistentId()
   {
     BookDAO testBookDAO = new BookDAO(mockedHelper);
@@ -262,11 +308,15 @@ public class TestBookDAO extends TestCase
 
     assertNull(returnedBook);
   }
+  
+  
 
   // ==========================================================================
   // Testing listBooks() method
   // ==========================================================================
 
+  
+  
   public void testListBooksDefault() 
   {
     BookDAO testBookDAO = new BookDAO(mockedHelper);
@@ -293,9 +343,10 @@ public class TestBookDAO extends TestCase
 
     // Confirm second book
     assertEquals(mockedBookTwo, bookList.get(1));
-
   }
 
+  
+  
   public void testListBooksNoBooks() 
   {
     BookDAO testBookDAO = new BookDAO(mockedHelper);
@@ -306,6 +357,8 @@ public class TestBookDAO extends TestCase
     assertTrue(bookList.isEmpty());
   }
 
+  
+  
   public void testListBooksOneBook() 
   {
     BookDAO testBookDAO = new BookDAO(mockedHelper);
@@ -329,10 +382,14 @@ public class TestBookDAO extends TestCase
 
   }
 
+  
+  
   // ==========================================================================
   // Testing findBooksByAuthor(String author) method
   // ==========================================================================
 
+  
+  
   public void testFindBooksByAuthorDefault() 
   {
     BookDAO testBookDAO = new BookDAO(mockedHelper);
@@ -372,6 +429,8 @@ public class TestBookDAO extends TestCase
     assertEquals("Charles Dickens", book.getAuthor()); 
   }
 
+  
+  
   public void testFindBooksByAuthorNullAuthor() 
   {
     BookDAO testBookDAO = new BookDAO(mockedHelper);
@@ -385,6 +444,8 @@ public class TestBookDAO extends TestCase
     }
   }
 
+  
+  
   public void testFindBooksByAuthorEmptyAuthor()
   {
     BookDAO testBookDAO = new BookDAO(mockedHelper);
@@ -397,6 +458,8 @@ public class TestBookDAO extends TestCase
       assertTrue(true);
     }
   }
+  
+  
 
   public void testFindBooksByAuthorNonExistentAuthor() 
   {
@@ -414,6 +477,8 @@ public class TestBookDAO extends TestCase
     // Confirm list empty
     assertTrue(bookListByAuthor.isEmpty());
   }
+  
+  
 
   public void testFindBooksByAuthorNoBooks() 
   {
@@ -426,6 +491,8 @@ public class TestBookDAO extends TestCase
     assertTrue(bookListByAuthor.isEmpty());
   }
 
+  
+  
   public void testFindBooksByAuthorMulitpleBooksByAuthor()
   {
     BookDAO testBookDAO = new BookDAO(mockedHelper);
@@ -456,10 +523,14 @@ public class TestBookDAO extends TestCase
     assertEquals("Harper Lee", goSetBook.getAuthor());
   }
 
+  
+  
   // ==========================================================================
   // Testing findBooksByTitle() method
   // ==========================================================================
 
+  
+  
   public void testFindBooksByTitleDefault() 
   {
     BookDAO testBookDAO = new BookDAO(mockedHelper);
@@ -500,6 +571,8 @@ public class TestBookDAO extends TestCase
     assertEquals("Great Expectations", book.getTitle()); 
   }
 
+  
+  
   public void testFindBooksByTitleEmptyTitle() {
     BookDAO testBookDAO = new BookDAO(mockedHelper);
 
@@ -516,6 +589,8 @@ public class TestBookDAO extends TestCase
     }
   }
 
+  
+  
   public void testFindBooksByTitleNullTitle() {
     BookDAO testBookDAO = new BookDAO(mockedHelper);
 
@@ -532,6 +607,8 @@ public class TestBookDAO extends TestCase
     }
   }
 
+  
+  
   public void testFindBooksByTitleNonExistentTitle() {
     {
       BookDAO testBookDAO = new BookDAO(mockedHelper);
@@ -551,6 +628,8 @@ public class TestBookDAO extends TestCase
     }
   }
 
+  
+  
   public void testFindBooksByTitleNoBooks() {
     BookDAO testBookDAO = new BookDAO(mockedHelper);
 
@@ -562,6 +641,8 @@ public class TestBookDAO extends TestCase
     assertTrue(bookListByTitle.isEmpty());
   }
 
+  
+  
   public void testFindBooksByTitleMultipleBooksSameTitle() {
     BookDAO testBookDAO = new BookDAO(mockedHelper);
 
@@ -587,10 +668,13 @@ public class TestBookDAO extends TestCase
   }
 
 
+  
   // ==========================================================================
   // Testing findBooksByAuthorTitle(String author, String title) method
   // ==========================================================================
 
+  
+  
   public void testFindBooksByAuthorTitleDefault() {
     BookDAO testBookDAO = new BookDAO(mockedHelper);
 
@@ -625,6 +709,8 @@ public class TestBookDAO extends TestCase
     assertTrue(bookListByTitleAndAuthor.contains(mockedBookFour));
   }
 
+  
+  
   public void testFindBooksByAuthorTitleEmptyAuthor() {
     BookDAO testBookDAO = new BookDAO(mockedHelper);
 
@@ -636,6 +722,8 @@ public class TestBookDAO extends TestCase
       assertTrue(true);
     }
   }
+  
+  
 
   public void testFindBooksByAuthorTitleNullAuthor() {
     BookDAO testBookDAO = new BookDAO(mockedHelper);
@@ -648,6 +736,8 @@ public class TestBookDAO extends TestCase
       assertTrue(true);
     }
   }
+  
+  
 
   public void testFindBooksByAuthorTitleEmptyTitle() {
     BookDAO testBookDAO = new BookDAO(mockedHelper);
@@ -661,6 +751,8 @@ public class TestBookDAO extends TestCase
     }
   }
   
+  
+  
   public void testFindBooksByAuthorTitleNullTitle() {
     BookDAO testBookDAO = new BookDAO(mockedHelper);
     
@@ -672,6 +764,8 @@ public class TestBookDAO extends TestCase
       assertTrue(true);
     }
   }
+  
+  
   
   public void testFindBooksByAuthorTitleSingleMatchOnly() {
     BookDAO testBookDAO = new BookDAO(mockedHelper);
@@ -695,6 +789,8 @@ public class TestBookDAO extends TestCase
     assertTrue(booksByAuthorAndTitle.isEmpty());
   }
   
+  
+  
   public void testFindBooksByAuthorTitleNoBooks() {
     BookDAO testBookDAO = new BookDAO(mockedHelper);
     
@@ -705,4 +801,5 @@ public class TestBookDAO extends TestCase
     // Confirm no results
     assertTrue(booksByAuthorAndTitle.isEmpty());
   }
+  
 }
