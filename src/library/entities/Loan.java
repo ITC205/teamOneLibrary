@@ -1,14 +1,13 @@
 package library.entities;
 
 import java.util.Date;
+import java.util.Calendar;
+import java.text.SimpleDateFormat;
 
 import library.interfaces.entities.IBook;
 import library.interfaces.entities.IMember;
 import library.interfaces.entities.ILoan;
 import library.interfaces.entities.ELoanState;
-
-import java.util.Calendar;
-import java.text.SimpleDateFormat;
 
 /**
  * Loan instance is used to associate a borrower (Member) with the Book being
