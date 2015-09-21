@@ -9,7 +9,12 @@ public class TestMemberHelper extends TestCase
   MemberHelper helper = new MemberHelper();
 
 
-
+  /**
+  * The TestMemberHelper class implements unit testing
+  * on the MemberHelper class
+  *
+  * @author  Rebecca Callow
+  */
   public void testMakeMember()
   {
     IMember newMember = helper.makeMember("Jane", "Doe", "01234567", "jdoe@email.com", 1);

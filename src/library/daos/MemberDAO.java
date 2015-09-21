@@ -9,6 +9,14 @@ import library.interfaces.daos.IMemberDAO;
 import library.interfaces.daos.IMemberHelper;
 import library.interfaces.entities.IMember;
 
+
+/**
+* Instances of the MemberDAO class contain a
+* map of Member objects. This class provides 
+* methods to access and manipulate this map
+*
+* @author  Rebecca Callow
+*/
 public class MemberDAO 
   implements IMemberDAO
 {

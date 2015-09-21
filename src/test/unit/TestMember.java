@@ -1,11 +1,17 @@
 package test.unit;
 
-import junit.framework.*;
+import junit.framework.TestCase;
 import library.entities.Member;
 import library.interfaces.entities.*;
-
 import static org.mockito.Mockito.*;
 
+
+/**
+* The TestMember class implements unit testing
+* on methods contained within the Member class
+*
+* @author  Rebecca Callow
+*/
 public class TestMember extends TestCase
 {
   
@@ -33,6 +39,7 @@ public class TestMember extends TestCase
     assertEquals(validLastName, validMember.getLastName());
     assertEquals(validContactPhone, validMember.getContactPhone());
     assertEquals(validId, validMember.getId());
+    assertEquals(validMember.getState(), EMemberState.BORROWING_ALLOWED);
     
     try
     {
@@ -104,6 +111,7 @@ public class TestMember extends TestCase
     assertFalse(validMember.hasReachedFineLimit());
     validMember.addFine(20.0f);
     assertTrue(validMember.hasReachedFineLimit());
+    assertEquals(validMember.getState(), EMemberState.BORROWING_DISALLOWED);
   }
   
   
@@ -172,6 +180,7 @@ public class TestMember extends TestCase
       validMember.addLoan(mockLoan);
     }
     assertTrue(validMember.hasReachedLoanLimit());
+    assertEquals(validMember.getState(), EMemberState.BORROWING_DISALLOWED);
   }
   
   

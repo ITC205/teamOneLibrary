@@ -7,6 +7,13 @@ import library.interfaces.entities.EMemberState;
 import library.interfaces.entities.ILoan;
 import library.interfaces.entities.IMember;
 
+
+/**
+* Instances of the Member class are Members that
+* may borrow books from a library
+*
+* @author  Rebecca Callow
+*/
 public class Member 
   implements IMember
 {
@@ -87,6 +94,10 @@ public class Member
   {
     if (totalFines_ >= IMember.FINE_LIMIT)
     {
+      if (borrowingAllowed())
+      {
+        updateState();
+      }
       return true;
     }
     else
@@ -116,6 +127,10 @@ public class Member
   {
     if (loanList_.size() > IMember.LOAN_LIMIT)
     {
+      if (borrowingAllowed())
+      {
+        updateState();
+      }
       return true;
     }
     else
@@ -129,8 +144,11 @@ public class Member
   @Override
   public String toString()
   {
-    return this.firstName_ + this.lastName_ + this.contactPhone_ + 
-           this.emailAddress_ + this.id_;
+    return "First Name: " + this.firstName_ + 
+           " Last Name: " + this.lastName_ + 
+           " Contact Phone: " + this.contactPhone_ + 
+           " Email Address: " + this.emailAddress_ + 
+           " Member ID: " + this.id_;
   }
 
   
