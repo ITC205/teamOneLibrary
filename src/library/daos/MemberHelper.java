@@ -12,13 +12,14 @@ public class MemberHelper
     
   }
 
+  @Override
   public IMember makeMember (String firstName, 
                              String lastName, 
                              String contactPhone, 
                              String emailAddress, int id)
   {
-    IMember newMember = new Member(firstName, lastName, contactPhone, emailAddress, id);
-    return newMember;
+    
+    return new Member(firstName, lastName, contactPhone, emailAddress, id);
   }
 }
 

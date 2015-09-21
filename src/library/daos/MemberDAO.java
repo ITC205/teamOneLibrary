@@ -45,14 +45,11 @@ public class MemberDAO
 
   @Override
   public IMember addMember(String firstName, String lastName,
-      String contactPhone, String emailAddress)
+                           String contactPhone, String emailAddress)
   {
-    while(memberMap_.get(nextId_) != null)
-    {
-      nextId_ += 1;
-    }
-    IMember newMember = helper_.makeMember(firstName, lastName, contactPhone, emailAddress, getNextId());
-    memberMap_.put(getNextId(), newMember);
+    IMember newMember = helper_.makeMember(firstName, lastName, contactPhone, 
+                                           emailAddress, getNextId());
+    memberMap_.put(newMember.getId(), newMember);
     nextId_ += 1;
     return newMember;
   }

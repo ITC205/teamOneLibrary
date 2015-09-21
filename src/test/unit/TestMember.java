@@ -18,7 +18,7 @@ public class TestMember extends TestCase
   
   Member validMember = new Member(validFirstName, validLastName, validContactPhone, validEmailAddress, validId);
   
-  ILoan loan = mock(ILoan.class);
+  ILoan mockLoan = mock(ILoan.class);
   
   
   
@@ -145,13 +145,13 @@ public class TestMember extends TestCase
   
   public void testAddLoan()
   {
-    validMember.addLoan(loan);
+    validMember.addLoan(mockLoan);
     assertTrue(validMember.getLoans().size() > 0);
 
-    loan = null;
+    mockLoan = null;
     try
     {
-      validMember.addLoan(loan);
+      validMember.addLoan(mockLoan);
     }
     catch (Throwable ex)
     {
@@ -165,13 +165,20 @@ public class TestMember extends TestCase
   
   public void testHasReachedLoanLimit()
   {
-    validMember.addLoan(loan);
+    validMember.addLoan(mockLoan);
     assertFalse(validMember.hasReachedLoanLimit());
     for (int n = 1; n <= 5; n++)
     {
-      validMember.addLoan(loan);
+      validMember.addLoan(mockLoan);
     }
     assertTrue(validMember.hasReachedLoanLimit());
+  }
+  
+  
+  
+  public void testGetId()
+  {
+    assertEquals(validMember.getId(), 1);
   }
   
   

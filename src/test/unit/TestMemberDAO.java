@@ -32,12 +32,12 @@ public class TestMemberDAO extends TestCase
     when(mockValidMemberOne.getId()).thenReturn(1);
     when(mockHelper.makeMember("Joe", "Bloggs", "76543210", "jbloggs@myemail.com", 1)).thenReturn(mockValidMemberOne);
     
-    when(mockValidMemberTwo.getFirstName()).thenReturn("Joe");
+    when(mockValidMemberTwo.getFirstName()).thenReturn("Frank");
     when(mockValidMemberTwo.getLastName()).thenReturn("Black");
     when(mockValidMemberTwo.getContactPhone()).thenReturn("44332211");
-    when(mockValidMemberTwo.getEmailAddress()).thenReturn("jblack@myemail.com");
+    when(mockValidMemberTwo.getEmailAddress()).thenReturn("fblack@myemail.com");
     when(mockValidMemberTwo.getId()).thenReturn(2);
-    when(mockHelper.makeMember("Joe", "Black", "44332211", "jblack@myemail.com", 1)).thenReturn(mockValidMemberTwo);
+    when(mockHelper.makeMember("Frank", "Black", "44332211", "fblack@myemail.com", 1)).thenReturn(mockValidMemberTwo);
     
     when(mockValidMemberThree.getFirstName()).thenReturn("Sam");
     when(mockValidMemberThree.getLastName()).thenReturn("Smith");
@@ -91,10 +91,39 @@ public class TestMemberDAO extends TestCase
   public void testAddMember()
   {
     createMocks();
-    IMember validMember = mockHelper.makeMember("Joe", "Bloggs", "76543210", "jbloggs@myemail.com", 1);
+    IMember validMemberOne = mockHelper.makeMember("Joe", "Bloggs", "76543210", "jbloggs@myemail.com", 1);
     MemberDAO validMemberDAO = new MemberDAO(mockHelper);
-    IMember testMember = validMemberDAO.addMember("Joe", "Bloggs", "76543210", "jbloggs@myemail.com");
-    assertEquals(validMember.getFirstName(), testMember.getFirstName());
+    IMember testMemberOne = validMemberDAO.addMember("Joe", "Bloggs", "76543210", "jbloggs@myemail.com");
+    assertEquals(validMemberOne.getFirstName(), testMemberOne.getFirstName());
+    
+    IMember testMemberTwo = validMemberDAO.addMember("Frank", "Black", "44332211", "fblack@myemail.com");
+    IMember testMemberThree = validMemberDAO.addMember("Sam", "Smith", "11111111", "ssmith@email.com");
+    IMember testMemberFour = validMemberDAO.addMember("Julia", "Grey", "0412123123", "juliagrey@mail.com");
+
+  }
+  
+  
+  
+  public void testGetMemberByIdValid()
+  {
+    createMocks();
+    IMember validMemberOne = mockHelper.makeMember("Joe", "Bloggs", "76543210", "jbloggs@myemail.com", 1);
+    MemberDAO validMemberDAO = new MemberDAO(mockHelper);
+    IMember testMemberOne = validMemberDAO.addMember("Joe", "Bloggs", "76543210", "jbloggs@myemail.com");
+    IMember returnedMember = validMemberDAO.getMemberByID(1);
+    assertEquals(1, returnedMember.getId());
+  }
+  
+  
+  
+  public void testGetMemberByIdInvalid()
+  {
+    createMocks();
+    IMember validMemberOne = mockHelper.makeMember("Joe", "Bloggs", "76543210", "jbloggs@myemail.com", 1);
+    MemberDAO validMemberDAO = new MemberDAO(mockHelper);
+    IMember testMemberOne = validMemberDAO.addMember("Joe", "Bloggs", "76543210", "jbloggs@myemail.com");
+    IMember returnedMember = validMemberDAO.getMemberByID(20);
+    assertEquals(null, returnedMember);
   }
   
   
