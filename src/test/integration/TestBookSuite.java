@@ -1,9 +1,11 @@
-package test.unit;
+package test.integration;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import test.integration.TestBookFamily;
+import test.unit.TestBook;
+import test.unit.TestBookDAO;
+import test.unit.TestBookHelper;
 
 /**
  * TestBookSuite class
