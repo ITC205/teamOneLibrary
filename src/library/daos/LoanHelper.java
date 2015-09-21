@@ -36,6 +36,14 @@ public class LoanHelper
   // Primary methods
   //===========================================================================
 
+  /*
+   * Creates a new Loan instance, with a default ID.
+   * @param book IBook The Book associated with Loan.
+   * @param borrower IMember The Member associated with Loan.
+   * @param borrowDate Date The date the Loan was created.
+   * @param dueDate Date The date the loan is due.
+   * @return ILoan A new Loan instance, with the default ID.
+   */
   @Override
   public ILoan makeLoan(IBook book, IMember borrower,
                         Date borrowDate, Date dueDate)
