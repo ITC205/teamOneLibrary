@@ -29,7 +29,7 @@ public class MemberDAO
     }
     else
     {
-      throw new IllegalArgumentException("MemberDAO: MemberDAO(): helper is null" +                                   "helper cannot be null");
+      throw new IllegalArgumentException("MemberDAO: MemberDAO(): helper cannot be null");
     }
   }
 
@@ -73,7 +73,8 @@ public class MemberDAO
 
 
   @Override
-  public List<IMember> listMembers() {
+  public List<IMember> listMembers() 
+  {
     List<IMember> memberList = new ArrayList<IMember>(memberMap_.values());
     return memberList;
   }
@@ -84,7 +85,7 @@ public class MemberDAO
   public List<IMember> findMembersByLastName(String lastName) {
     ArrayList<IMember> membersByLastName = new ArrayList<>();
 
-    for (int n = 0; n < memberMap_.size(); n++)
+    for (int n = 1; n <= memberMap_.size(); n++)
     {
       if (memberMap_.get(n).getLastName().equals(lastName))
       {
@@ -100,7 +101,7 @@ public class MemberDAO
   public List<IMember> findMembersByEmailAddress(String emailAddress) {
     ArrayList<IMember> membersByEmailAddress = new ArrayList<>();
 
-    for (int n = 0; n < memberMap_.size(); n++)
+    for (int n = 1; n <= memberMap_.size(); n++)
     {
       if (memberMap_.get(n).getEmailAddress().equals(emailAddress))
       {
@@ -116,7 +117,7 @@ public class MemberDAO
   public List<IMember> findMembersByNames(String firstName, String lastName) {
     ArrayList<IMember> membersByNames = new ArrayList<>();
 
-    for (int n = 0; n < memberMap_.size(); n++)
+    for (int n = 1; n <= memberMap_.size(); n++)
     {
       if ((memberMap_.get(n).getFirstName().equals(firstName)) && (memberMap_.get(n).getLastName().equals(lastName)))
       {
