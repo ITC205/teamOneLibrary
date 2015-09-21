@@ -15,6 +15,8 @@ import library.entities.Loan;
 import static org.assertj.core.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 
+import static test.unit.TestLoanReflection.*;
+
 /**
  * Helper class for building customized Loans for test cases.
  * Provides a fluent API, and allows all parameters of Loan constructor - as
@@ -246,35 +248,6 @@ public class TestLoanBuilder
   {
     borrower_ = borrower;
     return this;
-  }
-
-
-
-  /*
-   * Uses Reflection API to directly set Loan's private state.
-   */
-  private void setPrivateState(ILoan loan, ELoanState newState) {
-
-    try {
-      Class<?> loanClass = loan.getClass();
-      java.lang.reflect.Field state = loanClass.getDeclaredField("state_");
-
-      // Enable direct modification of private field
-      if (!state.isAccessible()) {
-        state.setAccessible(true);
-      }
-
-      state.set(loan, newState);
-    }
-    catch (NoSuchFieldException exception) {
-      fail("NoSuchFieldException should not occur");
-    }
-    catch (IllegalAccessException exception) {
-      fail("IllegalAccessException should not occur");
-    }
-    catch (Exception exception) {
-      fail("Exception should not occur");
-    }
   }
 
 }
