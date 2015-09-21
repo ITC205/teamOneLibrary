@@ -12,7 +12,7 @@ import java.text.SimpleDateFormat;
 
 /**
  * Loan instance is used to associate a borrower (Member) with the Book being
- * borrowed, the dates of the loan and the state of the loan itself.
+ * borrowed, set the dates of the loan and manage the state of the loan itself.
  */
 public class Loan
   implements ILoan
@@ -53,7 +53,7 @@ public class Loan
     throwIfObjectNull("Borrower.", borrower);
     throwIfObjectNull("Borrowing Date.", borrowDate);
     throwIfObjectNull("Due Date.", dueDate);
-    throwIfReturnDateIsNotAfterBorrowDate(borrowDate, dueDate);
+    throwIfDueDateIsNotAfterBorrowDate(borrowDate, dueDate);
     throwIfIDLessThanZero(id);
 
     book_ = book;
@@ -76,8 +76,8 @@ public class Loan
 
 
 
-  private void throwIfReturnDateIsNotAfterBorrowDate(Date borrowDate,
-                                                     Date returnDate)
+  private void throwIfDueDateIsNotAfterBorrowDate(Date borrowDate,
+                                                  Date returnDate)
     throws IllegalArgumentException
   {
     if (!returnDate.after(borrowDate)) {
