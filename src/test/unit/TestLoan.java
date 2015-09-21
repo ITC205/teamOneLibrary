@@ -340,7 +340,8 @@ public class TestLoan
     }
   }
 
-  // TODO: need to check if borrow date later than return date - but same day?
+
+
 
   // TODO: confirm the validity of this test
   // this test was based on the specification, but it appears the spec is
@@ -561,7 +562,7 @@ public class TestLoan
     assertThat(isStateOverDue).isFalse();
   }
 
-  // TODO: check status of items after isOverdue() changes status etc
+
 
   @Test
   public void checkOverDueWhenLoanDueNextCenturyIsFalse()
@@ -745,7 +746,6 @@ public class TestLoan
 
 
 
-
   @Test
   public void checkOverDueWhenStatePendingThrows()
   {
@@ -768,10 +768,6 @@ public class TestLoan
     }
   }
 
-
-
-  // TODO: check if loan is always meant to be constructed with default loan
-  // period - in which case need to test that behavior
 
 
   @Test
@@ -920,7 +916,6 @@ public class TestLoan
   }
 
 
-  // TODO: public void commitWhenStatePendingSetsStateCurrent() : reflection
 
   @Test
   public void commitWhenStatePendingSetsId()
@@ -940,6 +935,30 @@ public class TestLoan
 
     // Then loan id should be set
     assertThat(loan.getID()).isEqualTo(999);
+  }
+
+
+
+  @Test
+  public void commitWhenStatePendingSetsStateCurrent()
+  {
+    // Given mock Book and Member
+    IBook mockBook = mock(IBook.class);
+    IMember mockBorrower = mock(IMember.class);
+
+    // as part of a pending loan
+    ILoan loan = newLoan().withBook(mockBook)
+                          .withBorrower(mockBorrower)
+                          .withBorrowDate(20, 11, 2015)
+                          .withDueDate(31, 11, 2015)
+                          .makePending().build();
+    int id = 999;
+    loan.commit(id);
+    // Then loan state should change to current
+    // (have to use reflection to access private variable)
+    boolean isLoanStateCurrent =
+        getPrivateState((Loan)loan) == ELoanState.CURRENT;
+    assertThat(isLoanStateCurrent).isTrue();
   }
 
 
@@ -1085,6 +1104,5 @@ public class TestLoan
     }
     return null;
   }
-
-
+  
 }
