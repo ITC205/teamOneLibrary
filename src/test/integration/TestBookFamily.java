@@ -249,6 +249,7 @@ public class TestBookFamily extends TestCase
   }
   
   public void testFindBooksByTitleNoBooks() {
+    
     // Try to find 'Angels and Demons'
     List<IBook> booksByTitle = bookDAO.findBooksByTitle("Angels and Demons");
     
@@ -296,6 +297,46 @@ public class TestBookFamily extends TestCase
    // and title
    assertEquals(ids.size(), booksByAuthorAndTitle.size());
   }
+  
+  
+  public void testFindBooksByAuthorTitleNoBooksByAuthor() {
+    
+    // Adds six test books to bookDAO (see String[] constant variables)
+    addTestBooks(); 
+    
+    // There are no books by Dean Koontz, but there are books called 'Hover Car
+    // Racer
+    List<IBook> booksByAuthorAndTitle = bookDAO.findBooksByAuthorTitle(
+                                        "Dean Koontz", "Hover Car Racer");
+    
+    // Confirm no results (title matched but not author)
+    assertTrue(booksByAuthorAndTitle.isEmpty());
+  }
+  
+  public void testFindBooksByAuthorTitleNoBooksWithTitle() {
+    
+    // Adds six test books to bookDAO (see String[] constant variables)
+    addTestBooks(); 
+    
+    // There are no books called 'The Power of One', but there are books called 
+    // by Harper Lee
+    List<IBook> booksByAuthorAndTitle = bookDAO.findBooksByAuthorTitle(
+                                        "Harper Lee", "The Power of One");
+    
+    // Confirm no results (author matched but not title)
+    assertTrue(booksByAuthorAndTitle.isEmpty());
+  }
+  
+  public void testFindBooksByAuthorTitleNoBooks() {
+    
+    // Try to find 'To Kill a Mockingbird' book
+    List<IBook> booksByAuthorAndTitle = bookDAO.findBooksByAuthorTitle(
+                                        "Harper Lee", "To Kill a Mockingbird");
+    
+    // No books should be found as no book were added to bookDAO 
+    assertTrue(booksByAuthorAndTitle.isEmpty());
+  }
+  
   
   // ==========================================================================
   // Helper Methods
