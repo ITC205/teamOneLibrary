@@ -1072,5 +1072,5 @@ public class TestLoan
                             "Due Date: 31/12/2015";
     assertThat(loanString).isEqualTo(expectedString);
   }
-  
+
 }
