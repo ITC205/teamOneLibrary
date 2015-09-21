@@ -16,6 +16,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import static test.unit.TestLoanBuilder.*;
+import static test.unit.TestLoanReflection.*;
 
 /**
  * Factory class for producing new
@@ -23,14 +24,8 @@ import static test.unit.TestLoanBuilder.*;
 public class TestLoanHelper
 {
   //===========================================================================
-  // Variables
-  //===========================================================================
-
-
-
-  //===========================================================================
   // Primary methods testing - with stubs & dateBuilder (from TestLoanBuilder)
-  //                         - and reflection for creating protected LoanHelper
+  // and reflection for creating protected LoanHelper & checking state
   //===========================================================================
 
   @Test
@@ -45,16 +40,59 @@ public class TestLoanHelper
 
     ILoan loan = helper.makeLoan(book, borrower, borrowDate, dueDate);
 
-    // Then loan should be instantiated
     assertThat(loan).isInstanceOf(ILoan.class);
   }
 
 
+
   @Test
-  public void makeLoanHasDefaultIdZero()
+  public void makeLoanWithNullBorrowerThrows()
   {
     LoanHelper helper = createLoanHelperWithPrivateConstructor();
 
+    IBook book = stubBook();
+    IMember borrower = null;
+    Date borrowDate = dateBuilder(20, 11, 2015);
+    Date dueDate = dateBuilder(31, 11, 2015);
+
+    // When create a loan
+    try {
+      ILoan loan = helper.makeLoan(book, borrower, borrowDate, dueDate);
+    }
+
+    // Then exception should be thrown
+    catch (Exception exception) {
+      assertThat(exception).isInstanceOf(IllegalArgumentException.class);
+    }
+  }
+
+
+
+  @Test
+  public void makeLoanWithDueDateBeforeBorrowDateThrows()
+  {
+    LoanHelper helper = createLoanHelperWithPrivateConstructor();
+
+    IBook book = stubBook();
+    IMember borrower = stubMember();
+    Date borrowDate = dateBuilder(20, 11, 2015);
+    Date dueDate = dateBuilder(19, 11, 2015);
+
+    try {
+      ILoan loan = helper.makeLoan(book, borrower, borrowDate, dueDate);
+    }
+
+    catch (Exception exception) {
+      assertThat(exception).isInstanceOf(IllegalArgumentException.class);
+    }
+  }
+
+
+
+  @Test
+  public void makeLoanSetsStatePending()
+  {
+    LoanHelper helper = createLoanHelperWithPrivateConstructor();
 
     IBook book = stubBook();
     IMember borrower = stubMember();
@@ -63,7 +101,23 @@ public class TestLoanHelper
 
     ILoan loan = helper.makeLoan(book, borrower, borrowDate, dueDate);
 
-    // Then loan should have default ID of zero
+    assertThat(loan.getID()).isEqualTo(0);
+  }
+
+
+
+  @Test
+  public void makeLoanSetsIdZero()
+  {
+    LoanHelper helper = createLoanHelperWithPrivateConstructor();
+
+    IBook book = stubBook();
+    IMember borrower = stubMember();
+    Date borrowDate = dateBuilder(20, 11, 2015);
+    Date dueDate = dateBuilder(31, 11, 2015);
+
+    ILoan loan = helper.makeLoan(book, borrower, borrowDate, dueDate);
+
     assertThat(loan.getID()).isEqualTo(0);
   }
 
@@ -112,30 +166,6 @@ public class TestLoanHelper
     IMember secondLoanBorrower = secondLoan.getBorrower();
 
     // assertThat().isNotEqualTo();
-  }
-
-
-
-  /*
-   * Uses Reflection API to directly access LoanHelper's private constructor.
-   */
-  private LoanHelper createLoanHelperWithPrivateConstructor()
-  {
-    try {
-      Constructor<LoanHelper> constructor =
-        LoanHelper.class.getDeclaredConstructor();
-      constructor.setAccessible(true);
-      LoanHelper loanHelper = constructor.newInstance();
-      return loanHelper;
-    }
-
-    catch (IllegalAccessException exception) {
-      fail("IllegalAccessException should not occur");
-    }
-    catch (Exception exception) {
-      fail("Exception should not occur");
-    }
-    return null;
   }
 
 }
