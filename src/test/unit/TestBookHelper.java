@@ -33,7 +33,7 @@ public class TestBookHelper extends TestCase
     BookHelper helper = new BookHelper();
 
     IBook testBook = helper.makeBook("Charles Dickens", "Great Expectations",
-            "82.023 275 [2011]", 15);
+                                     "82.023 275 [2011]", 15);
 
     assertEquals("Charles Dickens", testBook.getAuthor());
     assertEquals("Great Expectations", testBook.getTitle());
@@ -47,7 +47,6 @@ public class TestBookHelper extends TestCase
     assertEquals("To Kill a Mockingbird", testBook.getTitle());
     assertEquals("813.54 TOKI", testBook.getCallNumber());
     assertEquals(338, testBook.getID());
-
   }
   
 }
