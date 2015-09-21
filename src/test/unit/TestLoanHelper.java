@@ -30,12 +30,13 @@ public class TestLoanHelper
 
   //===========================================================================
   // Primary methods testing - with stubs & dateBuilder (from TestLoanBuilder)
+  //                         - and reflection for creating protected LoanHelper
   //===========================================================================
 
   @Test
   public void makeLoan()
   {
-    LoanHelper helper = new LoanHelper();
+    LoanHelper helper = createLoanHelperWithPrivateConstructor();
 
     IBook book = stubBook();
     IMember borrower = stubMember();
@@ -52,7 +53,8 @@ public class TestLoanHelper
   @Test
   public void makeLoanHasDefaultIdZero()
   {
-    LoanHelper helper = new LoanHelper();
+    LoanHelper helper = createLoanHelperWithPrivateConstructor();
+
 
     IBook book = stubBook();
     IMember borrower = stubMember();
@@ -67,9 +69,9 @@ public class TestLoanHelper
 
 
   @Test
-  public void makeLoanIsFactoryForCreatingUniqueLoans()
+  public void makeLoanFactoryCreatesUniqueLoans()
   {
-    LoanHelper helper = new LoanHelper();
+    LoanHelper helper = createLoanHelperWithPrivateConstructor();
 
     IBook book = stubBook();
     IMember borrower = stubMember();
@@ -87,16 +89,43 @@ public class TestLoanHelper
 
 
 
+  @Test
+  public void makeLoanFactoryCreatesLoansWithDifferentBooks()
+  {
+    LoanHelper helper = createLoanHelperWithPrivateConstructor();
 
-  // TODO: check if LoanHelper constructor to be private & thus need this method
+    IBook book = stubBook();
+    IMember firstBorrower = stubMember();
+    IMember secondBorrower = stubMember();
+    Date borrowDate = dateBuilder(20, 11, 2015);
+    Date dueDate = dateBuilder(31, 11, 2015);
+
+    ILoan firstLoan = helper.makeLoan(book, firstBorrower, borrowDate, dueDate);
+
+    ILoan secondLoan = helper.makeLoan(book, secondBorrower, borrowDate, dueDate);
+
+
+    // Then
+
+    // Then can return borrower and verify it is same Member as local instance
+    IMember loanBorrower = firstLoan.getBorrower();
+    IMember secondLoanBorrower = secondLoan.getBorrower();
+
+    // assertThat().isNotEqualTo();
+  }
+
+
+
   /*
    * Uses Reflection API to directly access LoanHelper's private constructor.
    */
   private LoanHelper createLoanHelperWithPrivateConstructor()
   {
     try {
-      Constructor constructor = LoanHelper.class.getConstructor(String.class);
-      LoanHelper loanHelper = (LoanHelper)constructor.newInstance();
+      Constructor<LoanHelper> constructor =
+        LoanHelper.class.getDeclaredConstructor();
+      constructor.setAccessible(true);
+      LoanHelper loanHelper = constructor.newInstance();
       return loanHelper;
     }
 
