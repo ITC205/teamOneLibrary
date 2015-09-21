@@ -106,6 +106,7 @@ public class Loan
    * Returns the borrower associated with this Loan.
    * @return IMember The borrower associated with this Loan.
    */
+  @Override
   public IMember getBorrower()
   {
     return borrower_;
@@ -117,6 +118,7 @@ public class Loan
    * Returns the Book associated with this Loan.
    * @return IBook The Book associated with this Loan.
    */
+  @Override
   public IBook getBook()
   {
     return book_;
@@ -128,6 +130,7 @@ public class Loan
    * Returns the this Loan's ID.
    * @return int The ID of this Loan.
    */
+  @Override
   public int getID()
   {
     return id_;
@@ -145,6 +148,7 @@ public class Loan
    * Throws a RuntimeException if this Loan's state is not (initially) PENDING.
    * @param iD int The ID of this Loan.
    */
+  @Override
   public void commit(int iD)
   {
     if (state_ == ELoanState.PENDING) {
@@ -165,6 +169,7 @@ public class Loan
    * Sets this Loan state to COMPLETE.
    * Throws a RuntimeException if this Loan's state is not CURRENT or OVERDUE.
    */
+  @Override
   public void complete()
   {
     boolean isLoanIsCurrentOrOverDue =
@@ -184,6 +189,7 @@ public class Loan
    * Returns true if this Loan state is OVERDUE.
    * @return boolean true if Loan state is OVERDUE.
    */
+  @Override
   public boolean isOverDue()
   {
     return (state_ == ELoanState.OVERDUE);
@@ -197,6 +203,7 @@ public class Loan
    * @param currentDate Date current date.
    * @return boolean true if current date is past due date of this Loan.
    */
+  @Override
   public boolean checkOverDue(Date currentDate)
   {
     boolean isLoanCurrentOrOverDue =
@@ -217,7 +224,6 @@ public class Loan
 
 
 
-  // TODO: are there getters for dates?
   @Override
   public String toString()
   {
@@ -265,7 +271,5 @@ public class Loan
 
     return calendar.getTime();
   }
-
-
 
 }
