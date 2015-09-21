@@ -7,6 +7,9 @@ import java.lang.reflect.Constructor;
 import library.interfaces.entities.IBook;
 import library.interfaces.entities.IMember;
 import library.interfaces.entities.ILoan;
+import library.interfaces.entities.ELoanState;
+
+import library.entities.Loan;
 
 import library.daos.LoanHelper;
 
@@ -19,13 +22,13 @@ import static test.unit.TestLoanBuilder.*;
 import static test.unit.TestLoanReflection.*;
 
 /**
- * Factory class for producing new
+ * Unit tests for Loan Helper.
  */
 public class TestLoanHelper
 {
   //===========================================================================
-  // Primary methods testing - with stubs & dateBuilder (from TestLoanBuilder)
-  // and reflection for creating protected LoanHelper & checking state
+  // Primary methods testing - using stubs & dateBuilder (from TestLoanBuilder)
+  // & helpers for creating a LoanHelper & check Loan state (TestLoanReflection)
   //===========================================================================
 
   @Test
@@ -100,8 +103,9 @@ public class TestLoanHelper
     Date dueDate = dateBuilder(31, 11, 2015);
 
     ILoan loan = helper.makeLoan(book, borrower, borrowDate, dueDate);
+    ELoanState currentState = getPrivateState((Loan)loan);
 
-    assertThat(loan.getID()).isEqualTo(0);
+    assertThat(currentState).isEqualTo(ELoanState.PENDING);
   }
 
 
@@ -142,7 +146,7 @@ public class TestLoanHelper
   }
 
 
-
+  // TODO: use mocks to create 2 instances to compare
   @Test
   public void makeLoanFactoryCreatesLoansWithDifferentBooks()
   {
@@ -159,7 +163,6 @@ public class TestLoanHelper
     ILoan secondLoan = helper.makeLoan(book, secondBorrower, borrowDate, dueDate);
 
 
-    // Then
 
     // Then can return borrower and verify it is same Member as local instance
     IMember loanBorrower = firstLoan.getBorrower();
