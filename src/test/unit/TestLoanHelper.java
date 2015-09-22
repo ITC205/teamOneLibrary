@@ -27,8 +27,8 @@ import static test.unit.TestLoanReflection.*;
 public class TestLoanHelper
 {
   //===========================================================================
-  // Primary methods testing - using stubs & dateBuilder (from TestLoanBuilder)
-  // & helpers for creating a LoanHelper & check Loan state (TestLoanReflection)
+  // Sole method testing - using TestLoanBuilder (for stubs, & dateBuilder)
+  // & TestLoanReflection (create LoanHelper and check private Loan properties)
   //===========================================================================
 
   @Test
@@ -44,6 +44,28 @@ public class TestLoanHelper
     ILoan loan = helper.makeLoan(book, borrower, borrowDate, dueDate);
 
     assertThat(loan).isInstanceOf(ILoan.class);
+  }
+
+
+
+  @Test
+  public void makeLoanSetsExpectedProperties()
+  {
+    LoanHelper helper = createLoanHelperWithPrivateConstructor();
+
+    IBook book = stubBook();
+    IMember borrower = stubMember();
+    Date borrowDate = dateBuilder(20, 11, 2015);
+    Date dueDate = dateBuilder(31, 11, 2015);
+
+    ILoan loan = helper.makeLoan(book, borrower, borrowDate, dueDate);
+    Date loanBorrowDate = getPrivateBorrowDate((Loan)loan);
+    Date loanDueDate = getPrivateDueDate((Loan)loan);
+
+    assertThat(loan.getBook()).isEqualTo(book);
+    assertThat(loan.getBorrower()).isEqualTo(borrower);
+    assertThat(loanBorrowDate).isEqualTo(borrowDate);
+    assertThat(loanDueDate).isEqualTo(dueDate);
   }
 
 
@@ -126,8 +148,9 @@ public class TestLoanHelper
   }
 
 
+
   @Test
-  public void makeLoanFactoryCreatesUniqueLoans()
+  public void makeLoanFactoryCreatesUniqueLoansWhenPropertiesSame()
   {
     LoanHelper helper = createLoanHelperWithPrivateConstructor();
 
@@ -146,29 +169,55 @@ public class TestLoanHelper
   }
 
 
-  // TODO: use mocks to create 2 instances to compare
+
   @Test
-  public void makeLoanFactoryCreatesLoansWithDifferentBooks()
+  public void makeLoanFactoryCanCreateLoansWithDifferentProperties()
   {
     LoanHelper helper = createLoanHelperWithPrivateConstructor();
 
-    IBook book = stubBook();
+    IBook firstBook = stubBook();
+    when(firstBook.getAuthor()).thenReturn("Charles Dickens");
+    when(firstBook.getTitle()).thenReturn("Great Expectations");
     IMember firstBorrower = stubMember();
+    when(firstBorrower.getFirstName()).thenReturn("Jimmy");
+    when(firstBorrower.getLastName()).thenReturn("Jones");
+    Date firstBorrowDate = dateBuilder(10, 11, 2015);
+    Date firstDueDate = dateBuilder(21, 11, 2015);
+
+    IBook secondBook = stubBook();
+    when(secondBook.getAuthor()).thenReturn("Jane Austen");
+    when(secondBook.getTitle()).thenReturn("Pride and Prejudice");
     IMember secondBorrower = stubMember();
-    Date borrowDate = dateBuilder(20, 11, 2015);
-    Date dueDate = dateBuilder(31, 11, 2015);
+    when(secondBorrower.getFirstName()).thenReturn("Sam");
+    when(secondBorrower.getLastName()).thenReturn("Smith");
+    Date secondBorrowDate = dateBuilder(20, 11, 2015);
+    Date secondDueDate = dateBuilder(31, 11, 2015);
 
-    ILoan firstLoan = helper.makeLoan(book, firstBorrower, borrowDate, dueDate);
+    ILoan firstLoan = helper.makeLoan(firstBook, firstBorrower,
+                                      firstBorrowDate, firstDueDate);
 
-    ILoan secondLoan = helper.makeLoan(book, secondBorrower, borrowDate, dueDate);
+    ILoan secondLoan = helper.makeLoan(secondBook, secondBorrower,
+                                       secondBorrowDate, secondDueDate);
 
-
-
-    // Then can return borrower and verify it is same Member as local instance
-    IMember loanBorrower = firstLoan.getBorrower();
+    IBook firstLoanBook = firstLoan.getBook();
+    IBook secondLoanBook = secondLoan.getBook();
+    IMember firstLoanBorrower = firstLoan.getBorrower();
     IMember secondLoanBorrower = secondLoan.getBorrower();
+    Date firstLoanBorrowDate = getPrivateBorrowDate((Loan)firstLoan);
+    Date secondLoanBorrowDate = getPrivateBorrowDate((Loan)secondLoan);
+    Date firstLoanDueDate = getPrivateDueDate((Loan)firstLoan);
+    Date secondLoanDueDate = getPrivateDueDate((Loan)secondLoan);
 
-    // assertThat().isNotEqualTo();
+    assertThat(firstLoanBook).isNotEqualTo(secondLoanBook);
+    assertThat(firstLoanBook.getAuthor())
+                            .isNotEqualTo(secondLoanBook.getAuthor());
+
+    assertThat(firstLoanBorrower).isNotEqualTo(secondLoanBorrower);
+    assertThat(firstLoanBorrower.getLastName())
+        .isNotEqualTo(secondLoanBorrower.getLastName());
+
+    assertThat(firstLoanBorrowDate).isNotEqualTo(secondLoanBorrowDate);
+    assertThat(firstLoanDueDate).isNotEqualTo(secondLoanDueDate);
   }
 
 }
