@@ -14,10 +14,25 @@ import library.interfaces.entities.IMember;
 public class MemberHelper
   implements IMemberHelper
 {
+  
+  // ==========================================================================
+  // Constructor
+  // ==========================================================================
+  
+  
+  
   public MemberHelper()
   {
     
   }
+  
+  
+  
+  // ==========================================================================
+  // Methods: Primary
+  // ==========================================================================
+  
+  
 
   @Override
   public IMember makeMember (String firstName, 
@@ -28,6 +43,7 @@ public class MemberHelper
     
     return new Member(firstName, lastName, contactPhone, emailAddress, id);
   }
+  
 }
 
 

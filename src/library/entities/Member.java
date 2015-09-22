@@ -17,6 +17,13 @@ import library.interfaces.entities.IMember;
 public class Member 
   implements IMember
 {
+  
+  // ==========================================================================
+  // Variables
+  // ==========================================================================
+  
+  
+  
   private String firstName_;
   private String lastName_;
   private String contactPhone_;
@@ -25,6 +32,13 @@ public class Member
   private ArrayList<ILoan> loanList_ = new ArrayList<>();
   private EMemberState memberState_ = EMemberState.BORROWING_ALLOWED;
   private float totalFines_ = 0.0f;
+  
+  
+  
+  // ==========================================================================
+  // Constructor
+  // ==========================================================================
+  
   
 
   public Member(String firstName, String lastName, String contactPhone,
@@ -48,15 +62,35 @@ public class Member
   
   
   
+  // ==========================================================================
+  // Methods: Primary
+  // ==========================================================================
+  
+  
+  
   public void addLoan(ILoan loan) throws IllegalArgumentException
   {
-    if ((loan != null) && (borrowingAllowed()))
+    if (borrowingAllowed())
     {
-      loanList_.add(loan);
+      if (hasReachedLoanLimit())
+      {
+        updateState();
+      }
+      else
+      {
+        if (loan != null)
+            {
+              loanList_.add(loan);
+            }
+        else
+        {
+          throw new IllegalArgumentException("Member: addLoan: Loan cannot be null");
+        }
+      }  
     }
-    else
+    if (!borrowingAllowed())
     {
-      throw new IllegalArgumentException("Loan is null or member state is BORROWING_DISALLOWED");
+      throw new IllegalArgumentException("Member: addLoan: Member state is BORROWING_DISALLOWED");
     }
   }
   
@@ -67,6 +101,10 @@ public class Member
     if (amount >= 0)
     {
       totalFines_ += amount;
+      if ((totalFines_ >= FINE_LIMIT) && (!borrowingAllowed()))
+          {
+        updateState();
+          }
     }
     else
     {
@@ -168,62 +206,6 @@ public class Member
   
   
   
-  public String getFirstName()
-  {
-    return firstName_;
-  }
-
-
-
-  public String getLastName()
-  {
-    return lastName_;
-  }
-
-
-
-  public String getContactPhone()
-  {
-    return contactPhone_;
-  }
-
-
-
-  public String getEmailAddress()
-  {
-    return emailAddress_;
-  }
-
-
-
-  public int getId()
-  {
-    return id_;
-  }
-  
-  
-  
-  public EMemberState getState()
-  {
-    return memberState_;
-  }
-  
-  
-  
-  public ArrayList<ILoan> getLoans()
-  {
-    return loanList_;
-  }
-  
-  
-  
-  public float getTotalFines()
-  {
-    return totalFines_;
-  }
-  
-  
-  
   private boolean borrowingAllowed()
   {
     if (memberState_ == EMemberState.BORROWING_ALLOWED)
@@ -279,4 +261,67 @@ public class Member
       memberState_ = EMemberState.BORROWING_ALLOWED;
     }
   }
+  
+  
+  
+  // ==========================================================================
+  // Methods: Getters and Setters
+  // ==========================================================================
+  
+  
+  
+  public String getFirstName()
+  {
+    return firstName_;
+  }
+
+
+
+  public String getLastName()
+  {
+    return lastName_;
+  }
+
+
+
+  public String getContactPhone()
+  {
+    return contactPhone_;
+  }
+
+
+
+  public String getEmailAddress()
+  {
+    return emailAddress_;
+  }
+
+
+
+  public int getId()
+  {
+    return id_;
+  }
+  
+  
+  
+  public EMemberState getState()
+  {
+    return memberState_;
+  }
+  
+  
+  
+  public ArrayList<ILoan> getLoans()
+  {
+    return loanList_;
+  }
+  
+  
+  
+  public float getTotalFines()
+  {
+    return totalFines_;
+  }
+  
 }

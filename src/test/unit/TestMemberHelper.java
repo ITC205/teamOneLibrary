@@ -1,20 +1,37 @@
 package test.unit;
 
 import junit.framework.*;
+
 import library.daos.MemberHelper;
 import library.interfaces.entities.IMember;
 
+
+/**
+* The TestMemberHelper class implements unit testing
+* on the MemberHelper class
+*
+* @author  Rebecca Callow
+*/
 public class TestMemberHelper extends TestCase
 {
+  
+  // ==========================================================================
+  // Variables
+  // ==========================================================================
+  
+  
+  
   MemberHelper helper = new MemberHelper();
 
 
-  /**
-  * The TestMemberHelper class implements unit testing
-  * on the MemberHelper class
-  *
-  * @author  Rebecca Callow
-  */
+
+  // ==========================================================================
+  // Methods: Tests
+  // ==========================================================================
+  
+  
+  
+  // Test that a valid Member object is returned when makeMember is called
   public void testMakeMember()
   {
     IMember newMember = helper.makeMember("Jane", "Doe", "01234567", "jdoe@email.com", 1);

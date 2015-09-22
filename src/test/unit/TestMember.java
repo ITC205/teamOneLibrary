@@ -15,6 +15,12 @@ import static org.mockito.Mockito.*;
 public class TestMember extends TestCase
 {
   
+  // ==========================================================================
+  // Variables
+  // ==========================================================================
+  
+  
+  
   String validFirstName = "TestFirstName";
   String validLastName = "TestLastName";
   String validContactPhone = "01234567";
@@ -28,6 +34,14 @@ public class TestMember extends TestCase
   
   
   
+  // ==========================================================================
+  // Methods: Tests
+  // ==========================================================================
+  
+  
+  
+  // Test that the Member constructor instantiates a valid object, or 
+  // returns the required exceptions
   public void testMember()
   {
     String nullFirstName = null;
@@ -77,6 +91,7 @@ public class TestMember extends TestCase
   
   
   
+  // Test that fines are added accurately
   public void testAddFine()
   {
     validMember.addFine(1.0f);
@@ -97,6 +112,7 @@ public class TestMember extends TestCase
   
   
   
+  // Test that hasFinesPayable returns true if there are outstanding fines
   public void testHasFinesPayable()
   {
     assertFalse(validMember.hasFinesPayable());
@@ -106,6 +122,8 @@ public class TestMember extends TestCase
   
   
   
+  // Test that hasReachedFineLimit returns true if the member has reached the
+  // maximum allowable outstanding fines
   public void testHasReachedFineLimit()
   {
     assertFalse(validMember.hasReachedFineLimit());
@@ -116,6 +134,8 @@ public class TestMember extends TestCase
   
   
   
+  // Test that paid fines are subtracted from the total of outstanding fines
+  // and that the payment cannot exceed the amount owing
   public void testPayFine()
   {
     validMember.addFine(15.0f);
@@ -151,6 +171,7 @@ public class TestMember extends TestCase
   
   
   
+  // Test that loan objects can be added to the list for a given member
   public void testAddLoan()
   {
     validMember.addLoan(mockLoan);
@@ -170,7 +191,8 @@ public class TestMember extends TestCase
 
   
   
-  
+  // Test that member state is updated to BORROWING_DISALLOWED 
+  // when the loan limit is reached
   public void testHasReachedLoanLimit()
   {
     validMember.addLoan(mockLoan);
@@ -185,6 +207,7 @@ public class TestMember extends TestCase
   
   
   
+  // Ensure that a member's ID is returned correctly
   public void testGetId()
   {
     assertEquals(validMember.getId(), 1);
