@@ -138,6 +138,40 @@ public class LoanReflection
 
 
   /*
+  * Uses Reflection API to directly access & return the LoanDAO's private
+  * nextID_ field.
+  * @param loanDao LoanDAO The LoanDAO being used.
+  * @return int The next ID to be used for committing loans.
+  */
+  protected static int getPrivateNextId(LoanDAO loanDao)
+  {
+    try {
+      Class<?> loanDaoClass = loanDao.getClass();
+      Field nextID = loanDaoClass.getDeclaredField("nextID_");
+
+      // Enable direct modification of private field
+      if (!nextID.isAccessible()) {
+        nextID.setAccessible(true);
+      }
+
+      return (int)nextID.get(loanDao);
+    }
+
+    catch (NoSuchFieldException exception) {
+      fail("NoSuchFieldException should not occur");
+    }
+    catch (IllegalAccessException exception) {
+      fail("IllegalAccessException should not occur");
+    }
+    catch (Exception exception) {
+      fail("Exception should not occur");
+    }
+    return 0;
+  }
+
+
+
+  /*
    * Uses Reflection API to directly set the Loan's private state.
    * @param loan ILoan The loan under test.
    * @param ELoanState The state to set on the Loan.
@@ -155,6 +189,40 @@ public class LoanReflection
 
       state.set(loan, newState);
     }
+    catch (NoSuchFieldException exception) {
+      fail("NoSuchFieldException should not occur");
+    }
+    catch (IllegalAccessException exception) {
+      fail("IllegalAccessException should not occur");
+    }
+    catch (Exception exception) {
+      fail("Exception should not occur");
+    }
+  }
+
+
+
+  /*
+  * Uses Reflection API to directly set the LoanDAO's private
+  * nextID_ field.
+  * @param loanDao LoanDAO The LoanDAO being used.
+  * @param newNextID int The desired next ID.
+  * @return int The next ID to be used for committing loans.
+  */
+  protected static void setPrivateNextId(LoanDAO loanDao, int newNextID)
+  {
+    try {
+      Class<?> loanDaoClass = loanDao.getClass();
+      Field nextID = loanDaoClass.getDeclaredField("nextID_");
+
+      // Enable direct modification of private field
+      if (!nextID.isAccessible()) {
+        nextID.setAccessible(true);
+      }
+
+      nextID.set(loanDao, newNextID);
+    }
+
     catch (NoSuchFieldException exception) {
       fail("NoSuchFieldException should not occur");
     }
