@@ -329,18 +329,51 @@ public class TestLoanDAO
   }
 
 
-  // TODO: tests loans stored - need list first
+
   @Test
-  public void commitLoanStoresLoan()
+  public void commitLoanAddsLoanToLoanMap()
   {
     ILoanHelper loanHelper = stubHelper();
     LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
 
+    List<ILoan> allLoans = dao.listLoans();
+    assertThat(allLoans).isEmpty();
+
     setUpFirstLoan();
     dao.commitLoan(firstLoan_);
 
-    // assertThat().has(loan);
+    allLoans = dao.listLoans();
+    assertThat(allLoans).isNotEmpty();
+    assertThat(allLoans).hasSize(1);
+    assertThat(allLoans).containsExactly(firstLoan_);
   }
+
+
+
+  @Test
+  public void commitLoansAddsMultipleLoansToLoanMap()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+
+    List<ILoan> allLoans = dao.listLoans();
+    assertThat(allLoans).isEmpty();
+
+    setUpFirstLoan();
+    dao.commitLoan(firstLoan_);
+    setUpSecondLoan();
+    dao.commitLoan(secondLoan_);
+    dao.commitLoan(firstLoan_); // again
+
+    allLoans = dao.listLoans();
+    assertThat(allLoans).isNotEmpty();
+    assertThat(allLoans).hasSize(3);
+    assertThat(allLoans).contains(firstLoan_, secondLoan_);
+    assertThat(allLoans).containsSequence(firstLoan_, secondLoan_, firstLoan_);
+  }
+
+
+
 
 
 
