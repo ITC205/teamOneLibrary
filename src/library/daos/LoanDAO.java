@@ -1,5 +1,12 @@
 package library.daos;
 
+import library.interfaces.entities.IBook;
+import library.interfaces.entities.IMember;
+import library.interfaces.entities.ILoan;
+import library.interfaces.entities.ELoanState;
+
+import library.interfaces.daos.ILoanHelper;
+
 /**
  * Manages all Loans within the system, from creation of pending loans to
  * committing loans to 'persistence' and provides methods for finding
@@ -12,27 +19,22 @@ public class LoanDAO
   // Variables
   //===========================================================================
 
-  private static LoanDAO instance_ = null;
+  private ILoanHelper loanHelper_;
 
   //===========================================================================
   // Constructors
   //===========================================================================
 
-  private LoanDAO()
+  protected LoanDAO(ILoanHelper loanHelper)
   {
+    loanHelper_ = loanHelper;
   }
 
   //===========================================================================
   // Primary methods
   //===========================================================================
 
-  public static LoanDAO getInstance()
-  {
-    if (instance_ == null) {
-      instance_ = new LoanDAO();
-    }
-    return instance_;
-  }
+
 
   //===========================================================================
   // Helper methods
