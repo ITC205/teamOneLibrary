@@ -15,7 +15,7 @@ import library.entities.Loan;
 import static org.assertj.core.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 
-import static test.unit.TestLoanReflection.*;
+import static test.unit.LoanReflection.*;
 
 /**
  * Helper class for building customized Loans for test cases.
@@ -23,7 +23,7 @@ import static test.unit.TestLoanReflection.*;
  * well as private state to be passed in.
  *  - e.g.: IBook book = newLoan().withBook(book).withBorrower(borrower).build()
  */
-public class TestLoanBuilder
+public class LoanBuilder
 {
   //===========================================================================
   // Variables
@@ -124,7 +124,7 @@ public class TestLoanBuilder
   // Constructors
   //===========================================================================
 
-  private TestLoanBuilder()
+  private LoanBuilder()
   {
     //
   }
@@ -139,9 +139,9 @@ public class TestLoanBuilder
    * Loan to be built. Usage example:
    *   IBook book = newLoan().withBook(book).withBorrower(borrower).build()
    */
-  public static TestLoanBuilder newLoan()
+  public static LoanBuilder newLoan()
   {
-    return new TestLoanBuilder();
+    return new LoanBuilder();
   }
 
 
@@ -162,7 +162,7 @@ public class TestLoanBuilder
   // Helper methods
   //===========================================================================
 
-  public TestLoanBuilder withID(int id)
+  public LoanBuilder withID(int id)
   {
     id_ = id;
     return this;
@@ -170,7 +170,7 @@ public class TestLoanBuilder
 
 
 
-  public TestLoanBuilder withBorrowDate(int day, int month, int year)
+  public LoanBuilder withBorrowDate(int day, int month, int year)
   {
     borrowDate_ = dateBuilder(day, month, year);
     return this;
@@ -178,7 +178,7 @@ public class TestLoanBuilder
 
 
 
-  public TestLoanBuilder withBorrowDate(int day, int month, int year,
+  public LoanBuilder withBorrowDate(int day, int month, int year,
                                        int hour, int min, int sec)
   {
     borrowDate_ = dateBuilder(day, month, year, hour, min, sec);
@@ -187,7 +187,7 @@ public class TestLoanBuilder
 
 
 
-  public TestLoanBuilder withDueDate(int day, int month, int year)
+  public LoanBuilder withDueDate(int day, int month, int year)
   {
     dueDate_ = dateBuilder(day, month, year);
     return this;
@@ -195,7 +195,7 @@ public class TestLoanBuilder
 
 
 
-  public TestLoanBuilder withDueDate(int day, int month, int year,
+  public LoanBuilder withDueDate(int day, int month, int year,
                                      int hour, int min, int sec)
   {
     dueDate_ = dateBuilder(day, month, year, hour, min, sec);
@@ -204,7 +204,7 @@ public class TestLoanBuilder
 
 
 
-  public TestLoanBuilder makeOverDue()
+  public LoanBuilder makeOverDue()
   {
     state_ = ELoanState.OVERDUE;
     return this;
@@ -212,7 +212,7 @@ public class TestLoanBuilder
 
 
 
-  public TestLoanBuilder makeCurrent()
+  public LoanBuilder makeCurrent()
   {
     state_ = ELoanState.CURRENT;
     return this;
@@ -220,7 +220,7 @@ public class TestLoanBuilder
 
 
 
-  public TestLoanBuilder makeComplete()
+  public LoanBuilder makeComplete()
   {
     state_ = ELoanState.COMPLETE;
     return this;
@@ -228,7 +228,7 @@ public class TestLoanBuilder
 
 
 
-  public TestLoanBuilder makePending()
+  public LoanBuilder makePending()
   {
     state_ = ELoanState.PENDING;
     return this;
@@ -236,7 +236,7 @@ public class TestLoanBuilder
 
 
 
-  public TestLoanBuilder withBook(IBook book)
+  public LoanBuilder withBook(IBook book)
   {
     book_ = book;
     return this;
@@ -244,7 +244,7 @@ public class TestLoanBuilder
 
 
 
-  public TestLoanBuilder withBorrower(IMember borrower)
+  public LoanBuilder withBorrower(IMember borrower)
   {
     borrower_ = borrower;
     return this;

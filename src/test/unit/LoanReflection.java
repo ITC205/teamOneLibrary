@@ -18,13 +18,13 @@ import static org.assertj.core.api.Assertions.fail;
  * Provides static helper methods that use reflection to access and set private
  * state of a given Loan, and to instantiate a LoanHelper.
  */
-public class TestLoanReflection
+public class LoanReflection
 {
   //===========================================================================
   // Constructors
   //===========================================================================
 
-  private TestLoanReflection()
+  private LoanReflection()
   {
   }
 

@@ -2,8 +2,6 @@ package test.unit;
 
 import java.util.Date;
 
-import java.lang.reflect.Constructor;
-
 import library.interfaces.entities.IBook;
 import library.interfaces.entities.IMember;
 import library.interfaces.entities.ILoan;
@@ -18,8 +16,8 @@ import org.junit.Test;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import static test.unit.TestLoanBuilder.*;
-import static test.unit.TestLoanReflection.*;
+import static test.unit.LoanBuilder.*;
+import static test.unit.LoanReflection.*;
 
 /**
  * Unit tests for Loan Helper.
@@ -27,8 +25,8 @@ import static test.unit.TestLoanReflection.*;
 public class TestLoanHelper
 {
   //===========================================================================
-  // Sole method testing - using TestLoanBuilder (for stubs, & dateBuilder)
-  // & TestLoanReflection (create LoanHelper and check private Loan properties)
+  // Sole method testing - using LoanBuilder (for stubs, & dateBuilder)
+  // & LoanReflection (to create LoanHelper and check private Loan properties)
   //===========================================================================
 
   @Test

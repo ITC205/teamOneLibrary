@@ -1,7 +1,6 @@
 package test.unit;
 
 import java.text.ParseException;
-import java.util.Calendar;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 
@@ -18,8 +17,8 @@ import org.junit.Ignore;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import static test.unit.TestLoanBuilder.*;
-import static test.unit.TestLoanReflection.*;
+import static test.unit.LoanBuilder.*;
+import static test.unit.LoanReflection.*;
 
 /**
  * Unit tests for Loan entity.
@@ -53,7 +52,7 @@ public class TestLoan
   }
 
   // ==========================================================================
-  // Constructor Testing - with stubs & helper (to check state via reflection)
+  // Constructor Testing - with stubs & LoanReflection (to check state)
   // ==========================================================================
 
   @Test
@@ -523,7 +522,7 @@ public class TestLoan
   }
 
   // ==========================================================================
-  // Primary methods testing - with stubs, TestLoanBuilder (for generating
+  // Primary methods testing - with stubs, LoanBuilder (for generating
   // custom Loans) & dateBuilder (for simpler date creation)
   // ==========================================================================
 
@@ -853,7 +852,7 @@ public class TestLoan
   }
 
   // ==========================================================================
-  // Commit() testing - with stubs, simple mocks & TestLoanBuilder
+  // Commit() testing - with stubs, simple mocks & LoanBuilder
   // ==========================================================================
 
   @Test
