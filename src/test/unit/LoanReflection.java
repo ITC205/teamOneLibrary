@@ -4,6 +4,7 @@ import java.util.Date;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 
 import library.interfaces.entities.ILoan;
 import library.interfaces.entities.ELoanState;
@@ -172,7 +173,7 @@ public class LoanReflection
   * and return a new LoanHelper.
   * @return LoanHelper.
   */
-  protected static LoanHelper createLoanHelperWithPrivateConstructor()
+  protected static LoanHelper createLoanHelperWithProtectedConstructor()
   {
     try {
       Constructor<LoanHelper> constructor =
@@ -199,7 +200,8 @@ public class LoanReflection
 * @return LoanHelper.
 */
   protected static LoanDAO
-    createLoanDaoWithPrivateConstructor(ILoanHelper loanHelper)
+    createLoanDaoWithProtectedConstructor(ILoanHelper loanHelper)
+      throws IllegalArgumentException
   {
     try {
       Constructor<LoanDAO> constructor =
@@ -212,8 +214,15 @@ public class LoanReflection
     catch (IllegalAccessException exception) {
       fail("IllegalAccessException should not occur");
     }
-    catch (Exception exception) {
-      fail("Exception should not occur");
+    catch (NoSuchMethodException exception) {
+      fail("NoSuchMethodException should not occur");
+    }
+    catch (InstantiationException exception) {
+      fail("InstantiationException should not occur");
+    }
+    catch (java.lang.reflect.InvocationTargetException exception) {
+      throw new IllegalArgumentException("Null parameter passed in " +
+                                         "constructor");
     }
     return null;
   }
