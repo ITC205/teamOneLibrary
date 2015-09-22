@@ -7,8 +7,6 @@ import library.interfaces.entities.IMember;
 import library.interfaces.entities.ILoan;
 import library.interfaces.daos.ILoanHelper;
 
-import library.entities.Loan;
-
 import library.daos.LoanDAO;
 
 import org.junit.Test;
@@ -24,20 +22,20 @@ import static test.unit.LoanReflection.*;
  */
 public class TestLoanDAO
 {
-  private ILoan firstLoan = stubLoan();
-  private ILoan secondLoan = stubLoan();
-  private ILoan thirdLoan = stubLoan();
-  private ILoan fourthLoan = stubLoan();
-  private ILoan fifthLoan = stubLoan();
+  private ILoan firstLoan_ = stubLoan();
+  private ILoan secondLoan_ = stubLoan();
+  private ILoan thirdLoan_ = stubLoan();
+  private ILoan fourthLoan_ = stubLoan();
+  private ILoan fifthLoan_ = stubLoan();
 
-  private IMember jim = stubMember();
-  private IMember sam = stubMember();
-  private IMember jill = stubMember();
+  private IMember jim_ = stubMember();
+  private IMember sam_ = stubMember();
+  private IMember jill_ = stubMember();
 
-  private IBook greatExpectations = stubBook();
-  private IBook prideAndPrejudice = stubBook();
-  private IBook fightClub = stubBook();
-  private IBook fearAndLoathingInLasVegas = stubBook();
+  private IBook greatExpectations_ = stubBook();
+  private IBook prideAndPrejudice_ = stubBook();
+  private IBook fightClub_ = stubBook();
+  private IBook fearAndLoathingInLasVegas_ = stubBook();
 
   private Date Jan10 = dateBuilder(10, 0, 2014);
   private Date Jan24 = dateBuilder(24, 0, 2014);
@@ -48,27 +46,42 @@ public class TestLoanDAO
 
 
 
-  public void setUpFiveLoans()
+  public void setUpFirstLoan()
   {
-    when(firstLoan.getBook()).thenReturn(greatExpectations);
-    when(firstLoan.getBorrower()).thenReturn(jim);
-    when(firstLoan.getID()).thenReturn(101);
+    when(firstLoan_.getBook()).thenReturn(greatExpectations_);
+    when(firstLoan_.getBorrower()).thenReturn(jim_);
+    when(firstLoan_.getID()).thenReturn(101);
+    when(greatExpectations_.getTitle()).thenReturn("Great Expectations");
+  }
 
-    when(secondLoan.getBook()).thenReturn(prideAndPrejudice);
-    when(secondLoan.getBorrower()).thenReturn(sam);
-    when(secondLoan.getID()).thenReturn(102);
-
-    when(thirdLoan.getBook()).thenReturn(greatExpectations);
-    when(thirdLoan.getBorrower()).thenReturn(jill);
-    when(thirdLoan.getID()).thenReturn(103);
-
-    when(fourthLoan.getBook()).thenReturn(fightClub);
-    when(fourthLoan.getBorrower()).thenReturn(jim);
-    when(fourthLoan.getID()).thenReturn(104);
-
-    when(fifthLoan.getBook()).thenReturn(fearAndLoathingInLasVegas);
-    when(fifthLoan.getBorrower()).thenReturn(jill);
-    when(fifthLoan.getID()).thenReturn(105);
+  public void setUpSecondLoan()
+  {
+    when(secondLoan_.getBook()).thenReturn(prideAndPrejudice_);
+    when(secondLoan_.getBorrower()).thenReturn(sam_);
+    when(secondLoan_.getID()).thenReturn(102);
+    when(prideAndPrejudice_.getTitle()).thenReturn("Pride and Prejudice");
+  }
+  public void setUpThirdLoan()
+  {
+    when(thirdLoan_.getBook()).thenReturn(greatExpectations_);
+    when(thirdLoan_.getBorrower()).thenReturn(jill_);
+    when(thirdLoan_.getID()).thenReturn(103);
+    when(greatExpectations_.getTitle()).thenReturn("Great Expectations");
+  }
+  public void setUpFourthLoan()
+  {
+    when(fourthLoan_.getBook()).thenReturn(fightClub_);
+    when(fourthLoan_.getBorrower()).thenReturn(jim_);
+    when(fourthLoan_.getID()).thenReturn(104);
+    when(fightClub_.getTitle()).thenReturn("Fight Club");
+  }
+  public void setUpFifthLoan()
+  {
+    when(fifthLoan_.getBook()).thenReturn(fearAndLoathingInLasVegas_);
+    when(fifthLoan_.getBorrower()).thenReturn(jill_);
+    when(fifthLoan_.getID()).thenReturn(105);
+    when(fearAndLoathingInLasVegas_.getTitle()).thenReturn("Fear and Loathing " +
+                                                              "in Las Vegas");
   }
 
 
@@ -116,24 +129,24 @@ public class TestLoanDAO
     ILoanHelper loanHelper = mockHelper();
     LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
 
-    ILoan loan = dao.createLoan(greatExpectations, jim);
+    ILoan loan = dao.createLoan(greatExpectations_, jim_);
 
-    verify(loanHelper).makeLoan(greatExpectations, jim, today, due);
+    verify(loanHelper).makeLoan(greatExpectations_, jim_, today, due);
   }
 
 
 
   @Test
-  public void createLoanReturnsILoan()
+  public void createLoanReturnsILoanFromHelper()
   {
     Date today = ignoreTime(new Date());
     Date due = calculateDueDate(today);
     ILoanHelper loanHelper = stubHelper();
-    when(loanHelper.makeLoan(greatExpectations, jim, today, due))
-        .thenReturn(firstLoan);
+    when(loanHelper.makeLoan(greatExpectations_, jim_, today, due))
+        .thenReturn(firstLoan_);
     LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
 
-    ILoan loan = dao.createLoan(greatExpectations, jim);
+    ILoan loan = dao.createLoan(greatExpectations_, jim_);
 
     assertThat(loan).isInstanceOf(ILoan.class);
   }
@@ -146,14 +159,138 @@ public class TestLoanDAO
     Date today = ignoreTime(new Date());
     Date due = calculateDueDate(today);
     ILoanHelper loanHelper = stubHelper();
-    when(loanHelper.makeLoan(greatExpectations, jim, today, due))
-        .thenReturn(firstLoan);
+    when(loanHelper.makeLoan(greatExpectations_, jim_, today, due))
+        .thenReturn(firstLoan_);
     LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
 
-    ILoan loan = dao.createLoan(greatExpectations, jim);
+    ILoan loan = dao.createLoan(greatExpectations_, jim_);
 
-    assertThat(loan).isSameAs(firstLoan);
+    assertThat(loan).isSameAs(firstLoan_);
   }
+
+
+  @Test
+  public void createLoanWithNullBookThrows()
+  {
+    Date today = ignoreTime(new Date());
+    Date due = calculateDueDate(today);
+    ILoanHelper loanHelper = stubHelper();
+    when(loanHelper.makeLoan(null, jim_, today, due))
+                   .thenThrow(new IllegalArgumentException());
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+
+    try {
+      ILoan loan = dao.createLoan(greatExpectations_, jim_);
+    }
+    catch (Exception exception) {
+      assertThat(exception).isInstanceOf(IllegalArgumentException.class);
+    }
+  }
+
+
+
+  @Test
+  public void createLoanWithNullBorrowerThrows()
+  {
+    Date today = ignoreTime(new Date());
+    Date due = calculateDueDate(today);
+    ILoanHelper loanHelper = stubHelper();
+    when(loanHelper.makeLoan(greatExpectations_, null, today, due))
+        .thenThrow(new IllegalArgumentException());
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+
+    try {
+      ILoan loan = dao.createLoan(greatExpectations_, jim_);
+    }
+    catch (Exception exception) {
+      assertThat(exception).isInstanceOf(IllegalArgumentException.class);
+    }
+  }
+
+
+
+  @Test
+  public void setUpLoansHelperWorksCorrectly()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+
+    setUpFirstLoan();
+    dao.commitLoan(firstLoan_);
+    setUpSecondLoan();
+    dao.commitLoan(secondLoan_);
+
+    assertThat(firstLoan_.getBook()).isSameAs(greatExpectations_);
+    assertThat(secondLoan_.getBook()).isSameAs(prideAndPrejudice_);
+    assertThat(firstLoan_.getBook()).isNotSameAs(secondLoan_.getBook());
+  }
+
+
+
+  @Test
+  public void commitLoanCallsLoanCommitCorrectly()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    ILoan loan = mockLoan();
+
+    dao.commitLoan(loan);
+
+    // works because new LoanDAO has nextID set to 1 intially
+    verify(loan).commit(1);
+  }
+
+
+
+  @Test
+  public void commitLoanCallsLoanCommitWithCorrectId()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    ILoan loan = mockLoan();
+
+    // using reflection to set private nextID
+    setPrivateNextId(dao, 999);
+    dao.commitLoan(loan);
+
+    verify(loan).commit(999);
+  }
+
+
+
+  @Test
+  public void commitLoanCallsLoanCommitWithCorrectIdInSequence()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+
+    setUpFirstLoan();
+    dao.commitLoan(firstLoan_);
+    setUpSecondLoan();
+    dao.commitLoan(secondLoan_);
+    setUpThirdLoan();
+    dao.commitLoan(thirdLoan_);
+
+    verify(firstLoan_).commit(1);
+    verify(secondLoan_).commit(2);
+    verify(thirdLoan_).commit(3);
+  }
+
+  
+
+  @Test
+  public void commitLoanStoresLoan()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+
+    setUpFirstLoan();
+    dao.commitLoan(firstLoan_);
+
+    // assertThat().has(loan);
+  }
+
+
 
 
 
