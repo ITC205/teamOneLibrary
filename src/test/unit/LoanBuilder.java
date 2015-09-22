@@ -10,6 +10,8 @@ import library.interfaces.entities.IMember;
 import library.interfaces.entities.ILoan;
 import library.interfaces.entities.ELoanState;
 
+import library.interfaces.daos.ILoanHelper;
+
 import library.entities.Loan;
 
 import static org.assertj.core.api.Assertions.fail;
@@ -69,6 +71,30 @@ public class LoanBuilder
   public static IMember stubMember()
   {
     return mock(IMember.class);
+  }
+
+
+
+  /**
+   * Create stub LoanHelper with Mockito. Simply provides an explicitly named
+   * method to show that stubs are being used (not mocks or other fakes/doubles)
+   * @return stub LoanHelper.
+   */
+  public static ILoanHelper stubHelper()
+  {
+    return mock(ILoanHelper.class);
+  }
+
+
+
+  /**
+   * Create stub Loan with Mockito. Simply provides an explicitly named
+   * method to show that stubs are being used (not mocks or other fakes/doubles)
+   * @return stub Loan.
+   */
+  public static ILoan stubLoan()
+  {
+    return mock(ILoan.class);
   }
 
 
