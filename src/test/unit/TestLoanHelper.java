@@ -32,7 +32,7 @@ public class TestLoanHelper
   @Test
   public void makeLoan()
   {
-    LoanHelper helper = createLoanHelperWithPrivateConstructor();
+    LoanHelper helper = createLoanHelperWithProtectedConstructor();
 
     IBook book = stubBook();
     IMember borrower = stubMember();
@@ -49,7 +49,7 @@ public class TestLoanHelper
   @Test
   public void makeLoanSetsExpectedProperties()
   {
-    LoanHelper helper = createLoanHelperWithPrivateConstructor();
+    LoanHelper helper = createLoanHelperWithProtectedConstructor();
 
     IBook book = stubBook();
     IMember borrower = stubMember();
@@ -71,7 +71,7 @@ public class TestLoanHelper
   @Test
   public void makeLoanWithNullBorrowerThrows()
   {
-    LoanHelper helper = createLoanHelperWithPrivateConstructor();
+    LoanHelper helper = createLoanHelperWithProtectedConstructor();
 
     IBook book = stubBook();
     IMember borrower = null;
@@ -94,7 +94,7 @@ public class TestLoanHelper
   @Test
   public void makeLoanWithDueDateBeforeBorrowDateThrows()
   {
-    LoanHelper helper = createLoanHelperWithPrivateConstructor();
+    LoanHelper helper = createLoanHelperWithProtectedConstructor();
 
     IBook book = stubBook();
     IMember borrower = stubMember();
@@ -115,7 +115,7 @@ public class TestLoanHelper
   @Test
   public void makeLoanSetsStatePending()
   {
-    LoanHelper helper = createLoanHelperWithPrivateConstructor();
+    LoanHelper helper = createLoanHelperWithProtectedConstructor();
 
     IBook book = stubBook();
     IMember borrower = stubMember();
@@ -133,7 +133,7 @@ public class TestLoanHelper
   @Test
   public void makeLoanSetsIdZero()
   {
-    LoanHelper helper = createLoanHelperWithPrivateConstructor();
+    LoanHelper helper = createLoanHelperWithProtectedConstructor();
 
     IBook book = stubBook();
     IMember borrower = stubMember();
@@ -150,7 +150,7 @@ public class TestLoanHelper
   @Test
   public void makeLoanFactoryCreatesUniqueLoansWhenPropertiesSame()
   {
-    LoanHelper helper = createLoanHelperWithPrivateConstructor();
+    LoanHelper helper = createLoanHelperWithProtectedConstructor();
 
     IBook book = stubBook();
     IMember borrower = stubMember();
@@ -171,7 +171,7 @@ public class TestLoanHelper
   @Test
   public void makeLoanFactoryCanCreateLoansWithDifferentProperties()
   {
-    LoanHelper helper = createLoanHelperWithPrivateConstructor();
+    LoanHelper helper = createLoanHelperWithProtectedConstructor();
 
     IBook firstBook = stubBook();
     when(firstBook.getAuthor()).thenReturn("Charles Dickens");
