@@ -113,10 +113,27 @@ public class LoanDAO
    */
   public List<ILoan> listLoans()
   {
-    Map loans = (Map)loanMap_;
-    List allLoans = new ArrayList(loans.values());
-    return allLoans;
+    return new ArrayList<ILoan>(loanMap_.values());
   }
+
+
+  /*
+   * Returns the loan in the committed loan collection identified by id, or
+   * null if loan not found.
+   * @param id int The id of the Loan to return.
+   * @return ILoan The loan in the committed loan collection with the given id,
+   * or null if a loan with that id does not exist.
+   */
+  public ILoan getLoanByID(int id)
+  {
+    if (loanMap_.containsKey(id)) {
+      return loanMap_.get(id);
+    }
+    else {
+      return null;
+    }
+  }
+
 
 
 
