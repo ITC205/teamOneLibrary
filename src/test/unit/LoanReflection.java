@@ -8,9 +8,13 @@ import java.lang.reflect.Field;
 import library.interfaces.entities.ILoan;
 import library.interfaces.entities.ELoanState;
 
+import library.interfaces.daos.ILoanHelper;
+
+
 import library.entities.Loan;
 
 import library.daos.LoanHelper;
+import library.daos.LoanDAO;
 
 import static org.assertj.core.api.Assertions.fail;
 
@@ -171,11 +175,38 @@ public class LoanReflection
   protected static LoanHelper createLoanHelperWithPrivateConstructor()
   {
     try {
-      java.lang.reflect.Constructor<LoanHelper> constructor =
+      Constructor<LoanHelper> constructor =
           LoanHelper.class.getDeclaredConstructor();
       constructor.setAccessible(true);
       LoanHelper loanHelper = constructor.newInstance();
       return loanHelper;
+    }
+
+    catch (IllegalAccessException exception) {
+      fail("IllegalAccessException should not occur");
+    }
+    catch (Exception exception) {
+      fail("Exception should not occur");
+    }
+    return null;
+  }
+
+
+
+  /*
+* Uses Reflection API to directly access LoanHelper's private constructor
+* and return a new LoanHelper.
+* @return LoanHelper.
+*/
+  protected static LoanDAO
+    createLoanDaoWithPrivateConstructor(ILoanHelper loanHelper)
+  {
+    try {
+      Constructor<LoanDAO> constructor =
+          LoanDAO.class.getDeclaredConstructor(ILoanHelper.class);
+      constructor.setAccessible(true);
+      LoanDAO loanDao = constructor.newInstance(loanHelper);
+      return loanDao;
     }
 
     catch (IllegalAccessException exception) {
