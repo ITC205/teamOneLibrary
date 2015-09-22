@@ -24,11 +24,11 @@ import static test.unit.LoanReflection.*;
  */
 public class TestLoanDAO
 {
-  private ILoan firstLoan;
-  private ILoan secondLoan;
-  private ILoan thirdLoan;
-  private ILoan fourthLoan;
-  private ILoan fifthLoan;
+  private ILoan firstLoan = stubLoan();
+  private ILoan secondLoan = stubLoan();
+  private ILoan thirdLoan = stubLoan();
+  private ILoan fourthLoan = stubLoan();
+  private ILoan fifthLoan = stubLoan();
 
   private IMember jim = stubMember();
   private IMember sam = stubMember();
@@ -47,11 +47,30 @@ public class TestLoanDAO
   private Date Jul09 = dateBuilder(9, 6, 2014);
 
 
-  @org.junit.Before
-  public void setUp()
+
+  public void setUpFiveLoans()
   {
-    // when(firstLoan)
+    when(firstLoan.getBook()).thenReturn(greatExpectations);
+    when(firstLoan.getBorrower()).thenReturn(jim);
+    when(firstLoan.getID()).thenReturn(101);
+
+    when(secondLoan.getBook()).thenReturn(prideAndPrejudice);
+    when(secondLoan.getBorrower()).thenReturn(sam);
+    when(secondLoan.getID()).thenReturn(102);
+
+    when(thirdLoan.getBook()).thenReturn(greatExpectations);
+    when(thirdLoan.getBorrower()).thenReturn(jill);
+    when(thirdLoan.getID()).thenReturn(103);
+
+    when(fourthLoan.getBook()).thenReturn(fightClub);
+    when(fourthLoan.getBorrower()).thenReturn(jim);
+    when(fourthLoan.getID()).thenReturn(104);
+
+    when(fifthLoan.getBook()).thenReturn(fearAndLoathingInLasVegas);
+    when(fifthLoan.getBorrower()).thenReturn(jill);
+    when(fifthLoan.getID()).thenReturn(105);
   }
+
 
 
   //===========================================================================
@@ -85,25 +104,59 @@ public class TestLoanDAO
   }
 
   //===========================================================================
-  // Primary methods
+  // Test createLoan -  - with LoanBuilder (for stubs & mocks) &
+  // LoanReflection (to create new LoanDAOs)
   //===========================================================================
 
   @Test
   public void createLoanCallsLoanHelper()
   {
-    ILoanHelper loanHelper = stubHelper();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
     Date today = ignoreTime(new Date());
     Date due = calculateDueDate(today);
+    ILoanHelper loanHelper = mockHelper();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
 
-    dao.createLoan(greatExpectations, jim);
+    ILoan loan = dao.createLoan(greatExpectations, jim);
 
     verify(loanHelper).makeLoan(greatExpectations, jim, today, due);
   }
 
 
 
-  
+  @Test
+  public void createLoanReturnsILoan()
+  {
+    Date today = ignoreTime(new Date());
+    Date due = calculateDueDate(today);
+    ILoanHelper loanHelper = stubHelper();
+    when(loanHelper.makeLoan(greatExpectations, jim, today, due))
+        .thenReturn(firstLoan);
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+
+    ILoan loan = dao.createLoan(greatExpectations, jim);
+
+    assertThat(loan).isInstanceOf(ILoan.class);
+  }
+
+
+
+  @Test
+  public void createLoanGetsExpectedLoanFromHelper()
+  {
+    Date today = ignoreTime(new Date());
+    Date due = calculateDueDate(today);
+    ILoanHelper loanHelper = stubHelper();
+    when(loanHelper.makeLoan(greatExpectations, jim, today, due))
+        .thenReturn(firstLoan);
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+
+    ILoan loan = dao.createLoan(greatExpectations, jim);
+
+    assertThat(loan).isSameAs(firstLoan);
+  }
+
+
+
 
   // TODO: extract helpers?
 
