@@ -111,6 +111,18 @@ public class LoanBuilder
     return mock(ILoanHelper.class);
   }
 
+
+
+  /**
+   * Create Loan mock with Mockito. Simply provides an explicitly named
+   * method to show that a mock is being (not a stub or other fakes/doubles).
+   * @return mock Loan.
+   */
+  public static ILoan mockLoan()
+  {
+    return mock(ILoan.class);
+  }
+
   // ==========================================================================
   // Date helpers
   // ==========================================================================
