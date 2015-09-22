@@ -1,6 +1,9 @@
 package test.unit;
 
+import java.util.Date;
+
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 
 import library.interfaces.entities.ILoan;
 import library.interfaces.entities.ELoanState;
@@ -39,7 +42,7 @@ public class TestLoanReflection
   {
     try {
       Class<?> loanClass = loan.getClass();
-      java.lang.reflect.Field state = loanClass.getDeclaredField("state_");
+      Field state = loanClass.getDeclaredField("state_");
 
       // Enable direct modification of private field
       if (!state.isAccessible()) {
@@ -47,6 +50,72 @@ public class TestLoanReflection
       }
 
       return (ELoanState)state.get(loan);
+    }
+
+    catch (NoSuchFieldException exception) {
+      fail("NoSuchFieldException should not occur");
+    }
+    catch (IllegalAccessException exception) {
+      fail("IllegalAccessException should not occur");
+    }
+    catch (Exception exception) {
+      fail("Exception should not occur");
+    }
+    return null;
+  }
+
+
+
+  /*
+   * Uses Reflection API to access & return the Loan's private borrow date.
+   * @param loan Loan The loan under test.
+   * @return Date The borrowing date of the Loan.
+   */
+  protected static Date getPrivateBorrowDate(Loan loan)
+  {
+    try {
+      Class<?> loanClass = loan.getClass();
+      Field borrowDate = loanClass.getDeclaredField("borrowDate_");
+
+      // Enable direct modification of private field
+      if (!borrowDate.isAccessible()) {
+        borrowDate.setAccessible(true);
+      }
+
+      return (Date)borrowDate.get(loan);
+    }
+
+    catch (NoSuchFieldException exception) {
+      fail("NoSuchFieldException should not occur");
+    }
+    catch (IllegalAccessException exception) {
+      fail("IllegalAccessException should not occur");
+    }
+    catch (Exception exception) {
+      fail("Exception should not occur");
+    }
+    return null;
+  }
+
+
+
+  /*
+  * Uses Reflection API to directly access & return the Loan's private due date.
+  * @param loan Loan The loan under test.
+  * @return Date The due date of the Loan.
+  */
+  protected static Date getPrivateDueDate(Loan loan)
+  {
+    try {
+      Class<?> loanClass = loan.getClass();
+      Field dueDate = loanClass.getDeclaredField("dueDate_");
+
+      // Enable direct modification of private field
+      if (!dueDate.isAccessible()) {
+        dueDate.setAccessible(true);
+      }
+
+      return (Date)dueDate.get(loan);
     }
 
     catch (NoSuchFieldException exception) {
@@ -72,7 +141,7 @@ public class TestLoanReflection
   {
     try {
       Class<?> loanClass = loan.getClass();
-      java.lang.reflect.Field state = loanClass.getDeclaredField("state_");
+      Field state = loanClass.getDeclaredField("state_");
 
       // Enable direct modification of private field
       if (!state.isAccessible()) {
