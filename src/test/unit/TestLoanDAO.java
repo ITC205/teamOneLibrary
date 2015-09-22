@@ -2,6 +2,8 @@ package test.unit;
 
 import java.util.Date;
 
+import java.util.List;
+
 import library.interfaces.entities.IBook;
 import library.interfaces.entities.IMember;
 import library.interfaces.entities.ILoan;
@@ -47,7 +49,7 @@ public class TestLoanDAO
   private Date Mar29 = dateBuilder(29, 2, 2014);
   private Date Jun25 = dateBuilder(25, 5, 2014);
   private Date Jul09 = dateBuilder(9, 6, 2014);
-  
+
   public void setUpFirstLoan()
   {
     when(firstLoan_.getBook()).thenReturn(greatExpectations_);
@@ -231,6 +233,53 @@ public class TestLoanDAO
 
 
   @Test
+  public void loanListIsNullInitially()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+
+    List<ILoan> allLoans = dao.listLoans();
+
+    assert(allLoans).isEmpty();
+  }
+
+
+
+  @Test
+  public void loanListReturnsLoansManuallySetInLoanMap()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    ILoan[] loans = {firstLoan_, secondLoan_};
+
+    setPrivateLoanMap(dao, loans);
+    List<ILoan> allLoans = dao.listLoans();
+
+    assertThat(allLoans).isNotEmpty();
+    assertThat(allLoans).hasSize(2);
+    assertThat(allLoans).containsExactly(firstLoan_, secondLoan_);
+  }
+
+
+
+  @Test
+  public void loanListReturnsInSequenceLoansManuallySetInLoanMap()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    ILoan[] loans = {thirdLoan_, secondLoan_, firstLoan_};
+
+    setPrivateLoanMap(dao, loans);
+    List<ILoan> allLoans = dao.listLoans();
+
+    assertThat(allLoans).isNotEmpty();
+    assertThat(allLoans).hasSize(3);
+    assertThat(allLoans).containsSequence(thirdLoan_, secondLoan_, firstLoan_);
+  }
+
+
+
+  @Test
   public void commitLoanCallsLoanCommitCorrectly()
   {
     ILoanHelper loanHelper = stubHelper();
@@ -280,7 +329,7 @@ public class TestLoanDAO
   }
 
 
-
+  // TODO: tests loans stored - need list first
   @Test
   public void commitLoanStoresLoan()
   {
@@ -292,6 +341,8 @@ public class TestLoanDAO
 
     // assertThat().has(loan);
   }
+
+
 
 
 
