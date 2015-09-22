@@ -162,7 +162,6 @@ public class MemberDAO
 
 
 
-
   private int getNextId()
   {
     return nextId_;

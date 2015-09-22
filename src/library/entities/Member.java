@@ -45,9 +45,22 @@ public class Member
                      String emailAddress, int id) 
                      throws IllegalArgumentException
   {
-    if (!isValid(firstName) || !isValid(lastName) || !isValid(contactPhone) || !isValid(emailAddress))
+    if (!isValid(firstName))
     {
-      throw new IllegalArgumentException("Fields cannot be blank or null");
+      throw new IllegalArgumentException("Member: Member: First name cannot be blank or null");
+    }
+    if(!isValid(lastName))
+    {
+      throw new IllegalArgumentException("Member: Member: Last name cannot be blank or null");
+    }
+    if (!isValid(contactPhone))
+    {
+      throw new IllegalArgumentException("Member: Member: Contact phone cannot be blank or null");
+    }
+      
+    if (!isValid(emailAddress))
+    {
+      throw new IllegalArgumentException("Member: Member: Email address cannot be blank or null");
     }
     if (id <= 0)
     {
@@ -68,47 +81,37 @@ public class Member
   
   
   
-  public void addLoan(ILoan loan) throws IllegalArgumentException
+  @Override
+  public boolean hasOverDueLoans() 
   {
-    if (borrowingAllowed())
+    boolean hasOverDueLoans = false;
+    Date currentDate = new Date();
+    
+    for(ILoan loan: loanList_)
     {
-      if (hasReachedLoanLimit())
+      if (loan.checkOverDue(currentDate))
+      {
+        hasOverDueLoans = true;
+      }
+    }
+    return hasOverDueLoans;
+  }
+
+
+
+  public boolean hasReachedLoanLimit()
+  {
+    if (loanList_.size() > IMember.LOAN_LIMIT)
+    {
+      if (borrowingAllowed())
       {
         updateState();
       }
-      else
-      {
-        if (loan != null)
-            {
-              loanList_.add(loan);
-            }
-        else
-        {
-          throw new IllegalArgumentException("Member: addLoan: Loan cannot be null");
-        }
-      }  
-    }
-    if (!borrowingAllowed())
-    {
-      throw new IllegalArgumentException("Member: addLoan: Member state is BORROWING_DISALLOWED");
-    }
-  }
-  
-  
-  
-  public void addFine(float amount) throws IllegalArgumentException
-  {
-    if (amount >= 0)
-    {
-      totalFines_ += amount;
-      if ((totalFines_ >= FINE_LIMIT) && (!borrowingAllowed()))
-          {
-        updateState();
-          }
+      return true;
     }
     else
     {
-      throw new IllegalArgumentException("Fines cannot be negative");
+      return false;
     }
   }
   
@@ -146,6 +149,24 @@ public class Member
   
   
   
+  public void addFine(float amount) throws IllegalArgumentException
+  {
+    if (amount >= 0)
+    {
+      totalFines_ += amount;
+      if ((totalFines_ >= FINE_LIMIT) && (!borrowingAllowed()))
+          {
+        updateState();
+          }
+    }
+    else
+    {
+      throw new IllegalArgumentException("Fines cannot be negative");
+    }
+  }
+  
+  
+  
   public void payFine(float amount) throws IllegalArgumentException
   {
     if ((amount >= 0) && (amount <= totalFines_))
@@ -154,26 +175,36 @@ public class Member
     }
     else
     {
-      throw new IllegalArgumentException("Payment cannot be negative and " +
-                                     "must not exceed total fines owing");
+      throw new IllegalArgumentException("Member: payFine: Payment cannot be negative and " +
+                                         "must not exceed total fines owing");
     }
   }
   
   
   
-  public boolean hasReachedLoanLimit()
+  public void addLoan(ILoan loan) throws IllegalArgumentException
   {
-    if (loanList_.size() > IMember.LOAN_LIMIT)
+    if (borrowingAllowed())
     {
-      if (borrowingAllowed())
+      if (hasReachedLoanLimit())
       {
         updateState();
       }
-      return true;
+      else
+      {
+        if (loan != null)
+            {
+              loanList_.add(loan);
+            }
+        else
+        {
+          throw new IllegalArgumentException("Member: addLoan: Loan cannot be null");
+        }
+      }  
     }
-    else
+    if (!borrowingAllowed())
     {
-      return false;
+      throw new IllegalArgumentException("Member: addLoan: Member state is BORROWING_DISALLOWED");
     }
   }
   
@@ -191,7 +222,6 @@ public class Member
 
   
   
-  
   private boolean isValid(String memberDetails)
   {
     if (memberDetails != null && memberDetails.length() > 0)
@@ -206,35 +236,6 @@ public class Member
   
   
   
-  private boolean borrowingAllowed()
-  {
-    if (memberState_ == EMemberState.BORROWING_ALLOWED)
-    {
-       return true;
-    }
-    else return false;
-  }
-
-
-
-  @Override
-  public boolean hasOverDueLoans() 
-  {
-    boolean hasOverDueLoans = false;
-    Date currentDate = new Date();
-    
-    for(ILoan loan: loanList_)
-    {
-      if (loan.checkOverDue(currentDate))
-      {
-        hasOverDueLoans = true;
-      }
-    }
-    return hasOverDueLoans;
-  }
-
-
-
   @Override
   public void removeLoan(ILoan loan) throws IllegalArgumentException
   {
@@ -260,6 +261,17 @@ public class Member
     {
       memberState_ = EMemberState.BORROWING_ALLOWED;
     }
+  }
+  
+  
+  
+  private boolean borrowingAllowed()
+  {
+    if (memberState_ == EMemberState.BORROWING_ALLOWED)
+    {
+       return true;
+    }
+    else return false;
   }
   
   
