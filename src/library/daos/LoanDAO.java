@@ -61,15 +61,14 @@ public class LoanDAO
    * throws IllegalArgumentException if borrower or book is null.
    */
   // @Override
-  public void createLoan(IBook book, IMember borrower)
+  public ILoan createLoan(IBook book, IMember borrower)
   {
-    // throwIfObjectNull("Book", book);
+    throwIfObjectNull("Book", book);
     // throwIfObjectNull("Borrower", borrower);
     Date borrowDate = ignoreTime(new Date());
     Date dueDate = calculateDueDate(borrowDate);
-    // Date dueDate = calculateDueDate(borrowDate);
 
-    helper_.makeLoan(book, borrower, borrowDate, dueDate);
+    return helper_.makeLoan(book, borrower, borrowDate, dueDate);
   }
 
 
