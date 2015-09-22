@@ -2,6 +2,10 @@ package library.daos;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
 
 import library.interfaces.entities.IBook;
 import library.interfaces.entities.IMember;
@@ -29,6 +33,7 @@ public class LoanDAO
 
   private ILoanHelper helper_;
   private Calendar calendar_ = Calendar.getInstance();
+  private Map<Integer, Loan> loanMap_ = new HashMap<>();
 
 
   //===========================================================================
@@ -99,6 +104,16 @@ public class LoanDAO
     loan.commit(nextID_);
     nextID_++;
   }
+
+
+
+  public List<ILoan> listLoans()
+  {
+    Map loans = (Map)loanMap_;
+    List allLoans = new ArrayList(loans.values());
+    return allLoans;
+  }
+
 
 
   //===========================================================================
