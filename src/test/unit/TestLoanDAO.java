@@ -22,6 +22,10 @@ import static test.unit.LoanReflection.*;
  */
 public class TestLoanDAO
 {
+  //===========================================================================
+  // Test fixtures
+  //===========================================================================
+
   private ILoan firstLoan_ = stubLoan();
   private ILoan secondLoan_ = stubLoan();
   private ILoan thirdLoan_ = stubLoan();
@@ -43,9 +47,7 @@ public class TestLoanDAO
   private Date Mar29 = dateBuilder(29, 2, 2014);
   private Date Jun25 = dateBuilder(25, 5, 2014);
   private Date Jul09 = dateBuilder(9, 6, 2014);
-
-
-
+  
   public void setUpFirstLoan()
   {
     when(firstLoan_.getBook()).thenReturn(greatExpectations_);
@@ -61,6 +63,7 @@ public class TestLoanDAO
     when(secondLoan_.getID()).thenReturn(102);
     when(prideAndPrejudice_.getTitle()).thenReturn("Pride and Prejudice");
   }
+
   public void setUpThirdLoan()
   {
     when(thirdLoan_.getBook()).thenReturn(greatExpectations_);
@@ -68,6 +71,7 @@ public class TestLoanDAO
     when(thirdLoan_.getID()).thenReturn(103);
     when(greatExpectations_.getTitle()).thenReturn("Great Expectations");
   }
+
   public void setUpFourthLoan()
   {
     when(fourthLoan_.getBook()).thenReturn(fightClub_);
@@ -75,23 +79,22 @@ public class TestLoanDAO
     when(fourthLoan_.getID()).thenReturn(104);
     when(fightClub_.getTitle()).thenReturn("Fight Club");
   }
+
   public void setUpFifthLoan()
   {
     when(fifthLoan_.getBook()).thenReturn(fearAndLoathingInLasVegas_);
     when(fifthLoan_.getBorrower()).thenReturn(jill_);
     when(fifthLoan_.getID()).thenReturn(105);
-    when(fearAndLoathingInLasVegas_.getTitle()).thenReturn("Fear and Loathing " +
-                                                              "in Las Vegas");
+    when(fearAndLoathingInLasVegas_.getTitle())
+                                  .thenReturn("Fear and Loathing in Las Vegas");
   }
-
-
 
   //===========================================================================
   // Test constructor - with LoanBuilder (for stubs) & LoanReflection (to
   // create new LoanDAOs)
   //===========================================================================
 
-  @org.junit.Test
+  @Test
   public void createLoanDao()
   {
     ILoanHelper loanHelper = stubHelper();
@@ -103,7 +106,7 @@ public class TestLoanDAO
 
 
 
-  @org.junit.Test
+  @Test
   public void createLoanDaoWithNullHelperThrows()
   {
     ILoanHelper loanHelper = null;
@@ -276,7 +279,7 @@ public class TestLoanDAO
     verify(thirdLoan_).commit(3);
   }
 
-  
+
 
   @Test
   public void commitLoanStoresLoan()
