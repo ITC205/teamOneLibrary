@@ -24,8 +24,12 @@ public class LoanDAO
   // Variables
   //===========================================================================
 
+  // TODO: static? not hardcoded?
+  private int nextID_ = 1;
+
   private ILoanHelper helper_;
   private Calendar calendar_ = Calendar.getInstance();
+
 
   //===========================================================================
   // Constructors
@@ -62,9 +66,11 @@ public class LoanDAO
    */
   // @Override
   public ILoan createLoan(IBook book, IMember borrower)
+    throws IllegalArgumentException
   {
+    // TODO: remove throws (and helper) - as this is done by Loan
     throwIfObjectNull("Book", book);
-    // throwIfObjectNull("Borrower", borrower);
+    throwIfObjectNull("Borrower", borrower);
     Date borrowDate = ignoreTime(new Date());
     Date dueDate = calculateDueDate(borrowDate);
 
@@ -80,6 +86,20 @@ public class LoanDAO
       throw new IllegalArgumentException(message + parameterName);
     }
   }
+
+
+
+
+  /*
+   * Assigns the Loan a unique id and stores the Loan.
+   * @param loan ILoan The Loan to be committed.
+   */
+  public void commitLoan(ILoan loan)
+  {
+    loan.commit(nextID_);
+    nextID_++;
+  }
+
 
   //===========================================================================
   // Helper methods
