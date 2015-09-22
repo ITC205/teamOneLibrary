@@ -1,5 +1,7 @@
 package test.unit;
 
+import library.interfaces.daos.ILoanHelper;
+
 import library.daos.LoanDAO;
 
 import org.junit.Test;
@@ -17,27 +19,21 @@ import static test.unit.LoanReflection.*;
 public class TestLoanDAO
 {
   //===========================================================================
-  // Test correct initialization of singleton
+  // Test constructor - with LoanBuilder (for stubs)
   //===========================================================================
 
-  @Test
-  public void getInstance()
+  @org.junit.Test
+  public void createLoanDao()
   {
-    LoanDAO dao = LoanDAO.getInstance();
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = createLoanDaoWithPrivateConstructor(loanHelper);
 
-    assertThat(dao).isInstanceOf(LoanDAO.class);
+    assertThat(dao).isInstanceOf(library.daos.LoanDAO.class);
   }
 
 
 
-  @Test
-  public void getInstanceReturnsSingleton()
-  {
-    LoanDAO firstDao = LoanDAO.getInstance();
-    LoanDAO secondDao = LoanDAO.getInstance();
 
-    assertThat(firstDao).isSameAs(secondDao);
-  }
 
   //===========================================================================
   // Primary methods
