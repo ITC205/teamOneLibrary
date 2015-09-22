@@ -374,11 +374,86 @@ public class TestLoanDAO
 
 
 
+  @Test
+  public void getLoanByIdReturnsNullIfLoanMapEmpty()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+
+    List<ILoan> allLoans = dao.listLoans();
+    assertThat(allLoans).isEmpty();
+
+    ILoan loan = dao.getLoanByID(1);
+
+    assertThat(loan).isNull();
+  }
 
 
 
+  @Test
+  public void getLoanByIdReturnsLoanIfLoanMapContainsOnlyThatLoan()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+
+    List<ILoan> allLoans = dao.listLoans();
+    assertThat(allLoans).isEmpty();
+
+    setUpFirstLoan();
+    dao.commitLoan(firstLoan_);
+
+    ILoan loan = dao.getLoanByID(1);
+
+    assertThat(loan).isNotNull();
+    assertThat(loan).isEqualTo(firstLoan_);
+  }
 
 
+
+  @Test
+  public void getLoanByIdReturnsLoanIfLoanMapContainsMultipleLoans()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+
+    List<ILoan> allLoans = dao.listLoans();
+    assertThat(allLoans).isEmpty();
+
+    setUpThirdLoan();
+    dao.commitLoan(thirdLoan_);
+    setUpSecondLoan();
+    dao.commitLoan(secondLoan_);
+    setUpFirstLoan();
+    dao.commitLoan(firstLoan_);
+
+    ILoan loan = dao.getLoanByID(3);
+
+    assertThat(loan).isNotNull();
+    assertThat(loan).isEqualTo(firstLoan_);
+  }
+
+
+
+  @Test
+  public void getLoanByIdReturnsNullIfLoanMapDoesNotContainsLoanWithThatId()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+
+    List<ILoan> allLoans = dao.listLoans();
+    assertThat(allLoans).isEmpty();
+
+    setUpThirdLoan();
+    dao.commitLoan(thirdLoan_);
+    setUpSecondLoan();
+    dao.commitLoan(secondLoan_);
+    setUpFirstLoan();
+    dao.commitLoan(firstLoan_);
+
+    ILoan loan = dao.getLoanByID(4);
+
+    assertThat(loan).isNull();
+  }
 
 
 
