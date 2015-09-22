@@ -288,7 +288,7 @@ public class TestLoanDAO
 
     dao.commitLoan(loan);
 
-    // works because new LoanDAO has nextID set to 1 intially
+    // works because new LoanDAO has nextID set to 1 initially
     verify(loan).commit(1);
   }
 
@@ -335,7 +335,6 @@ public class TestLoanDAO
   {
     ILoanHelper loanHelper = stubHelper();
     LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
-
     List<ILoan> allLoans = dao.listLoans();
     assertThat(allLoans).isEmpty();
 
@@ -343,6 +342,7 @@ public class TestLoanDAO
     dao.commitLoan(firstLoan_);
 
     allLoans = dao.listLoans();
+
     assertThat(allLoans).isNotEmpty();
     assertThat(allLoans).hasSize(1);
     assertThat(allLoans).containsExactly(firstLoan_);
@@ -355,7 +355,6 @@ public class TestLoanDAO
   {
     ILoanHelper loanHelper = stubHelper();
     LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
-
     List<ILoan> allLoans = dao.listLoans();
     assertThat(allLoans).isEmpty();
 
@@ -366,10 +365,10 @@ public class TestLoanDAO
     dao.commitLoan(firstLoan_); // again
 
     allLoans = dao.listLoans();
+
     assertThat(allLoans).isNotEmpty();
     assertThat(allLoans).hasSize(3);
-    assertThat(allLoans).contains(firstLoan_, secondLoan_);
-    assertThat(allLoans).containsSequence(firstLoan_, secondLoan_, firstLoan_);
+    assertThat(allLoans).containsExactly(firstLoan_, secondLoan_, firstLoan_);
   }
 
 
@@ -379,7 +378,6 @@ public class TestLoanDAO
   {
     ILoanHelper loanHelper = stubHelper();
     LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
-
     List<ILoan> allLoans = dao.listLoans();
     assertThat(allLoans).isEmpty();
 
@@ -395,7 +393,6 @@ public class TestLoanDAO
   {
     ILoanHelper loanHelper = stubHelper();
     LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
-
     List<ILoan> allLoans = dao.listLoans();
     assertThat(allLoans).isEmpty();
 
@@ -415,7 +412,6 @@ public class TestLoanDAO
   {
     ILoanHelper loanHelper = stubHelper();
     LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
-
     List<ILoan> allLoans = dao.listLoans();
     assertThat(allLoans).isEmpty();
 
@@ -439,7 +435,6 @@ public class TestLoanDAO
   {
     ILoanHelper loanHelper = stubHelper();
     LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
-
     List<ILoan> allLoans = dao.listLoans();
     assertThat(allLoans).isEmpty();
 
