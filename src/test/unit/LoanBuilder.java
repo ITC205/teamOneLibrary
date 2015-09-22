@@ -97,7 +97,23 @@ public class LoanBuilder
     return mock(ILoan.class);
   }
 
+  // ==========================================================================
+  // Mock helpers
+  // ==========================================================================
 
+  /**
+   * Create LoanHelper mock with Mockito. Simply provides an explicitly named
+   * method to show that a mock is being (not a stub or other fakes/doubles).
+   * @return mock LoanHelper.
+   */
+  public static ILoanHelper mockHelper()
+  {
+    return mock(ILoanHelper.class);
+  }
+
+  // ==========================================================================
+  // Date helpers
+  // ==========================================================================
 
   /**
    * Create Date using simple interface (via Calendar) where time portion is
@@ -115,6 +131,7 @@ public class LoanBuilder
     Date date = calendar.getTime();
     return date;
   }
+
 
 
   /**
