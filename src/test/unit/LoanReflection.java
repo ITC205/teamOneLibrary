@@ -1,6 +1,7 @@
 package test.unit;
 
 import java.util.Date;
+import java.util.Map;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -221,6 +222,41 @@ public class LoanReflection
       }
 
       nextID.set(loanDao, newNextID);
+    }
+
+    catch (NoSuchFieldException exception) {
+      fail("NoSuchFieldException should not occur");
+    }
+    catch (IllegalAccessException exception) {
+      fail("IllegalAccessException should not occur");
+    }
+    catch (Exception exception) {
+      fail("Exception should not occur");
+    }
+  }
+
+
+
+  /*
+  * Uses Reflection API to directly add Loans to the LoanDAO's private LoanMap.
+  * @param loanDao LoanDAO The LoanDAO being used.
+  * @param loan ILoan The Loan to be added.
+  */
+  protected static void setPrivateLoanMap(LoanDAO loanDao, ILoan[] loans)
+  {
+    try {
+      Class<?> loanDaoClass = loanDao.getClass();
+      Field loanMap = loanDaoClass.getDeclaredField("loanMap_");
+
+      // Enable direct modification of private field
+      if (!loanMap.isAccessible()) {
+        loanMap.setAccessible(true);
+      }
+      Map<Integer, ILoan> newLoanMap = new java.util.HashMap<>();
+      for (int i = 0; i < loans.length; i++) {
+        newLoanMap.put(i, loans[i]);
+      }
+      loanMap.set(loanDao, newLoanMap);
     }
 
     catch (NoSuchFieldException exception) {
