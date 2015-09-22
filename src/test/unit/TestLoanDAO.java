@@ -5,10 +5,8 @@ import library.interfaces.daos.ILoanHelper;
 import library.daos.LoanDAO;
 
 import org.junit.Test;
-import org.junit.Ignore;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 import static test.unit.LoanBuilder.*;
 import static test.unit.LoanReflection.*;
@@ -19,20 +17,33 @@ import static test.unit.LoanReflection.*;
 public class TestLoanDAO
 {
   //===========================================================================
-  // Test constructor - with LoanBuilder (for stubs)
+  // Test constructor - with LoanBuilder (for stubs) & LoanReflection (to
+  // create new LoanDAOs)
   //===========================================================================
 
-  @org.junit.Test
+  @Test
   public void createLoanDao()
   {
     ILoanHelper loanHelper = stubHelper();
-    LoanDAO dao = createLoanDaoWithPrivateConstructor(loanHelper);
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
 
-    assertThat(dao).isInstanceOf(library.daos.LoanDAO.class);
+    assertThat(dao).isInstanceOf(LoanDAO.class);
   }
 
 
 
+  @Test
+  public void createLoanDaoWithNullHelperThrows()
+  {
+    ILoanHelper loanHelper = null;
+
+    try {
+      LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    }
+    catch (Exception exception) {
+    assertThat(exception).isInstanceOf(IllegalArgumentException.class);
+    }
+  }
 
 
   //===========================================================================
