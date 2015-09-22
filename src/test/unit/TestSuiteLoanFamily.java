@@ -11,7 +11,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses(
   {
       TestLoan.class,
-      TestLoanHelper.class
+      TestLoanHelper.class,
+      TestLoanDAO.class
   })
 
 public class TestSuiteLoanFamily
