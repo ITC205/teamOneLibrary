@@ -33,7 +33,7 @@ public class LoanDAO
 
   private ILoanHelper helper_;
   private Calendar calendar_ = Calendar.getInstance();
-  private Map<Integer, Loan> loanMap_ = new HashMap<>();
+  private Map<Integer, ILoan> loanMap_ = new HashMap<>();
 
 
   //===========================================================================
@@ -94,7 +94,6 @@ public class LoanDAO
 
 
 
-
   /*
    * Assigns the Loan a unique id and stores the Loan.
    * @param loan ILoan The Loan to be committed.
@@ -102,11 +101,16 @@ public class LoanDAO
   public void commitLoan(ILoan loan)
   {
     loan.commit(nextID_);
+    loanMap_.put(nextID_, loan);
     nextID_++;
   }
 
 
 
+  /*
+   * Returns a list of all loans in the committed loan collection.
+   * @return List<ILoan> The list of all Loans in the committed loan collection.
+   */
   public List<ILoan> listLoans()
   {
     Map loans = (Map)loanMap_;
