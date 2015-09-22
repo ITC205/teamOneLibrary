@@ -1,9 +1,6 @@
 package test.unit;
 
-import library.interfaces.entities.IBook;
-import library.interfaces.entities.IMember;
-import library.interfaces.entities.ILoan;
-import library.interfaces.entities.ELoanState;
+import library.daos.LoanDAO;
 
 import org.junit.Test;
 import org.junit.Ignore;
@@ -20,18 +17,27 @@ import static test.unit.LoanReflection.*;
 public class TestLoanDAO
 {
   //===========================================================================
-  // Variables
+  // Test correct initialization of singleton
   //===========================================================================
 
+  @Test
+  public void getInstance()
+  {
+    LoanDAO dao = LoanDAO.getInstance();
+
+    assertThat(dao).isInstanceOf(LoanDAO.class);
+  }
 
 
-  //===========================================================================
-  // Constructors
-  //===========================================================================
 
-  LoanDAO dao = LoanDAO.getInstance();
+  @Test
+  public void getInstanceReturnsSingleton()
+  {
+    LoanDAO firstDao = LoanDAO.getInstance();
+    LoanDAO secondDao = LoanDAO.getInstance();
 
-  assertThat(dao).isInstanceOf(LoanDAO.class);
+    assertThat(firstDao).isSameAs(secondDao);
+  }
 
   //===========================================================================
   // Primary methods
