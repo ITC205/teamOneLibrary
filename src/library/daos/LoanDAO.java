@@ -19,15 +19,25 @@ public class LoanDAO
   // Variables
   //===========================================================================
 
-  private ILoanHelper loanHelper_;
+  private ILoanHelper helper_;
 
   //===========================================================================
   // Constructors
   //===========================================================================
 
-  protected LoanDAO(ILoanHelper loanHelper)
+  /**
+   * Creates new LoanDAO.
+   * @param helper ILoanHelper The helper this DAO uses to instantiate Loans.
+   * throws IllegalArgumentException if helper is null.
+   */
+  protected LoanDAO(ILoanHelper helper)
+    throws IllegalArgumentException
   {
-    loanHelper_ = loanHelper;
+    if (helper == null) {
+      throw new IllegalArgumentException("Cannot create a new LoanDAO with " +
+                                         "a null Loan Helper.");
+    }
+    helper_ = helper;
   }
 
   //===========================================================================
