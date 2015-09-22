@@ -94,7 +94,7 @@ public class TestLoan
 
     // Then loan is instantiated with pending state
     // (have to use reflection to access private variable)
-    // which is why this test was added at end :-)
+    // which is why this test was added as one of last tests :-)
     ELoanState loanState = getPrivateState((Loan)loan);
     assertThat(loanState).isEqualTo(ELoanState.PENDING);
   }
@@ -523,7 +523,8 @@ public class TestLoan
   }
 
   // ==========================================================================
-  // Primary methods testing - with stubs, TestLoanBuilder & dateBuilder
+  // Primary methods testing - with stubs, TestLoanBuilder (for generating
+  // custom Loans) & dateBuilder (for simpler date creation)
   // ==========================================================================
 
   @Test
