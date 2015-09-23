@@ -1,4 +1,4 @@
-package test.integration;
+package test.collaboration;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
