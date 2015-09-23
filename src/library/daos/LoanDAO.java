@@ -141,7 +141,7 @@ public class LoanDAO
     }
 
     for (ILoan loan : loanMap_.values()) {
-      if(loan.getBook().equals(book)) {
+      if(loan.getBook().equals(book) && loan.isCurrent()) {
         return loan;
       }
     }
