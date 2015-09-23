@@ -135,6 +135,29 @@ public class LoanDAO
   }
 
 
+  // TODO: current book?!!!
+  /*
+   * Returns the current loan in the committed loan collection associated with
+   * the given book.
+   * @param book:IBook
+   * @return ILoan The loan in the committed loan collection associated with book
+   * or null if loan not found
+   */
+  public ILoan getLoanByBook(IBook book)
+  {
+    if (loanMap_.isEmpty()) {
+      return null;
+    }
+
+    for (ILoan loan : loanMap_.values()) {
+      if(loan.getBook().equals(book) &&
+             book.getState() == library.interfaces.entities.EBookState.ON_LOAN) {
+        return loan;
+      }
+    }
+    return null;
+  }
+
 
 
   //===========================================================================
