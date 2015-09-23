@@ -183,17 +183,6 @@ public class Loan
   }
 
 
-  /**
-   * Returns true if this Loan state is CURRENT (i.e. loan is still active).
-   * @return boolean true if Loan state is CURRENT.
-   */
-  @Override
-  public boolean isCurrent()
-  {
-    return (state_ == ELoanState.CURRENT);
-  }
-
-
 
   /**
    * Returns true if this Loan state is OVERDUE.
