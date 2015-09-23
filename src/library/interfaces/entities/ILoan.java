@@ -10,6 +10,8 @@ public interface ILoan
 
   public void complete();
 
+  public boolean isCurrent();
+
   public boolean isOverDue();
 
   public boolean checkOverDue(Date currentDate);
@@ -19,4 +21,5 @@ public interface ILoan
   public IBook getBook();
 
   public int getID();
+
 }
