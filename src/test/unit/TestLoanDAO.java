@@ -479,105 +479,7 @@ public class TestLoanDAO
 
     assertThat(loan).isNull();
   }
-
-  //===========================================================================
-  // Test getLoanByBook - with LoanBuilder (for stubs), LoanReflection
-  // (to create new LoanDAOs) & fixtures for loans & books
-  //===========================================================================
-
-  @Test
-  public void getLoanByBookReturnsNullIfNoLoans()
-  {
-    ILoanHelper loanHelper = stubHelper();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
-    List<ILoan> allLoans = dao.listLoans();
-    assertThat(allLoans).isEmpty();
-
-    ILoan loan = dao.getLoanByBook(catch22_);
-
-    assertThat(loan).isNull();
-  }
-
-
-
-  @Test
-  public void getLoanByBookReturnsNullIfNoCurrentLoan()
-  {
-    ILoanHelper loanHelper = stubHelper();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
-    List<ILoan> allLoans = dao.listLoans();
-    assertThat(allLoans).isEmpty();
-    setUpFirstLoan();
-    dao.commitLoan(firstJimLoansCatch22_); // returned
-    setUpSecondLoan();
-    dao.commitLoan(secondSamLoansEmma_);
-
-    ILoan loan = dao.getLoanByBook(catch22_);
-
-    assertThat(loan).isNull();
-  }
-
-
-
-  @Test
-  public void getLoanByBookReturnsCurrentLoanWhenOnlyLoan()
-  {
-    ILoanHelper loanHelper = stubHelper();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
-    List<ILoan> allLoans = dao.listLoans();
-    assertThat(allLoans).isEmpty();
-    setUpThirdLoan();
-    dao.commitLoan(thirdJillLoansCatch22_); // current
-
-    ILoan loan = dao.getLoanByBook(catch22_);
-
-    assertThat(loan).isSameAs(thirdJillLoansCatch22_);
-  }
-
-
-
-  // TODO: complete getLoanByBook tests
-  @Test
-  public void getLoanByBookIsNotNullIfCurrentLoan()
-  {
-    ILoanHelper loanHelper = stubHelper();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
-    List<ILoan> allLoans = dao.listLoans();
-    assertThat(allLoans).isEmpty();
-    setUpFirstLoan();
-    dao.commitLoan(firstJimLoansCatch22_); // returned
-    setUpSecondLoan();
-    dao.commitLoan(secondSamLoansEmma_);
-    setUpThirdLoan();
-    dao.commitLoan(thirdJillLoansCatch22_); // current
-
-    ILoan loan = dao.getLoanByBook(catch22_);
-
-    assertThat(loan).isNotNull();
-  }
-
-
-
-  @Test
-  public void getLoanByBookReturnsCurrentLoan()
-  {
-    ILoanHelper loanHelper = stubHelper();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
-    List<ILoan> allLoans = dao.listLoans();
-    assertThat(allLoans).isEmpty();
-    setUpFirstLoan();
-    dao.commitLoan(firstJimLoansCatch22_); // returned
-    setUpSecondLoan();
-    dao.commitLoan(secondSamLoansEmma_);
-    setUpThirdLoan();
-    dao.commitLoan(thirdJillLoansCatch22_); // current
-
-    ILoan loan = dao.getLoanByBook(catch22_);
-
-    assertThat(loan).isNotSameAs(firstJimLoansCatch22_);
-    assertThat(loan).isSameAs(thirdJillLoansCatch22_);
-  }
-
+  
   //===========================================================================
   // Test findLoansByBorrower - with LoanBuilder (for stubs), LoanReflection
   // (to create new LoanDAOs) & fixtures for loans & books
@@ -599,7 +501,7 @@ public class TestLoanDAO
 
 
   @Test
-  public void findLoansByBorrowerReturnsNullIfNoLoansByBorrower()
+  public void findLoansByBorrowerReturnsEmptyIfNoLoansByBorrower()
   {
     ILoanHelper loanHelper = stubHelper();
     LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
@@ -664,8 +566,21 @@ public class TestLoanDAO
                                       fourthJimLoansScoop_);
   }
 
+  //===========================================================================
+  // Test  - with LoanBuilder (for stubs), LoanReflection
+  // (to create new LoanDAOs) & fixtures for loans & books
+  //===========================================================================
+
+  @Test
+  public void findLoansByBookTitleNullWhenNoLoans()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    List<ILoan> allLoans = dao.listLoans();
+    assertThat(allLoans).isEmpty();
 
 
+  }
 
 
 
