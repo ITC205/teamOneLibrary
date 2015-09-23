@@ -57,6 +57,7 @@ public class TestLoanDAO
     when(firstJimLoansCatch22_.getBook()).thenReturn(catch22_);
     when(firstJimLoansCatch22_.getBorrower()).thenReturn(jim_);
     when(firstJimLoansCatch22_.getID()).thenReturn(1);
+    when(firstJimLoansCatch22_.isCurrent()).thenReturn(false);
     when(catch22_.getTitle()).thenReturn("CATCH-22");
     when(catch22_.getAuthor()).thenReturn("Joseph Heller");
     when(catch22_.getState()).thenReturn(EBookState.AVAILABLE); // TODO: check!
@@ -67,6 +68,7 @@ public class TestLoanDAO
     when(secondSamLoansEmma_.getBook()).thenReturn(emma_);
     when(secondSamLoansEmma_.getBorrower()).thenReturn(sam_);
     when(secondSamLoansEmma_.getID()).thenReturn(2);
+    when(secondSamLoansEmma_.isCurrent()).thenReturn(false);
     when(emma_.getTitle()).thenReturn("Emma");
     when(emma_.getAuthor()).thenReturn("Jane Austen");
     when(emma_.getState()).thenReturn(EBookState.AVAILABLE);
@@ -77,6 +79,7 @@ public class TestLoanDAO
     when(thirdJillLoansCatch22_.getBook()).thenReturn(catch22_);
     when(thirdJillLoansCatch22_.getBorrower()).thenReturn(jill_);
     when(thirdJillLoansCatch22_.getID()).thenReturn(3);
+    when(thirdJillLoansCatch22_.isCurrent()).thenReturn(true);
     when(catch22_.getTitle()).thenReturn("CATCH-22");
     when(catch22_.getAuthor()).thenReturn("Joseph Heller");
     when(catch22_.getState()).thenReturn(EBookState.ON_LOAN);;
@@ -87,6 +90,7 @@ public class TestLoanDAO
     when(fourthJimLoansScoop_.getBook()).thenReturn(scoop_);
     when(fourthJimLoansScoop_.getBorrower()).thenReturn(jim_);
     when(fourthJimLoansScoop_.getID()).thenReturn(4);
+    when(fourthJimLoansScoop_.isCurrent()).thenReturn(true);
     when(scoop_.getTitle()).thenReturn("Scoop");
     when(scoop_.getAuthor()).thenReturn("Evelyn Waugh");
     when(scoop_.getState()).thenReturn(EBookState.ON_LOAN);
@@ -97,6 +101,7 @@ public class TestLoanDAO
     when(fifthJillLoansDune_.getBook()).thenReturn(dune_);
     when(fifthJillLoansDune_.getBorrower()).thenReturn(jill_);
     when(fifthJillLoansDune_.getID()).thenReturn(5);
+    when(fifthJillLoansDune_.isCurrent()).thenReturn(true);
     when(dune_.getTitle()).thenReturn("Dune");
     when(dune_.getAuthor()).thenReturn("Frank Herbert");
     when(dune_.getState()).thenReturn(EBookState.ON_LOAN);
@@ -624,6 +629,13 @@ public class TestLoanDAO
     assertThat(loans).containsExactly(firstJimLoansCatch22_,
                                       fourthJimLoansScoop_);
   }
+
+
+
+
+
+
+
 
 
   // TODO: extract helpers?
