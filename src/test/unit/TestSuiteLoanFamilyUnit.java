@@ -15,7 +15,7 @@ import org.junit.runners.Suite.SuiteClasses;
       TestLoanDAO.class
   })
 
-public class TestSuiteLoanFamily
+public class TestSuiteLoanFamilyUnit
 {
  /* empty class */
 }
