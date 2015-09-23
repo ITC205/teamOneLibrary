@@ -36,7 +36,6 @@ public class LoanDAO
   private Calendar calendar_ = Calendar.getInstance();
   private Map<Integer, ILoan> loanMap_ = new HashMap<>();
 
-
   //===========================================================================
   // Constructors
   //===========================================================================
@@ -98,23 +97,12 @@ public class LoanDAO
 
 
   /*
-   * Returns a list of all loans in the committed loan collection.
-   * @return List<ILoan> The list of all Loans in the committed loan collection.
-   */
-  @Override
-  public List<ILoan> listLoans()
-  {
-    return new ArrayList<ILoan>(loanMap_.values());
-  }
-
-
-  /*
-   * Returns the loan in the committed loan collection identified by id, or
-   * null if loan not found.
-   * @param id int The id of the Loan to return.
-   * @return ILoan The loan in the committed loan collection with the given id,
-   * or null if a loan with that id does not exist.
-   */
+ * Returns the loan in the committed loan collection identified by id, or
+ * null if loan not found.
+ * @param id int The id of the Loan to return.
+ * @return ILoan The loan in the committed loan collection with the given id,
+ * or null if a loan with that id does not exist.
+ */
   @Override
   public ILoan getLoanByID(int id)
   {
@@ -127,6 +115,18 @@ public class LoanDAO
   }
 
 
+
+  /*
+   * Returns a list of all loans in the committed loan collection.
+   * @return List<ILoan> The list of all Loans in the committed loan collection.
+   */
+  @Override
+  public List<ILoan> listLoans()
+  {
+    return new ArrayList<ILoan>(loanMap_.values());
+  }
+
+  
 
   //TODO: equals, override equals, or use ==?
   /*
@@ -209,14 +209,6 @@ public class LoanDAO
   //===========================================================================
   // Helper methods
   //===========================================================================
-
-
-  //===========================================================================
-  // Getters & setters
-  //===========================================================================
-
-
-
 
   private Date ignoreTime(Date date)
   {
