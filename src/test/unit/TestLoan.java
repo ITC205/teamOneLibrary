@@ -1073,4 +1073,5 @@ public class TestLoan
     assertThat(loanString).isEqualTo(expectedString);
   }
 
+  // TODO: add tests for isCurrent - if it gets added!
 }

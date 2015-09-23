@@ -10,6 +10,8 @@ public interface ILoan
 
   public void complete();
 
+  public boolean isCurrent();
+
   public boolean isOverDue();
 
   public boolean checkOverDue(Date currentDate);
