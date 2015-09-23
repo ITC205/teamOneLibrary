@@ -44,7 +44,7 @@ public class LoanReflection
    * @param loan Loan The loan under test.
    * @return ELoanState The current state of the Loan.
    */
-  protected static ELoanState getPrivateState(Loan loan)
+  public static ELoanState getPrivateState(Loan loan)
   {
     try {
       Class<?> loanClass = loan.getClass();
@@ -77,7 +77,7 @@ public class LoanReflection
    * @param loan Loan The loan under test.
    * @return Date The borrowing date of the Loan.
    */
-  protected static Date getPrivateBorrowDate(Loan loan)
+  public static Date getPrivateBorrowDate(Loan loan)
   {
     try {
       Class<?> loanClass = loan.getClass();
@@ -110,7 +110,7 @@ public class LoanReflection
   * @param loan Loan The loan under test.
   * @return Date The due date of the Loan.
   */
-  protected static Date getPrivateDueDate(Loan loan)
+  public static Date getPrivateDueDate(Loan loan)
   {
     try {
       Class<?> loanClass = loan.getClass();
@@ -144,7 +144,7 @@ public class LoanReflection
   * @param loanDao LoanDAO The LoanDAO being used.
   * @return int The next ID to be used for committing loans.
   */
-  protected static int getPrivateNextId(LoanDAO loanDao)
+  public static int getPrivateNextId(LoanDAO loanDao)
   {
     try {
       Class<?> loanDaoClass = loanDao.getClass();
@@ -177,7 +177,7 @@ public class LoanReflection
   * @param loan Loan The loan under test.
   * @param date Date The date that will be set as the due date of the Loan.
   */
-  protected static void setPrivateDueDate(Loan loan, Date date)
+  public static void setPrivateDueDate(Loan loan, Date date)
   {
     try {
       Class<?> loanClass = loan.getClass();
@@ -209,7 +209,7 @@ public class LoanReflection
    * @param loan ILoan The loan under test.
    * @param ELoanState The state to set on the Loan.
    */
-  protected static void setPrivateState(ILoan loan, ELoanState newState)
+  public static void setPrivateState(ILoan loan, ELoanState newState)
   {
     try {
       Class<?> loanClass = loan.getClass();
@@ -274,7 +274,7 @@ public class LoanReflection
   * @param loanDao LoanDAO The LoanDAO being used.
   * @param loan ILoan The Loan to be added.
   */
-  protected static void setPrivateLoanMap(LoanDAO loanDao, ILoan[] loans)
+  public static void setPrivateLoanMap(LoanDAO loanDao, ILoan[] loans)
   {
     try {
       Class<?> loanDaoClass = loanDao.getClass();
