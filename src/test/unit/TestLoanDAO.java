@@ -39,6 +39,7 @@ public class TestLoanDAO
   private IMember jim_ = stubMember();
   private IMember sam_ = stubMember();
   private IMember jill_ = stubMember();
+  private IMember bob_ = stubMember();
 
   private IBook catch22_ = stubBook();
   private IBook emma_ = stubBook();
@@ -517,6 +518,7 @@ public class TestLoanDAO
   }
 
 
+
   @Test
   public void getLoanByBookReturnsCurrentLoanWhenOnlyLoan()
   {
@@ -531,6 +533,7 @@ public class TestLoanDAO
 
     assertThat(loan).isSameAs(thirdJillLoansCatch22_);
   }
+
 
 
   // TODO: complete getLoanByBook tests
@@ -554,6 +557,7 @@ public class TestLoanDAO
   }
 
 
+
   @Test
   public void getLoanByBookReturnsCurrentLoan()
   {
@@ -574,6 +578,10 @@ public class TestLoanDAO
     assertThat(loan).isSameAs(thirdJillLoansCatch22_);
   }
 
+  //===========================================================================
+  // Test findLoansByBorrower - with LoanBuilder (for stubs), LoanReflection
+  // (to create new LoanDAOs) & fixtures for loans & books
+  //===========================================================================
 
   @Test
   public void findLoansByBorrowerReturnsNullIfNoLoans()
@@ -587,6 +595,32 @@ public class TestLoanDAO
 
     assertThat(loans).isNull();
   }
+
+
+
+  @Test
+  public void findLoansByBorrowerReturnsNullIfNoLoansByBorrower()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    List<ILoan> allLoans = dao.listLoans();
+    assertThat(allLoans).isEmpty();
+    setUpFirstLoan();
+    dao.commitLoan(firstJimLoansCatch22_);
+    setUpSecondLoan();
+    dao.commitLoan(secondSamLoansEmma_);
+    setUpThirdLoan();
+    dao.commitLoan(thirdJillLoansCatch22_);
+    setUpFourthLoan();
+    dao.commitLoan(fourthJimLoansScoop_);
+    setUpFifthLoan();
+    dao.commitLoan(fifthJillLoansDune_);
+
+    List<ILoan> loans = dao.findLoansByBorrower(bob_);
+
+    assertThat(loans).isEmpty();
+  }
+
 
 
   @Test
