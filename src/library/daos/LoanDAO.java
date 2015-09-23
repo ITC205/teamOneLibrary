@@ -71,7 +71,7 @@ public class LoanDAO
    * from loan constructor).
    */
   // @Override
-  public ILoan createLoan(IBook book, IMember borrower)
+  public ILoan createLoan(IMember borrower, IBook book)
     throws IllegalArgumentException
   {
     Date borrowDate = ignoreTime(new Date());
