@@ -32,7 +32,7 @@ public class TestLoanHelper
   @Test
   public void makeLoan()
   {
-    LoanHelper helper = createLoanHelperWithProtectedConstructor();
+    LoanHelper helper = new LoanHelper();
 
     IBook book = stubBook();
     IMember borrower = stubMember();
@@ -49,7 +49,7 @@ public class TestLoanHelper
   @Test
   public void makeLoanSetsExpectedProperties()
   {
-    LoanHelper helper = createLoanHelperWithProtectedConstructor();
+    LoanHelper helper = new LoanHelper();
 
     IBook book = stubBook();
     IMember borrower = stubMember();
