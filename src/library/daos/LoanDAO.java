@@ -67,29 +67,17 @@ public class LoanDAO
    * @param book IBook The book that the borrower wishes to loan.
    * @return Loan A pending loan associated with the borrower and the book,
    * with and id of zero.
-   * throws IllegalArgumentException if borrower or book is null.
+   * throws IllegalArgumentException if borrower or book is null (propagated
+   * from loan constructor).
    */
   // @Override
   public ILoan createLoan(IBook book, IMember borrower)
     throws IllegalArgumentException
   {
-    // TODO: remove throws (and helper) - as this is done by Loan
-    throwIfObjectNull("Book", book);
-    throwIfObjectNull("Borrower", borrower);
     Date borrowDate = ignoreTime(new Date());
     Date dueDate = calculateDueDate(borrowDate);
 
     return helper_.makeLoan(book, borrower, borrowDate, dueDate);
-  }
-
-
-  private <T> void throwIfObjectNull(String parameterName, T object)
-      throws IllegalArgumentException
-  {
-    String message = "Cannot create a new Loan with a null ";
-    if (object == null) {
-      throw new IllegalArgumentException(message + parameterName);
-    }
   }
 
 
