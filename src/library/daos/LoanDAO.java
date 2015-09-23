@@ -11,6 +11,7 @@ import library.interfaces.entities.IBook;
 import library.interfaces.entities.IMember;
 import library.interfaces.entities.ILoan;
 
+import library.interfaces.daos.ILoanDAO;
 import library.interfaces.daos.ILoanHelper;
 
 import library.entities.Loan;
@@ -22,7 +23,7 @@ import library.entities.Loan;
  * loans.
  */
 public class LoanDAO
-//  implements ILoanDAO
+  implements ILoanDAO
 {
   //===========================================================================
   // Variables
@@ -70,7 +71,7 @@ public class LoanDAO
    * throws IllegalArgumentException if borrower or book is null (propagated
    * from loan constructor).
    */
-  // @Override
+  @Override
   public ILoan createLoan(IMember borrower, IBook book)
     throws IllegalArgumentException
   {
@@ -86,7 +87,7 @@ public class LoanDAO
    * Assigns the Loan a unique id and stores the Loan.
    * @param loan ILoan The Loan to be committed.
    */
-  // @Override
+  @Override
   public void commitLoan(ILoan loan)
   {
     loan.commit(nextID_);
@@ -100,7 +101,7 @@ public class LoanDAO
    * Returns a list of all loans in the committed loan collection.
    * @return List<ILoan> The list of all Loans in the committed loan collection.
    */
-  // @Override
+  @Override
   public List<ILoan> listLoans()
   {
     return new ArrayList<ILoan>(loanMap_.values());
@@ -114,7 +115,7 @@ public class LoanDAO
    * @return ILoan The loan in the committed loan collection with the given id,
    * or null if a loan with that id does not exist.
    */
-  // @Override
+  @Override
   public ILoan getLoanByID(int id)
   {
     if (loanMap_.containsKey(id)) {
@@ -135,7 +136,7 @@ public class LoanDAO
    * List<ILoan>
    * @param borrower IMember The borrower associated with the loans.
    */
-  // @Override
+  @Override
   public List<ILoan> findLoansByBorrower(IMember borrower)
   {
     if (loanMap_.isEmpty()) {
@@ -160,7 +161,7 @@ public class LoanDAO
    * @return List<ILoan> The list of all loans in the committed loan collection
    * associated with books with the given title.
    */
-  // @Override
+  @Override
   public List<ILoan> findLoansByBookTitle(String title)
   {
     if (loanMap_.isEmpty()) {
@@ -183,7 +184,7 @@ public class LoanDAO
    * @param date Date The current date, used to check if each current loan is
    * overdue.
    */
-  // @Override
+  @Override
   public void updateOverDueStatus(Date date)
   {
     for (ILoan loan : loanMap_.values()) {
@@ -194,6 +195,24 @@ public class LoanDAO
   }
 
 
+
+  /*
+   * Returns a list of all loans in the committed loan collection which are
+   * currently overdue (according to state).
+   * @return List<ILoan> All loans in the committed loan collection which are
+   * currently overdue.
+   */
+  @Override
+  public List<ILoan> findOverDueLoans()
+  {
+    List<ILoan> overdueLoans = new ArrayList<>();
+    for (ILoan loan : loanMap_.values()) {
+      if (loan.isOverDue()) {
+        overdueLoans.add(loan);
+      }
+    }
+    return overdueLoans;
+  }
 
   //===========================================================================
   // Helper methods

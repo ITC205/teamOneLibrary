@@ -682,6 +682,10 @@ public class TestLoanDAO
 
 
 
+  //===========================================================================
+  // Test updateOverDueStatus - with LoanBuilder (for stubs), LoanReflection
+  // (to create new LoanDAOs) & fixtures for loans & books
+  //===========================================================================
 
   // TODO: update when know how this works!
   @Test
@@ -713,6 +717,104 @@ public class TestLoanDAO
 
 
 
+
+
+
+
+
+
+  //===========================================================================
+  // Test findOverDueLoans - with LoanBuilder (for stubs), LoanReflection
+  // (to create new LoanDAOs) & fixtures for loans & books
+  //===========================================================================
+
+  @Test
+  public void findOverDueLoansEmptyIfNoLoans()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+
+    List<ILoan> overDueLoans = dao.findOverDueLoans();
+
+    assertThat(overDueLoans).isEmpty();
+  }
+
+
+
+  @Test
+  public void findOverDueLoansEmptyIfOneCompleteLoan()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    setUpFirstLoan();
+    dao.commitLoan(firstJimLoansCatch22_);
+
+    List<ILoan> overDueLoans = dao.findOverDueLoans();
+
+    assertThat(overDueLoans).isEmpty();
+  }
+
+
+
+  @Test
+  public void findOverDueLoansEmptyIfLoansNotDue()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    setUpFirstLoan();
+    dao.commitLoan(firstJimLoansCatch22_);
+    setUpSecondLoan();
+    dao.commitLoan(secondSamLoansEmma_);
+    setUpFifthLoan();
+    dao.commitLoan(fifthJillLoansDune_);
+
+    List<ILoan> overDueLoans = dao.findOverDueLoans();
+
+    assertThat(overDueLoans).isEmpty();
+  }
+
+
+
+  @Test
+  public void findOverDueLoansReturnsOneLoanIfOneOverDueLoan()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    setUpFirstLoan();
+    dao.commitLoan(firstJimLoansCatch22_);
+    setUpSecondLoan();
+    dao.commitLoan(secondSamLoansEmma_);
+    setUpThirdLoan();
+    dao.commitLoan(thirdJillLoansCatch22_);
+
+    List<ILoan> overDueLoans = dao.findOverDueLoans();
+
+    assertThat(overDueLoans).containsExactly(thirdJillLoansCatch22_);
+  }
+
+
+
+  @Test
+  public void findOverDueLoansReturnsMultipleIfMultipleOverDueLoans()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    setUpFirstLoan();
+    dao.commitLoan(firstJimLoansCatch22_);
+    setUpSecondLoan();
+    dao.commitLoan(secondSamLoansEmma_);
+    setUpThirdLoan();
+    dao.commitLoan(thirdJillLoansCatch22_);
+    setUpFourthLoan();
+    dao.commitLoan(fourthJimLoansScoop_);
+    setUpFifthLoan();
+    dao.commitLoan(fifthJillLoansDune_);
+
+    List<ILoan> overDueLoans = dao.findOverDueLoans();
+
+    assertThat(overDueLoans).containsExactly(thirdJillLoansCatch22_,
+                                             fourthJimLoansScoop_);
+  }
 
 
 
