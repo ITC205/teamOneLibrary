@@ -9,6 +9,8 @@ import library.interfaces.entities.IMember;
 import library.interfaces.entities.ILoan;
 import library.interfaces.daos.ILoanHelper;
 
+import library.interfaces.entities.EBookState;
+
 import library.daos.LoanDAO;
 
 import org.junit.Test;
@@ -54,41 +56,46 @@ public class TestLoanDAO
   {
     when(firstLoan_.getBook()).thenReturn(greatExpectations_);
     when(firstLoan_.getBorrower()).thenReturn(jim_);
-    when(firstLoan_.getID()).thenReturn(101);
+    when(firstLoan_.getID()).thenReturn(1);
     when(greatExpectations_.getTitle()).thenReturn("Great Expectations");
+    when(greatExpectations_.getState()).thenReturn(EBookState.ON_LOAN);
   }
 
   public void setUpSecondLoan()
   {
     when(secondLoan_.getBook()).thenReturn(prideAndPrejudice_);
     when(secondLoan_.getBorrower()).thenReturn(sam_);
-    when(secondLoan_.getID()).thenReturn(102);
+    when(secondLoan_.getID()).thenReturn(2);
     when(prideAndPrejudice_.getTitle()).thenReturn("Pride and Prejudice");
+    when(greatExpectations_.getState()).thenReturn(EBookState.ON_LOAN);
   }
 
   public void setUpThirdLoan()
   {
     when(thirdLoan_.getBook()).thenReturn(greatExpectations_);
     when(thirdLoan_.getBorrower()).thenReturn(jill_);
-    when(thirdLoan_.getID()).thenReturn(103);
+    when(thirdLoan_.getID()).thenReturn(3);
     when(greatExpectations_.getTitle()).thenReturn("Great Expectations");
+    when(greatExpectations_.getState()).thenReturn(EBookState.ON_LOAN);;
   }
 
   public void setUpFourthLoan()
   {
     when(fourthLoan_.getBook()).thenReturn(fightClub_);
     when(fourthLoan_.getBorrower()).thenReturn(jim_);
-    when(fourthLoan_.getID()).thenReturn(104);
+    when(fourthLoan_.getID()).thenReturn(4);
     when(fightClub_.getTitle()).thenReturn("Fight Club");
+    when(greatExpectations_.getState()).thenReturn(EBookState.ON_LOAN);
   }
 
   public void setUpFifthLoan()
   {
     when(fifthLoan_.getBook()).thenReturn(fearAndLoathingInLasVegas_);
     when(fifthLoan_.getBorrower()).thenReturn(jill_);
-    when(fifthLoan_.getID()).thenReturn(105);
+    when(fifthLoan_.getID()).thenReturn(5);
     when(fearAndLoathingInLasVegas_.getTitle())
                                   .thenReturn("Fear and Loathing in Las Vegas");
+    when(greatExpectations_.getState()).thenReturn(EBookState.ON_LOAN);
   }
 
   //===========================================================================
@@ -123,7 +130,7 @@ public class TestLoanDAO
 
   //===========================================================================
   // Test createLoan -  - with LoanBuilder (for stubs & mocks) &
-  // LoanReflection (to create new LoanDAOs)
+  // LoanReflection (to create new LoanDAOs) & fixtures for creating loan
   //===========================================================================
 
   @Test
@@ -212,25 +219,10 @@ public class TestLoanDAO
     }
   }
 
-
-
-  @Test
-  public void setUpLoansHelperWorksCorrectly()
-  {
-    ILoanHelper loanHelper = stubHelper();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
-
-    setUpFirstLoan();
-    dao.commitLoan(firstLoan_);
-    setUpSecondLoan();
-    dao.commitLoan(secondLoan_);
-
-    assertThat(firstLoan_.getBook()).isSameAs(greatExpectations_);
-    assertThat(secondLoan_.getBook()).isSameAs(prideAndPrejudice_);
-    assertThat(firstLoan_.getBook()).isNotSameAs(secondLoan_.getBook());
-  }
-
-
+  //===========================================================================
+  // Test listLoans - with LoanBuilder (for stubs) & LoanReflection (to create
+  // LoanDAO & add Loans to loanMap)
+  //===========================================================================
 
   @Test
   public void loanListIsNullInitially()
@@ -277,7 +269,31 @@ public class TestLoanDAO
     assertThat(allLoans).containsSequence(thirdLoan_, secondLoan_, firstLoan_);
   }
 
+  //===========================================================================
+  // Testing the test fixtures :-)
+  // ensure that broken text fixtures do not cause tests to fail/pass
+  //===========================================================================
 
+  @Test
+  public void setUpLoansHelperWorksCorrectly()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+
+    setUpFirstLoan();
+    dao.commitLoan(firstLoan_);
+    setUpSecondLoan();
+    dao.commitLoan(secondLoan_);
+
+    assertThat(firstLoan_.getBook()).isSameAs(greatExpectations_);
+    assertThat(secondLoan_.getBook()).isSameAs(prideAndPrejudice_);
+    assertThat(firstLoan_.getBook()).isNotSameAs(secondLoan_.getBook());
+  }
+
+  //===========================================================================
+  // Test commitLoan - with LoanBuilder (for stubs & mocks), LoanReflection
+  // (to create new LoanDAOs) & fixtures for loans
+  //===========================================================================
 
   @Test
   public void commitLoanCallsLoanCommitCorrectly()
@@ -289,7 +305,7 @@ public class TestLoanDAO
     dao.commitLoan(loan);
 
     // works because new LoanDAO has nextID set to 1 initially
-    verify(loan).commit(1);
+    verify(loan).commit(anyInt());
   }
 
 
@@ -362,16 +378,22 @@ public class TestLoanDAO
     dao.commitLoan(firstLoan_);
     setUpSecondLoan();
     dao.commitLoan(secondLoan_);
-    dao.commitLoan(firstLoan_); // again
+    setUpThirdLoan();
+    dao.commitLoan(thirdLoan_);
 
     allLoans = dao.listLoans();
 
     assertThat(allLoans).isNotEmpty();
     assertThat(allLoans).hasSize(3);
-    assertThat(allLoans).containsExactly(firstLoan_, secondLoan_, firstLoan_);
+    assertThat(allLoans).containsExactly(firstLoan_, secondLoan_, thirdLoan_);
   }
 
 
+
+  //===========================================================================
+  // Test getLoanByID - with LoanBuilder (for stubs), LoanReflection
+  // (to create new LoanDAOs) & fixtures for loans
+  //===========================================================================
 
   @Test
   public void getLoanByIdReturnsNullIfLoanMapEmpty()
@@ -415,17 +437,17 @@ public class TestLoanDAO
     List<ILoan> allLoans = dao.listLoans();
     assertThat(allLoans).isEmpty();
 
-    setUpThirdLoan();
-    dao.commitLoan(thirdLoan_);
-    setUpSecondLoan();
-    dao.commitLoan(secondLoan_);
     setUpFirstLoan();
     dao.commitLoan(firstLoan_);
+    setUpSecondLoan();
+    dao.commitLoan(secondLoan_);
+    setUpThirdLoan();
+    dao.commitLoan(thirdLoan_); // 3
 
     ILoan loan = dao.getLoanByID(3);
 
     assertThat(loan).isNotNull();
-    assertThat(loan).isEqualTo(firstLoan_);
+    assertThat(loan).isEqualTo(thirdLoan_);
   }
 
 
@@ -438,17 +460,72 @@ public class TestLoanDAO
     List<ILoan> allLoans = dao.listLoans();
     assertThat(allLoans).isEmpty();
 
-    setUpThirdLoan();
-    dao.commitLoan(thirdLoan_);
-    setUpSecondLoan();
-    dao.commitLoan(secondLoan_);
     setUpFirstLoan();
     dao.commitLoan(firstLoan_);
+    setUpSecondLoan();
+    dao.commitLoan(secondLoan_);
+    setUpThirdLoan();
+    dao.commitLoan(thirdLoan_); // 3
 
     ILoan loan = dao.getLoanByID(4);
 
     assertThat(loan).isNull();
   }
+
+  //===========================================================================
+  // Test getLoanByBook - with LoanBuilder (for stubs), LoanReflection
+  // (to create new LoanDAOs) & fixtures for loans & books
+  //===========================================================================
+
+  @Test
+  public void getLoanByBookReturnsNullIfLoanMapEmpty()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    List<ILoan> allLoans = dao.listLoans();
+    assertThat(allLoans).isEmpty();
+
+    ILoan loan = dao.getLoanByBook(greatExpectations_);
+
+    assertThat(loan).isNull();
+  }
+
+
+  // TODO: complete getLoanByBook tests once clear what they need to do
+  @Test
+  public void getLoanByBookIsNotNullIfLoanMapContainsBookOnly()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    List<ILoan> allLoans = dao.listLoans();
+    assertThat(allLoans).isEmpty();
+    setUpFirstLoan();
+    dao.commitLoan(firstLoan_);
+
+    ILoan loan = dao.getLoanByBook(greatExpectations_);
+
+    assertThat(loan).isNotNull();
+  }
+
+
+
+  @Test
+  public void getLoanByBookReturnsBookIfLoanMapContainsBookOnly()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    List<ILoan> allLoans = dao.listLoans();
+    assertThat(allLoans).isEmpty();
+    setUpFirstLoan();
+    dao.commitLoan(firstLoan_);
+
+
+    ILoan loan = dao.getLoanByBook(greatExpectations_);
+
+    assertThat(loan).isSameAs(firstLoan_);
+  }
+
+
 
 
 
