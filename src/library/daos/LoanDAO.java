@@ -138,8 +138,7 @@ public class LoanDAO
     }
 
     for (ILoan loan : loanMap_.values()) {
-      if(loan.getBook().equals(book) &&
-             book.getState() == library.interfaces.entities.EBookState.ON_LOAN) {
+      if(loan.getBook().equals(book)) {
         return loan;
       }
     }
