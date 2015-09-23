@@ -58,7 +58,7 @@ public class TestLoanDAO
     when(firstLoan_.getBorrower()).thenReturn(jim_);
     when(firstLoan_.getID()).thenReturn(1);
     when(greatExpectations_.getTitle()).thenReturn("Great Expectations");
-    when(greatExpectations_.getState()).thenReturn(EBookState.ON_LOAN);
+    when(greatExpectations_.getState()).thenReturn(EBookState.AVAILABLE);
   }
 
   public void setUpSecondLoan()
@@ -478,7 +478,7 @@ public class TestLoanDAO
   //===========================================================================
 
   @Test
-  public void getLoanByBookReturnsNullIfLoanMapEmpty()
+  public void getLoanByBookReturnsNullIfNoLoans()
   {
     ILoanHelper loanHelper = stubHelper();
     LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
@@ -493,7 +493,7 @@ public class TestLoanDAO
 
   // TODO: complete getLoanByBook tests once clear what they need to do
   @Test
-  public void getLoanByBookIsNotNullIfLoanMapContainsBookOnly()
+  public void getLoanByBookIsNotNullIfSingleLoanOfBook()
   {
     ILoanHelper loanHelper = stubHelper();
     LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
@@ -510,7 +510,7 @@ public class TestLoanDAO
 
 
   @Test
-  public void getLoanByBookReturnsBookIfLoanMapContainsBookOnly()
+  public void getLoanByBookReturnsLoanIfSingleLoanOfBook()
   {
     ILoanHelper loanHelper = stubHelper();
     LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
@@ -519,10 +519,31 @@ public class TestLoanDAO
     setUpFirstLoan();
     dao.commitLoan(firstLoan_);
 
-
     ILoan loan = dao.getLoanByBook(greatExpectations_);
 
     assertThat(loan).isSameAs(firstLoan_);
+  }
+
+
+
+  @Test
+  public void getLoanByBookReturnsCurrentLoanIfMultipleLoansOfBook()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    List<ILoan> allLoans = dao.listLoans();
+    assertThat(allLoans).isEmpty();
+    setUpFirstLoan();
+    dao.commitLoan(firstLoan_); // our book
+    setUpSecondLoan();
+    dao.commitLoan(secondLoan_);
+    setUpThirdLoan();
+    dao.commitLoan(thirdLoan_); // our book
+
+    ILoan loan = dao.getLoanByBook(greatExpectations_);
+
+    assertThat(loan).isNotSameAs(firstLoan_);
+    assertThat(loan).isSameAs(thirdLoan_);
   }
 
 
