@@ -30,20 +30,20 @@ public class TestLoanDAO
   // Test fixtures
   //===========================================================================
 
-  private ILoan firstLoan_ = stubLoan();
-  private ILoan secondLoan_ = stubLoan();
-  private ILoan thirdLoan_ = stubLoan();
-  private ILoan fourthLoan_ = stubLoan();
-  private ILoan fifthLoan_ = stubLoan();
+  private ILoan firstJimLoansCatch22_ = stubLoan();
+  private ILoan secondSamLoansEmma_ = stubLoan();
+  private ILoan thirdJillLoansCatch22_ = stubLoan();
+  private ILoan fourthJimLoansScoop_ = stubLoan();
+  private ILoan fifthJillLoansDune_ = stubLoan();
 
   private IMember jim_ = stubMember();
   private IMember sam_ = stubMember();
   private IMember jill_ = stubMember();
 
-  private IBook greatExpectations_ = stubBook();
-  private IBook prideAndPrejudice_ = stubBook();
-  private IBook fightClub_ = stubBook();
-  private IBook fearAndLoathingInLasVegas_ = stubBook();
+  private IBook catch22_ = stubBook();
+  private IBook emma_ = stubBook();
+  private IBook scoop_ = stubBook();
+  private IBook dune_ = stubBook();
 
   private Date Jan10 = dateBuilder(10, 0, 2014);
   private Date Jan24 = dateBuilder(24, 0, 2014);
@@ -54,48 +54,52 @@ public class TestLoanDAO
 
   public void setUpFirstLoan()
   {
-    when(firstLoan_.getBook()).thenReturn(greatExpectations_);
-    when(firstLoan_.getBorrower()).thenReturn(jim_);
-    when(firstLoan_.getID()).thenReturn(1);
-    when(greatExpectations_.getTitle()).thenReturn("Great Expectations");
-    when(greatExpectations_.getState()).thenReturn(EBookState.AVAILABLE);
+    when(firstJimLoansCatch22_.getBook()).thenReturn(catch22_);
+    when(firstJimLoansCatch22_.getBorrower()).thenReturn(jim_);
+    when(firstJimLoansCatch22_.getID()).thenReturn(1);
+    when(catch22_.getTitle()).thenReturn("CATCH-22");
+    when(catch22_.getAuthor()).thenReturn("Joseph Heller");
+    when(catch22_.getState()).thenReturn(EBookState.AVAILABLE); // TODO: check!
   }
 
   public void setUpSecondLoan()
   {
-    when(secondLoan_.getBook()).thenReturn(prideAndPrejudice_);
-    when(secondLoan_.getBorrower()).thenReturn(sam_);
-    when(secondLoan_.getID()).thenReturn(2);
-    when(prideAndPrejudice_.getTitle()).thenReturn("Pride and Prejudice");
-    when(greatExpectations_.getState()).thenReturn(EBookState.ON_LOAN);
+    when(secondSamLoansEmma_.getBook()).thenReturn(emma_);
+    when(secondSamLoansEmma_.getBorrower()).thenReturn(sam_);
+    when(secondSamLoansEmma_.getID()).thenReturn(2);
+    when(emma_.getTitle()).thenReturn("Emma");
+    when(emma_.getAuthor()).thenReturn("Jane Austen");
+    when(emma_.getState()).thenReturn(EBookState.AVAILABLE);
   }
 
   public void setUpThirdLoan()
   {
-    when(thirdLoan_.getBook()).thenReturn(greatExpectations_);
-    when(thirdLoan_.getBorrower()).thenReturn(jill_);
-    when(thirdLoan_.getID()).thenReturn(3);
-    when(greatExpectations_.getTitle()).thenReturn("Great Expectations");
-    when(greatExpectations_.getState()).thenReturn(EBookState.ON_LOAN);;
+    when(thirdJillLoansCatch22_.getBook()).thenReturn(catch22_);
+    when(thirdJillLoansCatch22_.getBorrower()).thenReturn(jill_);
+    when(thirdJillLoansCatch22_.getID()).thenReturn(3);
+    when(catch22_.getTitle()).thenReturn("CATCH-22");
+    when(catch22_.getAuthor()).thenReturn("Joseph Heller");
+    when(catch22_.getState()).thenReturn(EBookState.ON_LOAN);;
   }
 
   public void setUpFourthLoan()
   {
-    when(fourthLoan_.getBook()).thenReturn(fightClub_);
-    when(fourthLoan_.getBorrower()).thenReturn(jim_);
-    when(fourthLoan_.getID()).thenReturn(4);
-    when(fightClub_.getTitle()).thenReturn("Fight Club");
-    when(greatExpectations_.getState()).thenReturn(EBookState.ON_LOAN);
+    when(fourthJimLoansScoop_.getBook()).thenReturn(scoop_);
+    when(fourthJimLoansScoop_.getBorrower()).thenReturn(jim_);
+    when(fourthJimLoansScoop_.getID()).thenReturn(4);
+    when(scoop_.getTitle()).thenReturn("Scoop");
+    when(scoop_.getAuthor()).thenReturn("Evelyn Waugh");
+    when(scoop_.getState()).thenReturn(EBookState.ON_LOAN);
   }
 
   public void setUpFifthLoan()
   {
-    when(fifthLoan_.getBook()).thenReturn(fearAndLoathingInLasVegas_);
-    when(fifthLoan_.getBorrower()).thenReturn(jill_);
-    when(fifthLoan_.getID()).thenReturn(5);
-    when(fearAndLoathingInLasVegas_.getTitle())
-                                  .thenReturn("Fear and Loathing in Las Vegas");
-    when(greatExpectations_.getState()).thenReturn(EBookState.ON_LOAN);
+    when(fifthJillLoansDune_.getBook()).thenReturn(dune_);
+    when(fifthJillLoansDune_.getBorrower()).thenReturn(jill_);
+    when(fifthJillLoansDune_.getID()).thenReturn(5);
+    when(dune_.getTitle()).thenReturn("Dune");
+    when(dune_.getAuthor()).thenReturn("Frank Herbert");
+    when(dune_.getState()).thenReturn(EBookState.ON_LOAN);
   }
 
   //===========================================================================
@@ -141,9 +145,9 @@ public class TestLoanDAO
     ILoanHelper loanHelper = mockHelper();
     LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
 
-    ILoan loan = dao.createLoan(jim_, greatExpectations_);
+    ILoan loan = dao.createLoan(jim_, catch22_);
 
-    verify(loanHelper).makeLoan(greatExpectations_, jim_, today, due);
+    verify(loanHelper).makeLoan(catch22_, jim_, today, due);
   }
 
 
@@ -154,11 +158,11 @@ public class TestLoanDAO
     Date today = ignoreTime(new Date());
     Date due = calculateDueDate(today);
     ILoanHelper loanHelper = stubHelper();
-    when(loanHelper.makeLoan(greatExpectations_, jim_, today, due))
-        .thenReturn(firstLoan_);
+    when(loanHelper.makeLoan(catch22_, jim_, today, due))
+        .thenReturn(firstJimLoansCatch22_);
     LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
 
-    ILoan loan = dao.createLoan(jim_, greatExpectations_);
+    ILoan loan = dao.createLoan(jim_, catch22_);
 
     assertThat(loan).isInstanceOf(ILoan.class);
   }
@@ -171,13 +175,13 @@ public class TestLoanDAO
     Date today = ignoreTime(new Date());
     Date due = calculateDueDate(today);
     ILoanHelper loanHelper = stubHelper();
-    when(loanHelper.makeLoan(greatExpectations_, jim_, today, due))
-        .thenReturn(firstLoan_);
+    when(loanHelper.makeLoan(catch22_, jim_, today, due))
+        .thenReturn(firstJimLoansCatch22_);
     LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
 
-    ILoan loan = dao.createLoan(jim_, greatExpectations_);
+    ILoan loan = dao.createLoan(jim_, catch22_);
 
-    assertThat(loan).isSameAs(firstLoan_);
+    assertThat(loan).isSameAs(firstJimLoansCatch22_);
   }
 
 
@@ -207,12 +211,12 @@ public class TestLoanDAO
     Date today = ignoreTime(new Date());
     Date due = calculateDueDate(today);
     ILoanHelper loanHelper = stubHelper();
-    when(loanHelper.makeLoan(greatExpectations_, null, today, due))
+    when(loanHelper.makeLoan(catch22_, null, today, due))
         .thenThrow(new IllegalArgumentException());
     LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
 
     try {
-      ILoan loan = dao.createLoan(null, greatExpectations_);
+      ILoan loan = dao.createLoan(null, catch22_);
     }
     catch (Exception exception) {
       assertThat(exception).isInstanceOf(IllegalArgumentException.class);
@@ -242,14 +246,14 @@ public class TestLoanDAO
   {
     ILoanHelper loanHelper = stubHelper();
     LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
-    ILoan[] loans = {firstLoan_, secondLoan_};
+    ILoan[] loans = { firstJimLoansCatch22_, secondSamLoansEmma_};
 
     setPrivateLoanMap(dao, loans);
     List<ILoan> allLoans = dao.listLoans();
 
     assertThat(allLoans).isNotEmpty();
     assertThat(allLoans).hasSize(2);
-    assertThat(allLoans).containsExactly(firstLoan_, secondLoan_);
+    assertThat(allLoans).containsExactly(firstJimLoansCatch22_, secondSamLoansEmma_);
   }
 
 
@@ -259,14 +263,17 @@ public class TestLoanDAO
   {
     ILoanHelper loanHelper = stubHelper();
     LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
-    ILoan[] loans = {thirdLoan_, secondLoan_, firstLoan_};
+    ILoan[] loans = {thirdJillLoansCatch22_, secondSamLoansEmma_,
+                     firstJimLoansCatch22_ };
 
     setPrivateLoanMap(dao, loans);
     List<ILoan> allLoans = dao.listLoans();
 
     assertThat(allLoans).isNotEmpty();
     assertThat(allLoans).hasSize(3);
-    assertThat(allLoans).containsSequence(thirdLoan_, secondLoan_, firstLoan_);
+    assertThat(allLoans).containsSequence(thirdJillLoansCatch22_,
+                                          secondSamLoansEmma_,
+                                          firstJimLoansCatch22_ );
   }
 
   //===========================================================================
@@ -281,13 +288,14 @@ public class TestLoanDAO
     LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
 
     setUpFirstLoan();
-    dao.commitLoan(firstLoan_);
+    dao.commitLoan(firstJimLoansCatch22_);
     setUpSecondLoan();
-    dao.commitLoan(secondLoan_);
+    dao.commitLoan(secondSamLoansEmma_);
 
-    assertThat(firstLoan_.getBook()).isSameAs(greatExpectations_);
-    assertThat(secondLoan_.getBook()).isSameAs(prideAndPrejudice_);
-    assertThat(firstLoan_.getBook()).isNotSameAs(secondLoan_.getBook());
+    assertThat(firstJimLoansCatch22_.getBook()).isSameAs(catch22_);
+    assertThat(secondSamLoansEmma_.getBook()).isSameAs(emma_);
+    assertThat(firstJimLoansCatch22_.getBook())
+                                    .isNotSameAs(secondSamLoansEmma_.getBook());
   }
 
   //===========================================================================
@@ -331,17 +339,16 @@ public class TestLoanDAO
   {
     ILoanHelper loanHelper = stubHelper();
     LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
-
     setUpFirstLoan();
-    dao.commitLoan(firstLoan_);
+    dao.commitLoan(firstJimLoansCatch22_);
     setUpSecondLoan();
-    dao.commitLoan(secondLoan_);
+    dao.commitLoan(secondSamLoansEmma_);
     setUpThirdLoan();
-    dao.commitLoan(thirdLoan_);
+    dao.commitLoan(thirdJillLoansCatch22_);
 
-    verify(firstLoan_).commit(1);
-    verify(secondLoan_).commit(2);
-    verify(thirdLoan_).commit(3);
+    verify(firstJimLoansCatch22_).commit(1);
+    verify(secondSamLoansEmma_).commit(2);
+    verify(thirdJillLoansCatch22_).commit(3);
   }
 
 
@@ -353,15 +360,14 @@ public class TestLoanDAO
     LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
     List<ILoan> allLoans = dao.listLoans();
     assertThat(allLoans).isEmpty();
-
     setUpFirstLoan();
-    dao.commitLoan(firstLoan_);
+    dao.commitLoan(firstJimLoansCatch22_);
 
     allLoans = dao.listLoans();
 
     assertThat(allLoans).isNotEmpty();
     assertThat(allLoans).hasSize(1);
-    assertThat(allLoans).containsExactly(firstLoan_);
+    assertThat(allLoans).containsExactly(firstJimLoansCatch22_);
   }
 
 
@@ -373,22 +379,21 @@ public class TestLoanDAO
     LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
     List<ILoan> allLoans = dao.listLoans();
     assertThat(allLoans).isEmpty();
-
     setUpFirstLoan();
-    dao.commitLoan(firstLoan_);
+    dao.commitLoan(firstJimLoansCatch22_);
     setUpSecondLoan();
-    dao.commitLoan(secondLoan_);
+    dao.commitLoan(secondSamLoansEmma_);
     setUpThirdLoan();
-    dao.commitLoan(thirdLoan_);
+    dao.commitLoan(thirdJillLoansCatch22_);
 
     allLoans = dao.listLoans();
 
     assertThat(allLoans).isNotEmpty();
     assertThat(allLoans).hasSize(3);
-    assertThat(allLoans).containsExactly(firstLoan_, secondLoan_, thirdLoan_);
+    assertThat(allLoans).containsExactly(firstJimLoansCatch22_,
+                                         secondSamLoansEmma_,
+                                         thirdJillLoansCatch22_);
   }
-
-
 
   //===========================================================================
   // Test getLoanByID - with LoanBuilder (for stubs), LoanReflection
@@ -417,14 +422,13 @@ public class TestLoanDAO
     LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
     List<ILoan> allLoans = dao.listLoans();
     assertThat(allLoans).isEmpty();
-
     setUpFirstLoan();
-    dao.commitLoan(firstLoan_);
+    dao.commitLoan(firstJimLoansCatch22_);
 
     ILoan loan = dao.getLoanByID(1);
 
     assertThat(loan).isNotNull();
-    assertThat(loan).isEqualTo(firstLoan_);
+    assertThat(loan).isEqualTo(firstJimLoansCatch22_);
   }
 
 
@@ -436,18 +440,17 @@ public class TestLoanDAO
     LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
     List<ILoan> allLoans = dao.listLoans();
     assertThat(allLoans).isEmpty();
-
     setUpFirstLoan();
-    dao.commitLoan(firstLoan_);
+    dao.commitLoan(firstJimLoansCatch22_);
     setUpSecondLoan();
-    dao.commitLoan(secondLoan_);
+    dao.commitLoan(secondSamLoansEmma_);
     setUpThirdLoan();
-    dao.commitLoan(thirdLoan_); // 3
+    dao.commitLoan(thirdJillLoansCatch22_); // 3
 
     ILoan loan = dao.getLoanByID(3);
 
     assertThat(loan).isNotNull();
-    assertThat(loan).isEqualTo(thirdLoan_);
+    assertThat(loan).isEqualTo(thirdJillLoansCatch22_);
   }
 
 
@@ -459,13 +462,12 @@ public class TestLoanDAO
     LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
     List<ILoan> allLoans = dao.listLoans();
     assertThat(allLoans).isEmpty();
-
     setUpFirstLoan();
-    dao.commitLoan(firstLoan_);
+    dao.commitLoan(firstJimLoansCatch22_);
     setUpSecondLoan();
-    dao.commitLoan(secondLoan_);
+    dao.commitLoan(secondSamLoansEmma_);
     setUpThirdLoan();
-    dao.commitLoan(thirdLoan_); // 3
+    dao.commitLoan(thirdJillLoansCatch22_); // 3
 
     ILoan loan = dao.getLoanByID(4);
 
@@ -485,69 +487,143 @@ public class TestLoanDAO
     List<ILoan> allLoans = dao.listLoans();
     assertThat(allLoans).isEmpty();
 
-    ILoan loan = dao.getLoanByBook(greatExpectations_);
+    ILoan loan = dao.getLoanByBook(catch22_);
 
     assertThat(loan).isNull();
   }
 
 
-  // TODO: complete getLoanByBook tests once clear what they need to do
+
   @Test
-  public void getLoanByBookIsNotNullIfSingleLoanOfBook()
+  public void getLoanByBookReturnsNullIfNoCurrentLoan()
   {
     ILoanHelper loanHelper = stubHelper();
     LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
     List<ILoan> allLoans = dao.listLoans();
     assertThat(allLoans).isEmpty();
     setUpFirstLoan();
-    dao.commitLoan(firstLoan_);
+    dao.commitLoan(firstJimLoansCatch22_); // returned
+    setUpSecondLoan();
+    dao.commitLoan(secondSamLoansEmma_);
 
-    ILoan loan = dao.getLoanByBook(greatExpectations_);
+    ILoan loan = dao.getLoanByBook(catch22_);
+
+    assertThat(loan).isNull();
+  }
+
+
+  @Test
+  public void getLoanByBookReturnsCurrentLoanWhenOnlyLoan()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    List<ILoan> allLoans = dao.listLoans();
+    assertThat(allLoans).isEmpty();
+    setUpThirdLoan();
+    dao.commitLoan(thirdJillLoansCatch22_); // current
+
+    ILoan loan = dao.getLoanByBook(catch22_);
+
+    assertThat(loan).isSameAs(thirdJillLoansCatch22_);
+  }
+
+
+  // TODO: complete getLoanByBook tests
+  @Test
+  public void getLoanByBookIsNotNullIfCurrentLoan()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    List<ILoan> allLoans = dao.listLoans();
+    assertThat(allLoans).isEmpty();
+    setUpFirstLoan();
+    dao.commitLoan(firstJimLoansCatch22_); // returned
+    setUpSecondLoan();
+    dao.commitLoan(secondSamLoansEmma_);
+    setUpThirdLoan();
+    dao.commitLoan(thirdJillLoansCatch22_); // current
+
+    ILoan loan = dao.getLoanByBook(catch22_);
 
     assertThat(loan).isNotNull();
   }
 
 
-
   @Test
-  public void getLoanByBookReturnsLoanIfSingleLoanOfBook()
+  public void getLoanByBookReturnsCurrentLoan()
   {
     ILoanHelper loanHelper = stubHelper();
     LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
     List<ILoan> allLoans = dao.listLoans();
     assertThat(allLoans).isEmpty();
     setUpFirstLoan();
-    dao.commitLoan(firstLoan_);
-
-    ILoan loan = dao.getLoanByBook(greatExpectations_);
-
-    assertThat(loan).isSameAs(firstLoan_);
-  }
-
-
-  // TODO: broken - waiting for Jim
-  @Test
-  public void getLoanByBookReturnsCurrentLoanIfMultipleLoansOfBook()
-  {
-    ILoanHelper loanHelper = stubHelper();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
-    List<ILoan> allLoans = dao.listLoans();
-    assertThat(allLoans).isEmpty();
-    setUpFirstLoan();
-    dao.commitLoan(firstLoan_); // our book
+    dao.commitLoan(firstJimLoansCatch22_); // returned
     setUpSecondLoan();
-    dao.commitLoan(secondLoan_);
+    dao.commitLoan(secondSamLoansEmma_);
     setUpThirdLoan();
-    dao.commitLoan(thirdLoan_); // our book
+    dao.commitLoan(thirdJillLoansCatch22_); // current
 
-    ILoan loan = dao.getLoanByBook(greatExpectations_);
+    ILoan loan = dao.getLoanByBook(catch22_);
 
-    assertThat(loan).isNotSameAs(firstLoan_);
-    assertThat(loan).isSameAs(thirdLoan_);
+    assertThat(loan).isNotSameAs(firstJimLoansCatch22_);
+    assertThat(loan).isSameAs(thirdJillLoansCatch22_);
+  }
+
+
+  @Test
+  public void findLoansByBorrowerReturnsNullIfNoLoans()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    List<ILoan> allLoans = dao.listLoans();
+    assertThat(allLoans).isEmpty();
+
+    List<ILoan> loans = dao.findLoansByBorrower(jim_);
+
+    assertThat(loans).isNull();
+  }
+
+
+  @Test
+  public void findLoansByBorrowerReturnsLoanIfSingleLoanByBorrower()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    List<ILoan> allLoans = dao.listLoans();
+    assertThat(allLoans).isEmpty();
+    setUpFirstLoan();
+    dao.commitLoan(firstJimLoansCatch22_); // our book
+
+    List<ILoan> loans = dao.findLoansByBorrower(jim_);
+
+    assertThat(loans).isNotNull();
+    assertThat(loans).containsExactly(firstJimLoansCatch22_);
   }
 
 
 
+  @Test
+  public void findLoansByBorrowerReturnsLoanIfMultipleLoanByBorrower()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    List<ILoan> allLoans = dao.listLoans();
+    assertThat(allLoans).isEmpty();
+    setUpFirstLoan();
+    dao.commitLoan(firstJimLoansCatch22_); // jim
+    setUpSecondLoan();
+    dao.commitLoan(secondSamLoansEmma_);
+    setUpThirdLoan();
+    dao.commitLoan(thirdJillLoansCatch22_);
+    setUpFourthLoan();
+    dao.commitLoan(fourthJimLoansScoop_); // jim
+
+    List<ILoan> loans = dao.findLoansByBorrower(jim_);
+
+    assertThat(loans).isNotNull();
+    assertThat(loans).containsExactly(firstJimLoansCatch22_,
+                                      fourthJimLoansScoop_);
+  }
 
 
   // TODO: extract helpers?
