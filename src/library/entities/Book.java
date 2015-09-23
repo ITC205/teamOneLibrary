@@ -242,7 +242,7 @@ public class Book implements IBook
   
   private boolean isStringNullOrEmpty(String input) 
   {
-    // Check null first to avoid NullPointException 
+    // Check null first to avoid NullPointerException 
     if(input == null) {
       return true;
     }
