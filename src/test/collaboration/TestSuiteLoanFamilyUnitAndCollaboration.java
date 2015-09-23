@@ -9,12 +9,12 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(org.junit.runners.Suite.class)
 @SuiteClasses(
-                 {
-                     test.unit.TestLoan.class,
-                     test.unit.TestLoanHelper.class,
-                     test.unit.TestLoanDAO.class,
-                     TestSuiteLoanFamilyUnitAndCollaboration.class
-                 })
+  {
+    test.unit.TestLoan.class,
+    test.unit.TestLoanHelper.class,
+    test.unit.TestLoanDAO.class,
+    TestLoanFamily.class
+  })
 
 public class TestSuiteLoanFamilyUnitAndCollaboration
 {

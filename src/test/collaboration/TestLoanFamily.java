@@ -7,10 +7,12 @@ import java.util.List;
 import library.interfaces.entities.IBook;
 import library.interfaces.entities.IMember;
 import library.interfaces.entities.ILoan;
+import library.interfaces.entities.EBookState;
+
 import library.interfaces.daos.ILoanHelper;
 import library.interfaces.daos.ILoanDAO;
 
-import library.interfaces.entities.EBookState;
+import library.entities.Loan;
 
 import library.daos.LoanDAO;
 
@@ -45,28 +47,28 @@ public class TestLoanFamily
   {
     when(catch22_.getTitle()).thenReturn("CATCH-22");
     when(catch22_.getAuthor()).thenReturn("Joseph Heller");
-    when(catch22_.getState()).thenReturn(EBookState.AVAILABLE);
+    when(catch22_.getState()).thenReturn(library.interfaces.entities.EBookState.AVAILABLE);
   }
 
   public void setUpEmma()
   {
     when(emma_.getTitle()).thenReturn("Emma");
     when(emma_.getAuthor()).thenReturn("Jane Austen");
-    when(emma_.getState()).thenReturn(EBookState.AVAILABLE);
+    when(emma_.getState()).thenReturn(library.interfaces.entities.EBookState.AVAILABLE);
   }
 
   public void setUpScoop()
   {
     when(scoop_.getTitle()).thenReturn("Scoop");
     when(scoop_.getAuthor()).thenReturn("Evelyn Waugh");
-    when(scoop_.getState()).thenReturn(EBookState.ON_LOAN);
+    when(scoop_.getState()).thenReturn(library.interfaces.entities.EBookState.ON_LOAN);
   }
 
   public void setUpDune()
   {
     when(dune_.getTitle()).thenReturn("Dune");
     when(dune_.getAuthor()).thenReturn("Frank Herbert");
-    when(dune_.getState()).thenReturn(EBookState.ON_LOAN);
+    when(dune_.getState()).thenReturn(library.interfaces.entities.EBookState.ON_LOAN);
   }
 
 
@@ -116,6 +118,276 @@ public class TestLoanFamily
 
 
 
+  @Test
+  public void createLibraryWithOnePendingLoan()
+  {
+    ILoanHelper loanHelper = createLoanHelperWithProtectedConstructor();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+
+    ILoan loan = dao.createLoan(jim_, catch22_);
+    assertThat(loan.getID()).isEqualTo(0);
+  }
+
+
+
+  @Test
+  public void createLibraryWithOneCurrentLoan()
+  {
+    ILoanHelper loanHelper = createLoanHelperWithProtectedConstructor();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+
+    ILoan loan = dao.createLoan(jim_, catch22_);
+    dao.commitLoan(loan);
+
+    assertThat(loan.getID()).isEqualTo(1);
+    assertThat(loan.isCurrent()).isTrue();
+  }
+
+
+
+  @Test
+  public void createLibraryWithOneLoanAboutToBecomeOverDue()
+  {
+    ILoanHelper loanHelper = createLoanHelperWithProtectedConstructor();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    Date dueDate = dateBuilder(24, 10, 2015);
+    Date today = dateBuilder(25, 10, 2015);
+
+    ILoan loan = dao.createLoan(jim_, catch22_);
+    dao.commitLoan(loan);
+    setPrivateDueDate((Loan)loan, dueDate);
+    assertThat(loan.isOverDue()).isFalse();
+    assertThat(dao.findOverDueLoans()).isEmpty();
+
+    dao.updateOverDueStatus(today);
+
+    assertThat(loan.isOverDue()).isTrue();
+    assertThat(dao.findOverDueLoans()).isNotEmpty();
+  }
+
+
+
+  @Test
+  public void singleLoanCanBeFoundByBorrower()
+  {
+    ILoanHelper loanHelper = createLoanHelperWithProtectedConstructor();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    ILoan loan = dao.createLoan(jim_, catch22_);
+    dao.commitLoan(loan);
+
+    List<ILoan> jimLoans = dao.findLoansByBorrower(jim_);
+
+    assertThat(jimLoans).containsExactly(loan);
+  }
+
+
+
+  @Test
+  public void singleLoanCanBeFoundByBookTitle()
+  {
+    ILoanHelper loanHelper = createLoanHelperWithProtectedConstructor();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    setUpCatch22();
+    ILoan loan = dao.createLoan(jim_, catch22_);
+    dao.commitLoan(loan);
+
+    List<ILoan> catch22Loans = dao.findLoansByBookTitle("CATCH-22");
+
+    assertThat(catch22Loans).containsExactly(loan);
+  }
+
+
+
+
+
+
+  @Test
+  public void multipleLoansCanBeFoundByBorrower()
+  {
+    ILoanHelper loanHelper = createLoanHelperWithProtectedConstructor();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    setUpJim();
+    setUpCatch22();
+    ILoan firstLoan = dao.createLoan(jim_, catch22_);
+    dao.commitLoan(firstLoan);
+    ILoan secondLoan = dao.createLoan(sam_, emma_);
+    dao.commitLoan(secondLoan);
+    ILoan thirdLoan = dao.createLoan(jill_, catch22_);
+    dao.commitLoan(thirdLoan);
+    ILoan fourthLoan = dao.createLoan(jim_, scoop_);
+    dao.commitLoan(fourthLoan);
+    ILoan fifthLoan = dao.createLoan(jill_, dune_);
+    dao.commitLoan(fifthLoan);
+    ILoan sixthLoan = dao.createLoan(sam_, emma_);
+    dao.commitLoan(sixthLoan);
+    assertThat(dao.listLoans()).hasSize(6);
+
+    List<ILoan> jimLoans = dao.findLoansByBorrower(jim_);
+
+    assertThat(jimLoans).containsExactly(firstLoan, fourthLoan);
+  }
+
+
+
+  @Test
+  public void findLoansByBorrowerReturnsEmptyListForNewMember()
+  {
+    ILoanHelper loanHelper = createLoanHelperWithProtectedConstructor();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    ILoan firstLoan = dao.createLoan(jim_, catch22_);
+    dao.commitLoan(firstLoan);
+    ILoan secondLoan = dao.createLoan(sam_, emma_);
+    dao.commitLoan(secondLoan);
+    ILoan thirdLoan = dao.createLoan(jill_, catch22_);
+    dao.commitLoan(thirdLoan);
+    ILoan fourthLoan = dao.createLoan(jim_, scoop_);
+    dao.commitLoan(fourthLoan);
+    ILoan fifthLoan = dao.createLoan(jill_, dune_);
+    dao.commitLoan(fifthLoan);
+    ILoan sixthLoan = dao.createLoan(sam_, emma_);
+    dao.commitLoan(sixthLoan);
+    assertThat(dao.listLoans()).hasSize(6);
+
+    List<ILoan> bobLoans = dao.findLoansByBorrower(bob_);
+
+    assertThat(bobLoans).isEmpty();
+  }
+
+
+
+
+
+  @Test
+  public void multipleLoansCanBeFoundByBookTitle()
+  {
+    ILoanHelper loanHelper = createLoanHelperWithProtectedConstructor();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    setUpCatch22();
+    setUpEmma();
+    setUpScoop();
+    setUpDune();
+    ILoan firstLoan = dao.createLoan(jim_, catch22_);
+    dao.commitLoan(firstLoan);
+    ILoan secondLoan = dao.createLoan(sam_, emma_);
+    dao.commitLoan(secondLoan);
+    ILoan thirdLoan = dao.createLoan(jill_, catch22_);
+    dao.commitLoan(thirdLoan);
+    ILoan fourthLoan = dao.createLoan(jim_, scoop_);
+    dao.commitLoan(fourthLoan);
+    ILoan fifthLoan = dao.createLoan(jill_, dune_);
+    dao.commitLoan(fifthLoan);
+    ILoan sixthLoan = dao.createLoan(sam_, emma_);
+    dao.commitLoan(sixthLoan);
+    assertThat(dao.listLoans()).hasSize(6);
+
+    List<ILoan> catch22Loans = dao.findLoansByBookTitle("CATCH-22");
+
+    assertThat(catch22Loans).containsExactly(firstLoan, thirdLoan);
+  }
+
+
+
+  @Test
+  public void findLoanByWrongBookTitleReturnsEmptyList()
+  {
+    ILoanHelper loanHelper = createLoanHelperWithProtectedConstructor();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    setUpCatch22();
+    setUpEmma();
+    setUpScoop();
+    setUpDune();
+    ILoan firstLoan = dao.createLoan(jim_, catch22_);
+    dao.commitLoan(firstLoan);
+    ILoan secondLoan = dao.createLoan(sam_, emma_);
+    dao.commitLoan(secondLoan);
+    ILoan thirdLoan = dao.createLoan(jill_, catch22_);
+    dao.commitLoan(thirdLoan);
+    ILoan fourthLoan = dao.createLoan(jim_, scoop_);
+    dao.commitLoan(fourthLoan);
+    ILoan fifthLoan = dao.createLoan(jill_, dune_);
+    dao.commitLoan(fifthLoan);
+    ILoan sixthLoan = dao.createLoan(sam_, emma_);
+    dao.commitLoan(sixthLoan);
+    assertThat(dao.listLoans()).hasSize(6);
+
+    List<ILoan> catch22Loans = dao.findLoansByBookTitle("Lucky Jim");
+
+    assertThat(catch22Loans).isEmpty();
+  }
+
+
+
+  @Test
+  public void multipleLoansCanBeFoundByID()
+  {
+    ILoanHelper loanHelper = createLoanHelperWithProtectedConstructor();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    ILoan firstLoan = dao.createLoan(jim_, catch22_);
+    dao.commitLoan(firstLoan);
+    ILoan secondLoan = dao.createLoan(sam_, emma_);
+    dao.commitLoan(secondLoan);
+    ILoan thirdLoan = dao.createLoan(jill_, catch22_);
+    dao.commitLoan(thirdLoan);
+    ILoan fourthLoan = dao.createLoan(jim_, scoop_);
+    dao.commitLoan(fourthLoan);
+    ILoan fifthLoan = dao.createLoan(jill_, dune_);
+    dao.commitLoan(fifthLoan);
+    assertThat(dao.listLoans()).hasSize(5);
+
+    ILoan loan = dao.getLoanByID(4);
+
+    assertThat(loan).isEqualTo(fourthLoan);
+    assertThat(loan.getID()).isEqualTo(4);
+  }
+
+
+
+  @Test
+  public void findLoanByInvalidIDReturnsNull()
+  {
+    ILoanHelper loanHelper = createLoanHelperWithProtectedConstructor();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    ILoan firstLoan = dao.createLoan(jim_, catch22_);
+    dao.commitLoan(firstLoan);
+    ILoan secondLoan = dao.createLoan(sam_, emma_);
+    dao.commitLoan(secondLoan);
+    ILoan thirdLoan = dao.createLoan(jill_, catch22_);
+    dao.commitLoan(thirdLoan);
+    ILoan fourthLoan = dao.createLoan(jim_, scoop_);
+    dao.commitLoan(fourthLoan);
+    ILoan fifthLoan = dao.createLoan(jill_, dune_);
+    dao.commitLoan(fifthLoan);
+    assertThat(dao.listLoans()).hasSize(5);
+
+    ILoan loan = dao.getLoanByID(6);
+
+    assertThat(loan).isNull();
+  }
+
+
+
+  @Test
+  public void allLoansCanBeListed()
+  {
+    ILoanHelper loanHelper = createLoanHelperWithProtectedConstructor();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    setUpJim();
+    setUpCatch22();
+    ILoan firstLoan = dao.createLoan(jim_, catch22_);
+    dao.commitLoan(firstLoan);
+    ILoan secondLoan = dao.createLoan(sam_, emma_);
+    dao.commitLoan(secondLoan);
+    ILoan thirdLoan = dao.createLoan(jill_, catch22_);
+    dao.commitLoan(thirdLoan);
+    ILoan fourthLoan = dao.createLoan(jim_, scoop_);
+    dao.commitLoan(fourthLoan);
+    assertThat(dao.listLoans()).hasSize(4);
+
+    List<ILoan> allLoans = dao.listLoans();
+
+    assertThat(allLoans).containsExactly(firstLoan, secondLoan, thirdLoan,
+                                         fourthLoan);
+  }
 
 
 }
