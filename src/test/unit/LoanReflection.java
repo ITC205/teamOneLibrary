@@ -277,7 +277,7 @@ public class LoanReflection
   * and return a new LoanHelper.
   * @return LoanHelper.
   */
-  protected static LoanHelper createLoanHelperWithProtectedConstructor()
+  public static LoanHelper createLoanHelperWithProtectedConstructor()
   {
     try {
       Constructor<LoanHelper> constructor =
@@ -303,7 +303,7 @@ public class LoanReflection
 * and return a new LoanHelper.
 * @return LoanHelper.
 */
-  protected static LoanDAO
+  public static LoanDAO
     createLoanDaoWithProtectedConstructor(ILoanHelper loanHelper)
       throws IllegalArgumentException
   {
