@@ -173,6 +173,38 @@ public class LoanReflection
 
 
   /*
+  * Uses Reflection API to directly set the Loan's private due date.
+  * @param loan Loan The loan under test.
+  * @param date Date The date that will be set as the due date of the Loan.
+  */
+  protected static void setPrivateDueDate(Loan loan, Date date)
+  {
+    try {
+      Class<?> loanClass = loan.getClass();
+      Field dueDate = loanClass.getDeclaredField("dueDate_");
+
+      // Enable direct modification of private field
+      if (!dueDate.isAccessible()) {
+        dueDate.setAccessible(true);
+      }
+
+      dueDate.set(loan, date);
+    }
+
+    catch (NoSuchFieldException exception) {
+      fail("NoSuchFieldException should not occur");
+    }
+    catch (IllegalAccessException exception) {
+      fail("IllegalAccessException should not occur");
+    }
+    catch (Exception exception) {
+      fail("Exception should not occur");
+    }
+  }
+
+
+
+  /*
    * Uses Reflection API to directly set the Loan's private state.
    * @param loan ILoan The loan under test.
    * @param ELoanState The state to set on the Loan.
@@ -273,7 +305,7 @@ public class LoanReflection
 
 
   /*
-  * Uses Reflection API to directly access LoanHelper's private constructor
+  * Uses Reflection API to directly access LoanHelper's constructor
   * and return a new LoanHelper.
   * @return LoanHelper.
   */
@@ -299,7 +331,7 @@ public class LoanReflection
 
 
   /*
-* Uses Reflection API to directly access LoanHelper's private constructor
+* Uses Reflection API to directly access LoanHelper's constructor
 * and return a new LoanHelper.
 * @return LoanHelper.
 */
