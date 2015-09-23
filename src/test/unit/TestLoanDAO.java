@@ -237,7 +237,7 @@ public class TestLoanDAO
   //===========================================================================
 
   @Test
-  public void loanListIsEmptylInitially()
+  public void loanListIsEmptyInitially()
   {
     ILoanHelper loanHelper = stubHelper();
     LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
@@ -263,26 +263,6 @@ public class TestLoanDAO
     assertThat(allLoans).hasSize(2);
     assertThat(allLoans).containsExactly(firstJimLoansCatch22_,
                                          secondSamLoansEmma_);
-  }
-
-
-
-  @Test
-  public void loanListReturnsInSequenceLoansManuallySetInLoanMap()
-  {
-    ILoanHelper loanHelper = stubHelper();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
-    ILoan[] loans = {thirdJillLoansCatch22_, secondSamLoansEmma_,
-                     firstJimLoansCatch22_ };
-
-    setPrivateLoanMap(dao, loans);
-    List<ILoan> allLoans = dao.listLoans();
-
-    assertThat(allLoans).isNotEmpty();
-    assertThat(allLoans).hasSize(3);
-    assertThat(allLoans).containsSequence(thirdJillLoansCatch22_,
-                                          secondSamLoansEmma_,
-                                          firstJimLoansCatch22_ );
   }
 
   //===========================================================================
@@ -687,9 +667,38 @@ public class TestLoanDAO
   // (to create new LoanDAOs) & fixtures for loans & books
   //===========================================================================
 
+  @Test
+  public void updateOverDueStatusIfNoLoans()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    Date today = dateBuilder(10, 2, 2015);
+
+    dao.updateOverDueStatus(today);
+
+    //
+  }
+
+
+
+  @Test
+  public void updateOverDueStatusIfOneCompleteLoan()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    Date today = dateBuilder(10, 2, 2015);
+    setUpFirstLoan();
+    dao.commitLoan(firstJimLoansCatch22_);
+
+    dao.updateOverDueStatus(today);
+
+    //
+  }
+
+
   // TODO: update when know how this works!
   @Test
-  public void updateOverDueStatus()
+  public void updateOverDueStatusIfOneLoanDue()
   {
     ILoanHelper loanHelper = stubHelper();
     LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
@@ -712,8 +721,39 @@ public class TestLoanDAO
     // verify(thirdJillLoansCatch22_.checkOverDue(today));
     // verify(fourthJimLoansScoop_.checkOverDue(today));
     // verify(fifthJillLoansDune_.checkOverDue(today));
-
   }
+
+
+
+  // TODO: update when know how this works!
+  @Test
+  public void updateOverDueStatusOnMultipleLoans()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    setUpFirstLoan();
+    dao.commitLoan(firstJimLoansCatch22_);
+    setUpSecondLoan();
+    dao.commitLoan(secondSamLoansEmma_);
+    setUpThirdLoan();
+    dao.commitLoan(thirdJillLoansCatch22_);
+    setUpFourthLoan();
+    dao.commitLoan(fourthJimLoansScoop_);
+    setUpFifthLoan();
+    dao.commitLoan(fifthJillLoansDune_);
+    Date today = dateBuilder(10, 2, 2015);
+
+    dao.updateOverDueStatus(today);
+
+    // verify(firstJimLoansCatch22_.isCurrent());
+    // verify(firstJimLoansCatch22_.isCurrent());
+    // verify(secondSamLoansEmma_.isCurrent());
+    // verify(thirdJillLoansCatch22_.checkOverDue(today));
+    // verify(fourthJimLoansScoop_.checkOverDue(today));
+    // verify(fifthJillLoansDune_.checkOverDue(today));
+  }
+
+
 
 
 

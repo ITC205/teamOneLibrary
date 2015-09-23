@@ -128,7 +128,6 @@ public class LoanDAO
 
 
 
-  //TODO: equals, override equals, or use ==?
   /*
    * Returns a list of all loans in the committed loan collection associated
    * with the given borrower.
