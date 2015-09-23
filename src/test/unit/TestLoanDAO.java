@@ -141,7 +141,7 @@ public class TestLoanDAO
     ILoanHelper loanHelper = mockHelper();
     LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
 
-    ILoan loan = dao.createLoan(greatExpectations_, jim_);
+    ILoan loan = dao.createLoan(jim_, greatExpectations_);
 
     verify(loanHelper).makeLoan(greatExpectations_, jim_, today, due);
   }
@@ -158,7 +158,7 @@ public class TestLoanDAO
         .thenReturn(firstLoan_);
     LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
 
-    ILoan loan = dao.createLoan(greatExpectations_, jim_);
+    ILoan loan = dao.createLoan(jim_, greatExpectations_);
 
     assertThat(loan).isInstanceOf(ILoan.class);
   }
@@ -175,7 +175,7 @@ public class TestLoanDAO
         .thenReturn(firstLoan_);
     LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
 
-    ILoan loan = dao.createLoan(greatExpectations_, jim_);
+    ILoan loan = dao.createLoan(jim_, greatExpectations_);
 
     assertThat(loan).isSameAs(firstLoan_);
   }
@@ -192,7 +192,7 @@ public class TestLoanDAO
     LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
 
     try {
-      ILoan loan = dao.createLoan(greatExpectations_, jim_);
+      ILoan loan = dao.createLoan(jim_, null);
     }
     catch (Exception exception) {
       assertThat(exception).isInstanceOf(IllegalArgumentException.class);
@@ -212,7 +212,7 @@ public class TestLoanDAO
     LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
 
     try {
-      ILoan loan = dao.createLoan(greatExpectations_, jim_);
+      ILoan loan = dao.createLoan(null, greatExpectations_);
     }
     catch (Exception exception) {
       assertThat(exception).isInstanceOf(IllegalArgumentException.class);
@@ -525,7 +525,7 @@ public class TestLoanDAO
   }
 
 
-
+  // TODO: broken - waiting for Jim
   @Test
   public void getLoanByBookReturnsCurrentLoanIfMultipleLoansOfBook()
   {
