@@ -86,6 +86,7 @@ public class LoanDAO
    * Assigns the Loan a unique id and stores the Loan.
    * @param loan ILoan The Loan to be committed.
    */
+  // @Override
   public void commitLoan(ILoan loan)
   {
     loan.commit(nextID_);
@@ -112,6 +113,7 @@ public class LoanDAO
    * @return ILoan The loan in the committed loan collection with the given id,
    * or null if a loan with that id does not exist.
    */
+  // @Override
   public ILoan getLoanByID(int id)
   {
     if (loanMap_.containsKey(id)) {
@@ -131,6 +133,7 @@ public class LoanDAO
    * @return ILoan The loan in the committed loan collection associated with book
    * or null if loan not found
    */
+  // @Override
   public ILoan getLoanByBook(IBook book)
   {
     if (loanMap_.isEmpty()) {
@@ -143,6 +146,30 @@ public class LoanDAO
       }
     }
     return null;
+  }
+
+
+  // TODO: if no loans return null or empty list?
+  //TODO: equals, override equals, or use ==?
+  /*
+   * Returns a list of all loans in the committed loan collection associated
+   * with the given borrower.
+   * List<ILoan>
+   * @param borrower IMember The borrower
+   */
+  // @Override
+  public List<ILoan> findLoansByBorrower(IMember borrower)
+  {
+    if (loanMap_.isEmpty()) {
+      return null;
+    }
+    List<ILoan> borrowerLoans= new ArrayList<>();
+    for (ILoan loan : loanMap_.values()) {
+      if (loan.getBorrower() == borrower) {
+        borrowerLoans.add(loan);
+      }
+    }
+    return borrowerLoans;
   }
 
 
