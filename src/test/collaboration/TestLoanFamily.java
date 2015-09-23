@@ -15,6 +15,7 @@ import library.interfaces.daos.ILoanDAO;
 import library.entities.Loan;
 
 import library.daos.LoanDAO;
+import library.daos.LoanHelper;
 
 import org.junit.Test;
 
@@ -47,28 +48,28 @@ public class TestLoanFamily
   {
     when(catch22_.getTitle()).thenReturn("CATCH-22");
     when(catch22_.getAuthor()).thenReturn("Joseph Heller");
-    when(catch22_.getState()).thenReturn(library.interfaces.entities.EBookState.AVAILABLE);
+    when(catch22_.getState()).thenReturn(EBookState.AVAILABLE);
   }
 
   public void setUpEmma()
   {
     when(emma_.getTitle()).thenReturn("Emma");
     when(emma_.getAuthor()).thenReturn("Jane Austen");
-    when(emma_.getState()).thenReturn(library.interfaces.entities.EBookState.AVAILABLE);
+    when(emma_.getState()).thenReturn(EBookState.AVAILABLE);
   }
 
   public void setUpScoop()
   {
     when(scoop_.getTitle()).thenReturn("Scoop");
     when(scoop_.getAuthor()).thenReturn("Evelyn Waugh");
-    when(scoop_.getState()).thenReturn(library.interfaces.entities.EBookState.ON_LOAN);
+    when(scoop_.getState()).thenReturn(EBookState.ON_LOAN);
   }
 
   public void setUpDune()
   {
     when(dune_.getTitle()).thenReturn("Dune");
     when(dune_.getAuthor()).thenReturn("Frank Herbert");
-    when(dune_.getState()).thenReturn(library.interfaces.entities.EBookState.ON_LOAN);
+    when(dune_.getState()).thenReturn(EBookState.ON_LOAN);
   }
 
 
@@ -108,8 +109,8 @@ public class TestLoanFamily
   @Test
   public void createEmptyLibrary()
   {
-    ILoanHelper loanHelper = createLoanHelperWithProtectedConstructor();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    ILoanHelper loanHelper = new LoanHelper();
+    LoanDAO dao = new LoanDAO(loanHelper);
 
     List<ILoan> emptyLoanList = dao.listLoans();
 
@@ -121,8 +122,8 @@ public class TestLoanFamily
   @Test
   public void createLibraryWithOnePendingLoan()
   {
-    ILoanHelper loanHelper = createLoanHelperWithProtectedConstructor();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    ILoanHelper loanHelper = new LoanHelper();
+    LoanDAO dao = new LoanDAO(loanHelper);
 
     ILoan loan = dao.createLoan(jim_, catch22_);
     assertThat(loan.getID()).isEqualTo(0);
@@ -133,8 +134,8 @@ public class TestLoanFamily
   @Test
   public void createLibraryWithOneCurrentLoan()
   {
-    ILoanHelper loanHelper = createLoanHelperWithProtectedConstructor();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    ILoanHelper loanHelper = new LoanHelper();
+    LoanDAO dao = new LoanDAO(loanHelper);
 
     ILoan loan = dao.createLoan(jim_, catch22_);
     dao.commitLoan(loan);
@@ -148,8 +149,8 @@ public class TestLoanFamily
   @Test
   public void createLibraryWithOneLoanAboutToBecomeOverDue()
   {
-    ILoanHelper loanHelper = createLoanHelperWithProtectedConstructor();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    ILoanHelper loanHelper = new LoanHelper();
+    LoanDAO dao = new LoanDAO(loanHelper);
     Date dueDate = dateBuilder(24, 10, 2015);
     Date today = dateBuilder(25, 10, 2015);
 
@@ -170,8 +171,8 @@ public class TestLoanFamily
   @Test
   public void singleLoanCanBeFoundByBorrower()
   {
-    ILoanHelper loanHelper = createLoanHelperWithProtectedConstructor();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    ILoanHelper loanHelper = new LoanHelper();
+    LoanDAO dao = new LoanDAO(loanHelper);
     ILoan loan = dao.createLoan(jim_, catch22_);
     dao.commitLoan(loan);
 
@@ -185,8 +186,8 @@ public class TestLoanFamily
   @Test
   public void singleLoanCanBeFoundByBookTitle()
   {
-    ILoanHelper loanHelper = createLoanHelperWithProtectedConstructor();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    ILoanHelper loanHelper = new LoanHelper();
+    LoanDAO dao = new LoanDAO(loanHelper);
     setUpCatch22();
     ILoan loan = dao.createLoan(jim_, catch22_);
     dao.commitLoan(loan);
@@ -204,8 +205,8 @@ public class TestLoanFamily
   @Test
   public void multipleLoansCanBeFoundByBorrower()
   {
-    ILoanHelper loanHelper = createLoanHelperWithProtectedConstructor();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    ILoanHelper loanHelper = new LoanHelper();
+    LoanDAO dao = new LoanDAO(loanHelper);
     setUpJim();
     setUpCatch22();
     ILoan firstLoan = dao.createLoan(jim_, catch22_);
@@ -232,8 +233,8 @@ public class TestLoanFamily
   @Test
   public void findLoansByBorrowerReturnsEmptyListForNewMember()
   {
-    ILoanHelper loanHelper = createLoanHelperWithProtectedConstructor();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    ILoanHelper loanHelper = new LoanHelper();
+    LoanDAO dao = new LoanDAO(loanHelper);
     ILoan firstLoan = dao.createLoan(jim_, catch22_);
     dao.commitLoan(firstLoan);
     ILoan secondLoan = dao.createLoan(sam_, emma_);
@@ -260,8 +261,8 @@ public class TestLoanFamily
   @Test
   public void multipleLoansCanBeFoundByBookTitle()
   {
-    ILoanHelper loanHelper = createLoanHelperWithProtectedConstructor();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    ILoanHelper loanHelper = new LoanHelper();
+    LoanDAO dao = new LoanDAO(loanHelper);
     setUpCatch22();
     setUpEmma();
     setUpScoop();
@@ -290,8 +291,8 @@ public class TestLoanFamily
   @Test
   public void findLoanByWrongBookTitleReturnsEmptyList()
   {
-    ILoanHelper loanHelper = createLoanHelperWithProtectedConstructor();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    ILoanHelper loanHelper = new LoanHelper();
+    LoanDAO dao = new LoanDAO(loanHelper);
     setUpCatch22();
     setUpEmma();
     setUpScoop();
@@ -320,8 +321,8 @@ public class TestLoanFamily
   @Test
   public void multipleLoansCanBeFoundByID()
   {
-    ILoanHelper loanHelper = createLoanHelperWithProtectedConstructor();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    ILoanHelper loanHelper = new LoanHelper();
+    LoanDAO dao = new LoanDAO(loanHelper);
     ILoan firstLoan = dao.createLoan(jim_, catch22_);
     dao.commitLoan(firstLoan);
     ILoan secondLoan = dao.createLoan(sam_, emma_);
@@ -345,8 +346,8 @@ public class TestLoanFamily
   @Test
   public void findLoanByInvalidIDReturnsNull()
   {
-    ILoanHelper loanHelper = createLoanHelperWithProtectedConstructor();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    ILoanHelper loanHelper = new LoanHelper();
+    LoanDAO dao = new LoanDAO(loanHelper);
     ILoan firstLoan = dao.createLoan(jim_, catch22_);
     dao.commitLoan(firstLoan);
     ILoan secondLoan = dao.createLoan(sam_, emma_);
@@ -369,8 +370,8 @@ public class TestLoanFamily
   @Test
   public void allLoansCanBeListed()
   {
-    ILoanHelper loanHelper = createLoanHelperWithProtectedConstructor();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    ILoanHelper loanHelper = new LoanHelper();
+    LoanDAO dao = new LoanDAO(loanHelper);
     setUpJim();
     setUpCatch22();
     ILoan firstLoan = dao.createLoan(jim_, catch22_);

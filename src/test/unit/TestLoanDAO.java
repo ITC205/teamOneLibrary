@@ -139,7 +139,7 @@ public class TestLoanDAO
   public void createLoanDao()
   {
     ILoanHelper loanHelper = stubHelper();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    LoanDAO dao = new LoanDAO(loanHelper);
 
     assertThat(dao).isNotNull();
     assertThat(dao).isInstanceOf(LoanDAO.class);
@@ -153,7 +153,7 @@ public class TestLoanDAO
     ILoanHelper loanHelper = null;
 
     try {
-      LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+      LoanDAO dao = new LoanDAO(loanHelper);
     }
     catch (Exception exception) {
     assertThat(exception).isInstanceOf(IllegalArgumentException.class);
@@ -171,7 +171,7 @@ public class TestLoanDAO
     Date today = ignoreTime(new Date());
     Date due = calculateDueDate(today);
     ILoanHelper loanHelper = mockHelper();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    LoanDAO dao = new LoanDAO(loanHelper);
 
     ILoan loan = dao.createLoan(jim_, catch22_);
 
@@ -188,7 +188,7 @@ public class TestLoanDAO
     ILoanHelper loanHelper = stubHelper();
     when(loanHelper.makeLoan(catch22_, jim_, today, due))
         .thenReturn(firstJimLoansCatch22_);
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    LoanDAO dao = new LoanDAO(loanHelper);
 
     ILoan loan = dao.createLoan(jim_, catch22_);
 
@@ -205,7 +205,7 @@ public class TestLoanDAO
     ILoanHelper loanHelper = stubHelper();
     when(loanHelper.makeLoan(catch22_, jim_, today, due))
         .thenReturn(firstJimLoansCatch22_);
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    LoanDAO dao = new LoanDAO(loanHelper);
 
     ILoan loan = dao.createLoan(jim_, catch22_);
 
@@ -222,7 +222,7 @@ public class TestLoanDAO
     ILoanHelper loanHelper = stubHelper();
     when(loanHelper.makeLoan(null, jim_, today, due))
                    .thenThrow(new IllegalArgumentException());
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    LoanDAO dao = new LoanDAO(loanHelper);
 
     try {
       ILoan loan = dao.createLoan(jim_, null);
@@ -242,7 +242,7 @@ public class TestLoanDAO
     ILoanHelper loanHelper = stubHelper();
     when(loanHelper.makeLoan(catch22_, null, today, due))
         .thenThrow(new IllegalArgumentException());
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    LoanDAO dao = new LoanDAO(loanHelper);
 
     try {
       ILoan loan = dao.createLoan(null, catch22_);
@@ -261,7 +261,7 @@ public class TestLoanDAO
   public void loanListIsEmptyInitially()
   {
     ILoanHelper loanHelper = stubHelper();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    LoanDAO dao = new LoanDAO(loanHelper);
 
     List<ILoan> allLoans = dao.listLoans();
 
@@ -274,7 +274,7 @@ public class TestLoanDAO
   public void loanListReturnsLoansManuallySetInLoanMap()
   {
     ILoanHelper loanHelper = stubHelper();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    LoanDAO dao = new LoanDAO(loanHelper);
     ILoan[] loans = {firstJimLoansCatch22_, secondSamLoansEmma_};
 
     setPrivateLoanMap(dao, loans);
@@ -295,7 +295,7 @@ public class TestLoanDAO
   public void setUpLoansHelperWorksCorrectly()
   {
     ILoanHelper loanHelper = stubHelper();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    LoanDAO dao = new LoanDAO(loanHelper);
     setUpFirstLoan();
     dao.commitLoan(firstJimLoansCatch22_);
     setUpSecondLoan();
@@ -316,7 +316,7 @@ public class TestLoanDAO
   public void commitLoanCallsLoanCommitCorrectly()
   {
     ILoanHelper loanHelper = stubHelper();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    LoanDAO dao = new LoanDAO(loanHelper);
     ILoan loan = mockLoan();
 
     dao.commitLoan(loan);
@@ -331,7 +331,7 @@ public class TestLoanDAO
   public void commitLoanCallsLoanCommitWithCorrectId()
   {
     ILoanHelper loanHelper = stubHelper();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    LoanDAO dao = new LoanDAO(loanHelper);
     ILoan loan = mockLoan();
 
     // using reflection to set private nextID
@@ -347,7 +347,7 @@ public class TestLoanDAO
   public void commitLoanCallsLoanCommitWithCorrectIdInSequence()
   {
     ILoanHelper loanHelper = stubHelper();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    LoanDAO dao = new LoanDAO(loanHelper);
     setUpFirstLoan();
     dao.commitLoan(firstJimLoansCatch22_);
     setUpSecondLoan();
@@ -366,7 +366,7 @@ public class TestLoanDAO
   public void commitLoanAddsLoanToLoanMap()
   {
     ILoanHelper loanHelper = stubHelper();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    LoanDAO dao = new LoanDAO(loanHelper);
     List<ILoan> allLoans = dao.listLoans();
     assertThat(allLoans).isEmpty();
     setUpFirstLoan();
@@ -385,7 +385,7 @@ public class TestLoanDAO
   public void commitLoansAddsMultipleLoansToLoanMap()
   {
     ILoanHelper loanHelper = stubHelper();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    LoanDAO dao = new LoanDAO(loanHelper);
     List<ILoan> allLoans = dao.listLoans();
     assertThat(allLoans).isEmpty();
     setUpFirstLoan();
@@ -413,7 +413,7 @@ public class TestLoanDAO
   public void getLoanByIdReturnsNullIfLoanMapEmpty()
   {
     ILoanHelper loanHelper = stubHelper();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    LoanDAO dao = new LoanDAO(loanHelper);
     List<ILoan> allLoans = dao.listLoans();
     assertThat(allLoans).isEmpty();
 
@@ -428,7 +428,7 @@ public class TestLoanDAO
   public void getLoanByIdReturnsLoanIfLoanMapContainsOnlyThatLoan()
   {
     ILoanHelper loanHelper = stubHelper();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    LoanDAO dao = new LoanDAO(loanHelper);
     List<ILoan> allLoans = dao.listLoans();
     assertThat(allLoans).isEmpty();
     setUpFirstLoan();
@@ -446,7 +446,7 @@ public class TestLoanDAO
   public void getLoanByIdReturnsLoanIfLoanMapContainsMultipleLoans()
   {
     ILoanHelper loanHelper = stubHelper();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    LoanDAO dao = new LoanDAO(loanHelper);
     List<ILoan> allLoans = dao.listLoans();
     assertThat(allLoans).isEmpty();
     setUpFirstLoan();
@@ -468,7 +468,7 @@ public class TestLoanDAO
   public void getLoanByIdReturnsNullIfLoanMapDoesNotContainsLoanWithThatId()
   {
     ILoanHelper loanHelper = stubHelper();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    LoanDAO dao = new LoanDAO(loanHelper);
     List<ILoan> allLoans = dao.listLoans();
     assertThat(allLoans).isEmpty();
     setUpFirstLoan();
@@ -492,7 +492,7 @@ public class TestLoanDAO
   public void findLoansByBorrowerReturnsNullIfNoLoans()
   {
     ILoanHelper loanHelper = stubHelper();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    LoanDAO dao = new LoanDAO(loanHelper);
     List<ILoan> allLoans = dao.listLoans();
     assertThat(allLoans).isEmpty();
 
@@ -507,7 +507,7 @@ public class TestLoanDAO
   public void findLoansByBorrowerReturnsEmptyIfNoLoansByBorrower()
   {
     ILoanHelper loanHelper = stubHelper();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    LoanDAO dao = new LoanDAO(loanHelper);
     List<ILoan> allLoans = dao.listLoans();
     assertThat(allLoans).isEmpty();
     setUpFirstLoan();
@@ -532,7 +532,7 @@ public class TestLoanDAO
   public void findLoansByBorrowerReturnsLoanIfSingleLoanByBorrower()
   {
     ILoanHelper loanHelper = stubHelper();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    LoanDAO dao = new LoanDAO(loanHelper);
     List<ILoan> allLoans = dao.listLoans();
     assertThat(allLoans).isEmpty();
     setUpFirstLoan();
@@ -550,7 +550,7 @@ public class TestLoanDAO
   public void findLoansByBorrowerReturnsLoanIfMultipleLoanByBorrower()
   {
     ILoanHelper loanHelper = stubHelper();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    LoanDAO dao = new LoanDAO(loanHelper);
     List<ILoan> allLoans = dao.listLoans();
     assertThat(allLoans).isEmpty();
     setUpFirstLoan();
@@ -578,7 +578,7 @@ public class TestLoanDAO
   public void findLoansByBookTitleNullWhenNoLoans()
   {
     ILoanHelper loanHelper = stubHelper();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    LoanDAO dao = new LoanDAO(loanHelper);
     List<ILoan> allLoans = dao.listLoans();
     assertThat(allLoans).isEmpty();
 
@@ -593,7 +593,7 @@ public class TestLoanDAO
   public void findLoansByBookTitleEmptyWhenTitleNotInLoans()
   {
     ILoanHelper loanHelper = stubHelper();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    LoanDAO dao = new LoanDAO(loanHelper);
     List<ILoan> allLoans = dao.listLoans();
     assertThat(allLoans).isEmpty();
     setUpFirstLoan();
@@ -614,7 +614,7 @@ public class TestLoanDAO
   public void findLoansByBookTitleReturnsLoanWhenTitleInOnlyLoan()
   {
     ILoanHelper loanHelper = stubHelper();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    LoanDAO dao = new LoanDAO(loanHelper);
     List<ILoan> allLoans = dao.listLoans();
     assertThat(allLoans).isEmpty();
     setUpFirstLoan();
@@ -631,7 +631,7 @@ public class TestLoanDAO
   public void findLoansByBookTitleReturnsLoansWhenTitleInMultipleLoans()
   {
     ILoanHelper loanHelper = stubHelper();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    LoanDAO dao = new LoanDAO(loanHelper);
     List<ILoan> allLoans = dao.listLoans();
     assertThat(allLoans).isEmpty();
     setUpFirstLoan();
@@ -653,7 +653,7 @@ public class TestLoanDAO
   public void findLoansByBookTitleIsCaseInsensitive()
   {
     ILoanHelper loanHelper = stubHelper();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    LoanDAO dao = new LoanDAO(loanHelper);
     List<ILoan> allLoans = dao.listLoans();
     assertThat(allLoans).isEmpty();
     setUpFirstLoan();
@@ -670,7 +670,7 @@ public class TestLoanDAO
   public void findLoansByBookTitleIsExactMatchOnly()
   {
     ILoanHelper loanHelper = stubHelper();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    LoanDAO dao = new LoanDAO(loanHelper);
     List<ILoan> allLoans = dao.listLoans();
     assertThat(allLoans).isEmpty();
     setUpFirstLoan();
@@ -691,7 +691,7 @@ public class TestLoanDAO
   public void updateOverDueStatusDoesNotCallLoanCheckOverDueOnCompleteLoan()
   {
     ILoanHelper loanHelper = stubHelper();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    LoanDAO dao = new LoanDAO(loanHelper);
     Date today = dateBuilder(10, 2, 2015);
     setUpFirstLoan();
     dao.commitLoan(firstJimLoansCatch22_);
@@ -707,7 +707,7 @@ public class TestLoanDAO
   public void updateOverDueStatusOnMultipleLoansCallsOnlyOnCurrentLoans()
   {
     ILoanHelper loanHelper = stubHelper();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    LoanDAO dao = new LoanDAO(loanHelper);
     setUpFirstLoan();
     dao.commitLoan(firstJimLoansCatch22_);
     setUpSecondLoan();
@@ -751,7 +751,7 @@ public class TestLoanDAO
   public void findOverDueLoansEmptyIfNoLoans()
   {
     ILoanHelper loanHelper = stubHelper();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    LoanDAO dao = new LoanDAO(loanHelper);
 
     List<ILoan> overDueLoans = dao.findOverDueLoans();
 
@@ -764,7 +764,7 @@ public class TestLoanDAO
   public void findOverDueLoansEmptyIfOneCompleteLoan()
   {
     ILoanHelper loanHelper = stubHelper();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    LoanDAO dao = new LoanDAO(loanHelper);
     setUpFirstLoan();
     dao.commitLoan(firstJimLoansCatch22_);
 
@@ -779,7 +779,7 @@ public class TestLoanDAO
   public void findOverDueLoansEmptyIfLoansNotDue()
   {
     ILoanHelper loanHelper = stubHelper();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    LoanDAO dao = new LoanDAO(loanHelper);
     setUpFirstLoan();
     dao.commitLoan(firstJimLoansCatch22_);
     setUpSecondLoan();
@@ -798,7 +798,7 @@ public class TestLoanDAO
   public void findOverDueLoansReturnsOneLoanIfOneOverDueLoan()
   {
     ILoanHelper loanHelper = stubHelper();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    LoanDAO dao = new LoanDAO(loanHelper);
     setUpFirstLoan();
     dao.commitLoan(firstJimLoansCatch22_);
     setUpSecondLoan();
@@ -817,7 +817,7 @@ public class TestLoanDAO
   public void findOverDueLoansReturnsMultipleIfMultipleOverDueLoans()
   {
     ILoanHelper loanHelper = stubHelper();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    LoanDAO dao = new LoanDAO(loanHelper);
     setUpFirstLoan();
     dao.commitLoan(firstJimLoansCatch22_);
     setUpSecondLoan();

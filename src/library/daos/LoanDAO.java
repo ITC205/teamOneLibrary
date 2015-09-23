@@ -44,7 +44,7 @@ public class LoanDAO
    * @param helper ILoanHelper The helper this DAO uses to instantiate Loans.
    * throws IllegalArgumentException if helper is null.
    */
-  protected LoanDAO(ILoanHelper helper)
+  public LoanDAO(ILoanHelper helper)
     throws IllegalArgumentException
   {
     if (helper == null) {

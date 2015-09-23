@@ -26,9 +26,9 @@ public class LoanHelper
   //===========================================================================
 
   /*
-   * Constructor protected, to restrict use as a helper for Loan DAO.
+   * Creates new LoanHelper.
    */
-  protected LoanHelper()
+  public LoanHelper()
   {
   }
 

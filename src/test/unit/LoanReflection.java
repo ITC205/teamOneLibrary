@@ -304,63 +304,6 @@ public class LoanReflection
 
 
 
-  /*
-  * Uses Reflection API to directly access LoanHelper's constructor
-  * and return a new LoanHelper.
-  * @return LoanHelper.
-  */
-  public static LoanHelper createLoanHelperWithProtectedConstructor()
-  {
-    try {
-      Constructor<LoanHelper> constructor =
-          LoanHelper.class.getDeclaredConstructor();
-      constructor.setAccessible(true);
-      LoanHelper loanHelper = constructor.newInstance();
-      return loanHelper;
-    }
 
-    catch (IllegalAccessException exception) {
-      fail("IllegalAccessException should not occur");
-    }
-    catch (Exception exception) {
-      fail("Exception should not occur");
-    }
-    return null;
-  }
-
-
-
-  /*
-* Uses Reflection API to directly access LoanHelper's constructor
-* and return a new LoanHelper.
-* @return LoanHelper.
-*/
-  public static LoanDAO
-    createLoanDaoWithProtectedConstructor(ILoanHelper loanHelper)
-      throws IllegalArgumentException
-  {
-    try {
-      Constructor<LoanDAO> constructor =
-          LoanDAO.class.getDeclaredConstructor(ILoanHelper.class);
-      constructor.setAccessible(true);
-      LoanDAO loanDao = constructor.newInstance(loanHelper);
-      return loanDao;
-    }
-
-    catch (IllegalAccessException exception) {
-      fail("IllegalAccessException should not occur");
-    }
-    catch (NoSuchMethodException exception) {
-      fail("NoSuchMethodException should not occur");
-    }
-    catch (InstantiationException exception) {
-      fail("InstantiationException should not occur");
-    }
-    catch (java.lang.reflect.InvocationTargetException exception) {
-      throw new IllegalArgumentException("Null parameter passed in " +
-                                         "constructor");
-    }
-    return null;
-  }
 
 }
