@@ -145,14 +145,14 @@ public class Loan
    *  - records this Loan on Book instance
    *  - records this Loan on Member instance
    * Throws a RuntimeException if this Loan's state is not (initially) PENDING.
-   * @param iD int The ID of this Loan.
+   * @param id int The ID of this Loan.
    */
   @Override
-  public void commit(int iD)
+  public void commit(int id)
   {
     if (state_ == ELoanState.PENDING) {
       state_ = ELoanState.CURRENT;
-      id_ = iD;
+      id_ = id;
       book_.borrow(this);
       borrower_.addLoan(this);
     }
@@ -180,6 +180,17 @@ public class Loan
       throw new RuntimeException("Completing a Loan that is not Current or " +
                                  "OverDue is invalid.");
     }
+  }
+
+
+  /**
+   * Returns true if this Loan state is CURRENT (i.e. loan is still active).
+   * @return boolean true if Loan state is CURRENT.
+   */
+  @Override
+  public boolean isCurrent()
+  {
+    return (state_ == ELoanState.CURRENT);
   }
 
 
