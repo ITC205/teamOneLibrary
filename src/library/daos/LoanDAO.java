@@ -125,29 +125,6 @@ public class LoanDAO
   }
 
 
-  // TODO: current book?!!!
-  /*
-   * Returns the current loan in the committed loan collection associated with
-   * the given book.
-   * @param book:IBook
-   * @return ILoan The loan in the committed loan collection associated with book
-   * or null if loan not found
-   */
-  // @Override
-  public ILoan getLoanByBook(IBook book)
-  {
-    if (loanMap_.isEmpty()) {
-      return null;
-    }
-
-    for (ILoan loan : loanMap_.values()) {
-      if(loan.getBook().equals(book) && loan.isCurrent()) {
-        return loan;
-      }
-    }
-    return null;
-  }
-
 
   // TODO: if no loans return null or empty list?
   //TODO: equals, override equals, or use ==?
@@ -173,6 +150,19 @@ public class LoanDAO
   }
 
 
+
+  /*
+   * Returns a list of all loans in the committed loan collection associated
+   * with books with the given title.
+   * @param title String The title of the book(s).
+   * @return List<ILoan> The list of all loans in the committed loan collection
+   * associated with books with the given title.
+   */
+  // @Override
+  public List<ILoan> findLoansByBookTitle(String title)
+  {
+    //
+  }
 
   //===========================================================================
   // Helper methods
