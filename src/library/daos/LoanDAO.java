@@ -29,7 +29,6 @@ public class LoanDAO
   // Variables
   //===========================================================================
 
-  // TODO: static? not hardcoded?
   private int nextID_ = 1;
 
   private ILoanHelper helper_;
