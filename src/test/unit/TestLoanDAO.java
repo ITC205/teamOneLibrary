@@ -36,6 +36,7 @@ public class TestLoanDAO
   private ILoan thirdJillLoansCatch22_ = stubLoan();
   private ILoan fourthJimLoansScoop_ = stubLoan();
   private ILoan fifthJillLoansDune_ = stubLoan();
+  private ILoan sixthSamLoansEmma_ = stubLoan();
 
   private IMember jim_ = stubMember();
   private IMember sam_ = stubMember();
@@ -59,6 +60,7 @@ public class TestLoanDAO
     when(firstJimLoansCatch22_.getBook()).thenReturn(catch22_);
     when(firstJimLoansCatch22_.getBorrower()).thenReturn(jim_);
     when(firstJimLoansCatch22_.getID()).thenReturn(1);
+    when(firstJimLoansCatch22_.isCurrent()).thenReturn(false);
     when(firstJimLoansCatch22_.isOverDue()).thenReturn(false);
     when(catch22_.getTitle()).thenReturn("CATCH-22");
     when(catch22_.getAuthor()).thenReturn("Joseph Heller");
@@ -71,6 +73,7 @@ public class TestLoanDAO
     when(secondSamLoansEmma_.getBook()).thenReturn(emma_);
     when(secondSamLoansEmma_.getBorrower()).thenReturn(sam_);
     when(secondSamLoansEmma_.getID()).thenReturn(2);
+    when(secondSamLoansEmma_.isCurrent()).thenReturn(false);
     when(secondSamLoansEmma_.isOverDue()).thenReturn(false);
     when(emma_.getTitle()).thenReturn("Emma");
     when(emma_.getAuthor()).thenReturn("Jane Austen");
@@ -82,6 +85,7 @@ public class TestLoanDAO
     when(thirdJillLoansCatch22_.getBook()).thenReturn(catch22_);
     when(thirdJillLoansCatch22_.getBorrower()).thenReturn(jill_);
     when(thirdJillLoansCatch22_.getID()).thenReturn(3);
+    when(thirdJillLoansCatch22_.isCurrent()).thenReturn(false);
     when(thirdJillLoansCatch22_.isOverDue()).thenReturn(true);
     when(catch22_.getTitle()).thenReturn("CATCH-22");
     when(catch22_.getAuthor()).thenReturn("Joseph Heller");
@@ -93,6 +97,7 @@ public class TestLoanDAO
     when(fourthJimLoansScoop_.getBook()).thenReturn(scoop_);
     when(fourthJimLoansScoop_.getBorrower()).thenReturn(jim_);
     when(fourthJimLoansScoop_.getID()).thenReturn(4);
+    when(fourthJimLoansScoop_.isCurrent()).thenReturn(false);
     when(fourthJimLoansScoop_.isOverDue()).thenReturn(true);
     when(scoop_.getTitle()).thenReturn("Scoop");
     when(scoop_.getAuthor()).thenReturn("Evelyn Waugh");
@@ -104,9 +109,24 @@ public class TestLoanDAO
     when(fifthJillLoansDune_.getBook()).thenReturn(dune_);
     when(fifthJillLoansDune_.getBorrower()).thenReturn(jill_);
     when(fifthJillLoansDune_.getID()).thenReturn(5);
+    when(fifthJillLoansDune_.isCurrent()).thenReturn(true);
+    when(fifthJillLoansDune_.checkOverDue(any())).thenReturn(true);
     when(fifthJillLoansDune_.isOverDue()).thenReturn(false);
     when(dune_.getTitle()).thenReturn("Dune");
     when(dune_.getAuthor()).thenReturn("Frank Herbert");
+    when(dune_.getState()).thenReturn(EBookState.ON_LOAN);
+  }
+
+  public void setUpSixthLoan()
+  {
+    when(sixthSamLoansEmma_.getBook()).thenReturn(emma_);
+    when(sixthSamLoansEmma_.getBorrower()).thenReturn(sam_);
+    when(sixthSamLoansEmma_.getID()).thenReturn(6);
+    when(sixthSamLoansEmma_.isCurrent()).thenReturn(true);
+    when(sixthSamLoansEmma_.checkOverDue(any())).thenReturn(false);
+    when(sixthSamLoansEmma_.isOverDue()).thenReturn(false);
+    when(dune_.getTitle()).thenReturn("Emma");
+    when(dune_.getAuthor()).thenReturn("Jane Austen");
     when(dune_.getState()).thenReturn(EBookState.ON_LOAN);
   }
 
@@ -191,6 +211,7 @@ public class TestLoanDAO
 
     assertThat(loan).isSameAs(firstJimLoansCatch22_);
   }
+
 
 
   @Test
@@ -660,29 +681,14 @@ public class TestLoanDAO
     assertThat(loans).isEmpty();
   }
 
-
-
   //===========================================================================
-  // Test updateOverDueStatus - with LoanBuilder (for stubs), LoanReflection
-  // (to create new LoanDAOs) & fixtures for loans & books
+  // Test updateOverDueStatus - with LoanBuilder (for stubs & mocks),
+  // LoanReflection (to create new LoanDAOs) & fixtures for loans & books
   //===========================================================================
 
+  // TODO: check these, once Jim responds
   @Test
-  public void updateOverDueStatusIfNoLoans()
-  {
-    ILoanHelper loanHelper = stubHelper();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
-    Date today = dateBuilder(10, 2, 2015);
-
-    dao.updateOverDueStatus(today);
-
-    //
-  }
-
-
-
-  @Test
-  public void updateOverDueStatusIfOneCompleteLoan()
+  public void updateOverDueStatusDoesNotCallLoanCheckOverDueOnCompleteLoan()
   {
     ILoanHelper loanHelper = stubHelper();
     LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
@@ -692,13 +698,13 @@ public class TestLoanDAO
 
     dao.updateOverDueStatus(today);
 
-    //
+    verify(firstJimLoansCatch22_, never()).checkOverDue(any());
   }
 
 
-  // TODO: update when know how this works!
+
   @Test
-  public void updateOverDueStatusIfOneLoanDue()
+  public void updateOverDueStatusOnMultipleLoansCallsOnlyOnCurrentLoans()
   {
     ILoanHelper loanHelper = stubHelper();
     LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
@@ -712,45 +718,18 @@ public class TestLoanDAO
     dao.commitLoan(fourthJimLoansScoop_);
     setUpFifthLoan();
     dao.commitLoan(fifthJillLoansDune_);
+    setUpSixthLoan();
+    dao.commitLoan(sixthSamLoansEmma_);
     Date today = dateBuilder(10, 2, 2015);
 
     dao.updateOverDueStatus(today);
 
-    // verify(firstJimLoansCatch22_.checkOverDue(today));
-    // verify(secondSamLoansEmma_.checkOverDue(today));
-    // verify(thirdJillLoansCatch22_.checkOverDue(today));
-    // verify(fourthJimLoansScoop_.checkOverDue(today));
-    // verify(fifthJillLoansDune_.checkOverDue(today));
-  }
-
-
-
-  // TODO: update when know how this works!
-  @Test
-  public void updateOverDueStatusOnMultipleLoans()
-  {
-    ILoanHelper loanHelper = stubHelper();
-    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
-    setUpFirstLoan();
-    dao.commitLoan(firstJimLoansCatch22_);
-    setUpSecondLoan();
-    dao.commitLoan(secondSamLoansEmma_);
-    setUpThirdLoan();
-    dao.commitLoan(thirdJillLoansCatch22_);
-    setUpFourthLoan();
-    dao.commitLoan(fourthJimLoansScoop_);
-    setUpFifthLoan();
-    dao.commitLoan(fifthJillLoansDune_);
-    Date today = dateBuilder(10, 2, 2015);
-
-    dao.updateOverDueStatus(today);
-
-    // verify(firstJimLoansCatch22_.isCurrent());
-    // verify(firstJimLoansCatch22_.isCurrent());
-    // verify(secondSamLoansEmma_.isCurrent());
-    // verify(thirdJillLoansCatch22_.checkOverDue(today));
-    // verify(fourthJimLoansScoop_.checkOverDue(today));
-    // verify(fifthJillLoansDune_.checkOverDue(today));
+    verify(firstJimLoansCatch22_, never()).checkOverDue(any());
+    verify(secondSamLoansEmma_, never()).checkOverDue(any());
+    verify(thirdJillLoansCatch22_, never()).checkOverDue(any());
+    verify(fourthJimLoansScoop_, never()).checkOverDue(any());
+    verify(fifthJillLoansDune_).checkOverDue(today);
+    verify(sixthSamLoansEmma_).checkOverDue(today);
   }
 
 
