@@ -68,7 +68,7 @@ public class TestLoan
     int id = 1;
 
     // When create a valid loan
-    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate);
 
     // Then loan is instantiated and a valid Loan instance
     assertThat(loan).isInstanceOf(ILoan.class);
@@ -89,7 +89,7 @@ public class TestLoan
     int id = 1;
 
     // When create a valid loan
-    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate);
 
     // Then loan is instantiated with pending state
     // (have to use reflection to access private variable)
@@ -114,7 +114,7 @@ public class TestLoan
 
     // When create a loan
     try {
-      ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
+      ILoan loan = new Loan(book, borrower, borrowDate, dueDate);
     }
 
     // Then exception should be thrown
@@ -139,7 +139,7 @@ public class TestLoan
 
     // When create a loan
     try {
-      ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
+      ILoan loan = new Loan(book, borrower, borrowDate, dueDate);
     }
 
     // Then exception should be thrown
@@ -164,7 +164,7 @@ public class TestLoan
 
     // When create a loan
     try {
-      ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
+      ILoan loan = new Loan(book, borrower, borrowDate, dueDate);
     }
 
     // Then exception should be thrown
@@ -189,7 +189,7 @@ public class TestLoan
 
     // When create a loan
     try {
-      ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
+      ILoan loan = new Loan(book, borrower, borrowDate, dueDate);
     }
 
     // Then exception should be thrown
@@ -214,7 +214,7 @@ public class TestLoan
 
     // When create a loan
     try {
-      ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
+      ILoan loan = new Loan(book, borrower, borrowDate, dueDate);
     }
 
     // Then exception should be thrown
@@ -249,7 +249,7 @@ public class TestLoan
     }
 
     // When create a loan
-    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate);
 
     // Then loan is instantiated, and a valid ILoan instance
     assertThat(loan).isInstanceOf(ILoan.class);
@@ -275,7 +275,7 @@ public class TestLoan
 
     // When create a loan
     try {
-      ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
+      ILoan loan = new Loan(book, borrower, borrowDate, dueDate);
     }
 
     // Then exception should be thrown
@@ -302,7 +302,7 @@ public class TestLoan
 
     // When create a loan
     try {
-      ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
+      ILoan loan = new Loan(book, borrower, borrowDate, dueDate);
     }
 
     // Then exception should be thrown
@@ -329,7 +329,7 @@ public class TestLoan
 
     // When create a loan
     try {
-      ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
+      ILoan loan = new Loan(book, borrower, borrowDate, dueDate);
     }
 
     // Then exception should be thrown
@@ -361,7 +361,7 @@ public class TestLoan
 
     // When create a loan
     try {
-      ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
+      ILoan loan = new Loan(book, borrower, borrowDate, dueDate);
     }
 
     // Then exception should be thrown
@@ -387,7 +387,7 @@ public class TestLoan
 
     // When create a loan
     try {
-      ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
+      ILoan loan = new Loan(book, borrower, borrowDate, dueDate);
     }
 
     // Then exception should be thrown
@@ -414,7 +414,7 @@ public class TestLoan
 
     // When create a loan
     try {
-      ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
+      ILoan loan = new Loan(book, borrower, borrowDate, dueDate);
     }
 
     // Then exception should be thrown
@@ -441,7 +441,7 @@ public class TestLoan
     int id = 1;
 
     // When create a loan
-    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate);
 
     // Then can return borrower and verify it is same Member as local instance
     IMember loanBorrower = loan.getBorrower();
@@ -465,7 +465,7 @@ public class TestLoan
     int id = 1;
 
     // When create a loan
-    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate);
 
     // Then can return borrower and verify it is same Member as local instance
     IMember loanBorrower = loan.getBorrower();
@@ -491,7 +491,7 @@ public class TestLoan
     int id = 1;
 
     // When create a loan
-    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate);
 
     // Then can return book and verify it is same Member as local instance
     IBook loanBook = loan.getBook();
@@ -511,14 +511,13 @@ public class TestLoan
     // With valid dates and ID
     Date borrowDate = new Date(1);
     Date dueDate = new Date(2);
-    int id = 125;
 
     // When create a loan
-    ILoan loan = new Loan(book, borrower, borrowDate, dueDate, id);
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate);
 
     // Then can return ID
     int loanID = loan.getID();
-    assertThat(loanID).isEqualTo(id);
+    assertThat(loanID).isEqualTo(0);
   }
 
   // ==========================================================================
@@ -870,7 +869,7 @@ public class TestLoan
 
     // Then exception should be thrown
     catch (Exception exception) {
-      assertThat(exception).isInstanceOf(IllegalArgumentException.class);
+      assertThat(exception).isInstanceOf(RuntimeException.class);
     }
   }
 
@@ -891,7 +890,7 @@ public class TestLoan
 
     // Then exception should be thrown
     catch (Exception exception) {
-      assertThat(exception).isInstanceOf(IllegalArgumentException.class);
+      assertThat(exception).isInstanceOf(RuntimeException.class);
     }
   }
 
@@ -912,7 +911,7 @@ public class TestLoan
 
     // Then exception should be thrown
     catch (Exception exception) {
-      assertThat(exception).isInstanceOf(IllegalArgumentException.class);
+      assertThat(exception).isInstanceOf(RuntimeException.class);
     }
   }
 
@@ -1057,14 +1056,13 @@ public class TestLoan
                           .withBorrower(borrower)
                           .withBorrowDate(20, 11, 2015)
                           .withDueDate(31, 11, 2015)
-                          .withID(99)
                           .makeCurrent().build();
     // When
     String loanString = loan.toString();
 
     // Then expect loanString to match (note differences in Date months)
     // including explicitly set id
-    String expectedString = "Loan ID:  99\n" +
+    String expectedString = "Loan ID:  0\n" +
                             "Author:   Charles Dickens\n" +
                             "Title:    Great Expectations\n" +
                             "Borrower: Neil Armstrong\n" +

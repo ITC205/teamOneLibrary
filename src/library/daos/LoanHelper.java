@@ -48,9 +48,7 @@ public class LoanHelper
   public ILoan makeLoan(IBook book, IMember borrower,
                         Date borrowDate, Date dueDate)
   {
-    return new Loan(book, borrower,
-                    borrowDate, dueDate,
-                    DEFAULT_ID);
+    return new Loan(book, borrower, borrowDate, dueDate);
   }
 
 }

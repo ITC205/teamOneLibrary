@@ -20,6 +20,7 @@ public class Loan
   // Variables
   //===========================================================================
 
+  private static int DEFAULT_ID = 0;
   private IBook book_;
   private IMember borrower_;
   private Date borrowDate_;
@@ -38,28 +39,25 @@ public class Loan
    * @param borrower IMember
    * @param borrowDate Date
    * @param dueDate Date
-   * @param id int
    * Throws an IllegalArgumentException if:
    *  - any of book, borrower, borrowDate, or dueDate are null
    *  - dueDate is less than borrowDate
    *  - loanID is less than or equal to zero
    */
-  public Loan(IBook book, IMember borrower, Date borrowDate, Date dueDate,
-              int id)
+  public Loan(IBook book, IMember borrower, Date borrowDate, Date dueDate)
     throws IllegalArgumentException
   {
     throwIfObjectNull("Book.", book);
     throwIfObjectNull("Borrower.", borrower);
     throwIfObjectNull("Borrowing Date.", borrowDate);
     throwIfObjectNull("Due Date.", dueDate);
-    throwIfDueDateIsNotAfterBorrowDate(borrowDate, dueDate);
-    throwIfIDLessThanZero(id);
+    throwIfDueDateIsLessThanBorrowDate(borrowDate, dueDate);
 
     book_ = book;
     borrower_ = borrower;
     borrowDate_ = borrowDate;
     dueDate_ = dueDate;
-    id_ = id;
+    id_ = Loan.DEFAULT_ID;
   }
 
 
@@ -74,8 +72,8 @@ public class Loan
   }
 
 
-
-  private void throwIfDueDateIsNotAfterBorrowDate(Date borrowDate,
+  // TODO: check
+  private void throwIfDueDateIsLessThanBorrowDate(Date borrowDate,
                                                   Date returnDate)
     throws IllegalArgumentException
   {
@@ -83,17 +81,6 @@ public class Loan
       throw new IllegalArgumentException("Cannot create a new Loan when the " +
                                          "Return Date is before or the same " +
                                          "as the Borrowing Date.");
-    }
-  }
-
-
-
-  private void throwIfIDLessThanZero(int id)
-    throws IllegalArgumentException
-  {
-    if (id < 0) {
-      throw new IllegalArgumentException("Cannot create a new Loan with an " +
-                                         "ID less than or equal to zero.");
     }
   }
 
@@ -150,15 +137,33 @@ public class Loan
   @Override
   public void commit(int id)
   {
-    if (state_ == ELoanState.PENDING) {
-      state_ = ELoanState.CURRENT;
-      id_ = id;
-      book_.borrow(this);
-      borrower_.addLoan(this);
-    }
-    else {
-      throw new IllegalArgumentException("Committing a Loan that is not " +
+    throwIfStateNotPending();
+    throwIfIDNotGreaterThanZero(id);
+
+    state_ = ELoanState.CURRENT;
+    id_ = id;
+    book_.borrow(this);
+    borrower_.addLoan(this);
+  }
+
+
+
+  private void throwIfStateNotPending()
+  {
+    if (!(state_ == ELoanState.PENDING)){
+      throw new RuntimeException("Committing a Loan that is not " +
                                          "Pending is invalid.");
+    }
+  }
+
+
+
+  private void throwIfIDNotGreaterThanZero(int id)
+      throws IllegalArgumentException
+  {
+    if (id <= 0) {
+      throw new IllegalArgumentException("Cannot commit a Loan with an ID " +
+                                         "less than or equal to zero.");
     }
   }
 

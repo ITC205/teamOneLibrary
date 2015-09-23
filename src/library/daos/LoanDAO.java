@@ -126,7 +126,7 @@ public class LoanDAO
     return new ArrayList<ILoan>(loanMap_.values());
   }
 
-  
+
 
   //TODO: equals, override equals, or use ==?
   /*
