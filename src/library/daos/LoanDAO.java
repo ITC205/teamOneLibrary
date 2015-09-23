@@ -100,6 +100,7 @@ public class LoanDAO
    * Returns a list of all loans in the committed loan collection.
    * @return List<ILoan> The list of all Loans in the committed loan collection.
    */
+  // @Override
   public List<ILoan> listLoans()
   {
     return new ArrayList<ILoan>(loanMap_.values());
@@ -151,6 +152,7 @@ public class LoanDAO
 
 
 
+  // TODO: remove null
   /*
    * Returns a list of all loans in the committed loan collection associated
    * with books with the given title.
@@ -172,6 +174,26 @@ public class LoanDAO
     }
     return bookTitleLoans;
   }
+
+
+
+  /*
+   * Iterates through the committed loan collection updating the overdue
+   * status of current loans according to date.
+   * @param date Date The current date, used to check if each current loan is
+   * overdue.
+   */
+  // @Override
+  public void updateOverDueStatus(Date date)
+  {
+    for (ILoan loan : loanMap_.values()) {
+      if (loan.isCurrent()) {
+        loan.checkOverDue(date);
+      }
+    }
+  }
+
+
 
   //===========================================================================
   // Helper methods

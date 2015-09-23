@@ -8,6 +8,7 @@ import library.interfaces.entities.IBook;
 import library.interfaces.entities.IMember;
 import library.interfaces.entities.ILoan;
 import library.interfaces.daos.ILoanHelper;
+import library.interfaces.daos.ILoanDAO;
 
 import library.interfaces.entities.EBookState;
 
@@ -58,10 +59,11 @@ public class TestLoanDAO
     when(firstJimLoansCatch22_.getBook()).thenReturn(catch22_);
     when(firstJimLoansCatch22_.getBorrower()).thenReturn(jim_);
     when(firstJimLoansCatch22_.getID()).thenReturn(1);
-    when(firstJimLoansCatch22_.isCurrent()).thenReturn(false);
+    when(firstJimLoansCatch22_.isOverDue()).thenReturn(false);
     when(catch22_.getTitle()).thenReturn("CATCH-22");
     when(catch22_.getAuthor()).thenReturn("Joseph Heller");
-    when(catch22_.getState()).thenReturn(EBookState.AVAILABLE); // TODO: check!
+    when(catch22_.getState()).thenReturn(EBookState.AVAILABLE);
+    // when just this loan
   }
 
   public void setUpSecondLoan()
@@ -69,7 +71,7 @@ public class TestLoanDAO
     when(secondSamLoansEmma_.getBook()).thenReturn(emma_);
     when(secondSamLoansEmma_.getBorrower()).thenReturn(sam_);
     when(secondSamLoansEmma_.getID()).thenReturn(2);
-    when(secondSamLoansEmma_.isCurrent()).thenReturn(false);
+    when(secondSamLoansEmma_.isOverDue()).thenReturn(false);
     when(emma_.getTitle()).thenReturn("Emma");
     when(emma_.getAuthor()).thenReturn("Jane Austen");
     when(emma_.getState()).thenReturn(EBookState.AVAILABLE);
@@ -80,7 +82,7 @@ public class TestLoanDAO
     when(thirdJillLoansCatch22_.getBook()).thenReturn(catch22_);
     when(thirdJillLoansCatch22_.getBorrower()).thenReturn(jill_);
     when(thirdJillLoansCatch22_.getID()).thenReturn(3);
-    when(thirdJillLoansCatch22_.isCurrent()).thenReturn(true);
+    when(thirdJillLoansCatch22_.isOverDue()).thenReturn(true);
     when(catch22_.getTitle()).thenReturn("CATCH-22");
     when(catch22_.getAuthor()).thenReturn("Joseph Heller");
     when(catch22_.getState()).thenReturn(EBookState.ON_LOAN);;
@@ -91,7 +93,7 @@ public class TestLoanDAO
     when(fourthJimLoansScoop_.getBook()).thenReturn(scoop_);
     when(fourthJimLoansScoop_.getBorrower()).thenReturn(jim_);
     when(fourthJimLoansScoop_.getID()).thenReturn(4);
-    when(fourthJimLoansScoop_.isCurrent()).thenReturn(true);
+    when(fourthJimLoansScoop_.isOverDue()).thenReturn(true);
     when(scoop_.getTitle()).thenReturn("Scoop");
     when(scoop_.getAuthor()).thenReturn("Evelyn Waugh");
     when(scoop_.getState()).thenReturn(EBookState.ON_LOAN);
@@ -102,7 +104,7 @@ public class TestLoanDAO
     when(fifthJillLoansDune_.getBook()).thenReturn(dune_);
     when(fifthJillLoansDune_.getBorrower()).thenReturn(jill_);
     when(fifthJillLoansDune_.getID()).thenReturn(5);
-    when(fifthJillLoansDune_.isCurrent()).thenReturn(true);
+    when(fifthJillLoansDune_.isOverDue()).thenReturn(false);
     when(dune_.getTitle()).thenReturn("Dune");
     when(dune_.getAuthor()).thenReturn("Frank Herbert");
     when(dune_.getState()).thenReturn(EBookState.ON_LOAN);
@@ -235,7 +237,7 @@ public class TestLoanDAO
   //===========================================================================
 
   @Test
-  public void loanListIsNullInitially()
+  public void loanListIsEmptylInitially()
   {
     ILoanHelper loanHelper = stubHelper();
     LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
@@ -252,14 +254,15 @@ public class TestLoanDAO
   {
     ILoanHelper loanHelper = stubHelper();
     LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
-    ILoan[] loans = { firstJimLoansCatch22_, secondSamLoansEmma_};
+    ILoan[] loans = {firstJimLoansCatch22_, secondSamLoansEmma_};
 
     setPrivateLoanMap(dao, loans);
     List<ILoan> allLoans = dao.listLoans();
 
     assertThat(allLoans).isNotEmpty();
     assertThat(allLoans).hasSize(2);
-    assertThat(allLoans).containsExactly(firstJimLoansCatch22_, secondSamLoansEmma_);
+    assertThat(allLoans).containsExactly(firstJimLoansCatch22_,
+                                         secondSamLoansEmma_);
   }
 
 
@@ -292,7 +295,6 @@ public class TestLoanDAO
   {
     ILoanHelper loanHelper = stubHelper();
     LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
-
     setUpFirstLoan();
     dao.commitLoan(firstJimLoansCatch22_);
     setUpSecondLoan();
@@ -533,7 +535,7 @@ public class TestLoanDAO
     List<ILoan> allLoans = dao.listLoans();
     assertThat(allLoans).isEmpty();
     setUpFirstLoan();
-    dao.commitLoan(firstJimLoansCatch22_); // our book
+    dao.commitLoan(firstJimLoansCatch22_);
 
     List<ILoan> loans = dao.findLoansByBorrower(jim_);
 
@@ -677,6 +679,38 @@ public class TestLoanDAO
 
     assertThat(loans).isEmpty();
   }
+
+
+
+
+  // TODO: update when know how this works!
+  @Test
+  public void updateOverDueStatus()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    setUpFirstLoan();
+    dao.commitLoan(firstJimLoansCatch22_);
+    setUpSecondLoan();
+    dao.commitLoan(secondSamLoansEmma_);
+    setUpThirdLoan();
+    dao.commitLoan(thirdJillLoansCatch22_);
+    setUpFourthLoan();
+    dao.commitLoan(fourthJimLoansScoop_);
+    setUpFifthLoan();
+    dao.commitLoan(fifthJillLoansDune_);
+    Date today = dateBuilder(10, 2, 2015);
+
+    dao.updateOverDueStatus(today);
+
+    // verify(firstJimLoansCatch22_.checkOverDue(today));
+    // verify(secondSamLoansEmma_.checkOverDue(today));
+    // verify(thirdJillLoansCatch22_.checkOverDue(today));
+    // verify(fourthJimLoansScoop_.checkOverDue(today));
+    // verify(fifthJillLoansDune_.checkOverDue(today));
+
+  }
+
 
 
 
