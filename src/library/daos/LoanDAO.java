@@ -132,7 +132,7 @@ public class LoanDAO
    * Returns a list of all loans in the committed loan collection associated
    * with the given borrower.
    * List<ILoan>
-   * @param borrower IMember The borrower
+   * @param borrower IMember The borrower associated with the loans.
    */
   // @Override
   public List<ILoan> findLoansByBorrower(IMember borrower)
@@ -161,7 +161,16 @@ public class LoanDAO
   // @Override
   public List<ILoan> findLoansByBookTitle(String title)
   {
-    //
+    if (loanMap_.isEmpty()) {
+      return null;
+    }
+    List<ILoan> bookTitleLoans = new ArrayList<>();
+    for (ILoan loan : loanMap_.values()) {
+      if (loan.getBook().getTitle().equalsIgnoreCase(title)) {
+        bookTitleLoans.add(loan);
+      }
+    }
+    return bookTitleLoans;
   }
 
   //===========================================================================

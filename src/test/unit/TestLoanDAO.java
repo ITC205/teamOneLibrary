@@ -479,7 +479,7 @@ public class TestLoanDAO
 
     assertThat(loan).isNull();
   }
-  
+
   //===========================================================================
   // Test findLoansByBorrower - with LoanBuilder (for stubs), LoanReflection
   // (to create new LoanDAOs) & fixtures for loans & books
@@ -567,7 +567,7 @@ public class TestLoanDAO
   }
 
   //===========================================================================
-  // Test  - with LoanBuilder (for stubs), LoanReflection
+  // Test findLoansByBookTitle - with LoanBuilder (for stubs), LoanReflection
   // (to create new LoanDAOs) & fixtures for loans & books
   //===========================================================================
 
@@ -579,8 +579,105 @@ public class TestLoanDAO
     List<ILoan> allLoans = dao.listLoans();
     assertThat(allLoans).isEmpty();
 
+    List<ILoan> loans = dao.findLoansByBookTitle("Scoop");
 
+    assertThat(loans).isNull();
   }
+
+
+
+  @Test
+  public void findLoansByBookTitleEmptyWhenTitleNotInLoans()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    List<ILoan> allLoans = dao.listLoans();
+    assertThat(allLoans).isEmpty();
+    setUpFirstLoan();
+    dao.commitLoan(firstJimLoansCatch22_);
+    setUpSecondLoan();
+    dao.commitLoan(secondSamLoansEmma_);
+    setUpThirdLoan();
+    dao.commitLoan(thirdJillLoansCatch22_);
+
+    List<ILoan> loans = dao.findLoansByBookTitle("Scoop");
+
+    assertThat(loans).isEmpty();
+  }
+
+
+
+  @Test
+  public void findLoansByBookTitleReturnsLoanWhenTitleInOnlyLoan()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    List<ILoan> allLoans = dao.listLoans();
+    assertThat(allLoans).isEmpty();
+    setUpFirstLoan();
+    dao.commitLoan(firstJimLoansCatch22_);
+
+    List<ILoan> loans = dao.findLoansByBookTitle("CATCH-22");
+
+    assertThat(loans).containsExactly(firstJimLoansCatch22_);
+  }
+
+
+
+  @Test
+  public void findLoansByBookTitleReturnsLoansWhenTitleInMultipleLoans()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    List<ILoan> allLoans = dao.listLoans();
+    assertThat(allLoans).isEmpty();
+    setUpFirstLoan();
+    dao.commitLoan(firstJimLoansCatch22_);
+    setUpSecondLoan();
+    dao.commitLoan(secondSamLoansEmma_);
+    setUpThirdLoan();
+    dao.commitLoan(thirdJillLoansCatch22_);
+
+    List<ILoan> loans = dao.findLoansByBookTitle("CATCH-22");
+
+    assertThat(loans).containsExactly(firstJimLoansCatch22_,
+                                      thirdJillLoansCatch22_);
+  }
+
+
+
+  @Test
+  public void findLoansByBookTitleIsCaseInsensitive()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    List<ILoan> allLoans = dao.listLoans();
+    assertThat(allLoans).isEmpty();
+    setUpFirstLoan();
+    dao.commitLoan(firstJimLoansCatch22_); // 'CATCH-22'
+
+    List<ILoan> loans = dao.findLoansByBookTitle("Catch-22");
+
+    assertThat(loans).containsExactly(firstJimLoansCatch22_);
+  }
+
+
+
+  @Test
+  public void findLoansByBookTitleIsExactMatchOnly()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = createLoanDaoWithProtectedConstructor(loanHelper);
+    List<ILoan> allLoans = dao.listLoans();
+    assertThat(allLoans).isEmpty();
+    setUpFirstLoan();
+    dao.commitLoan(firstJimLoansCatch22_);
+
+    List<ILoan> loans = dao.findLoansByBookTitle("CATCH*");
+
+    assertThat(loans).isEmpty();
+  }
+
 
 
 
