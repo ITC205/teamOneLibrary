@@ -497,7 +497,7 @@ public class TestLoanDAO
 
     List<ILoan> loans = dao.findLoansByBorrower(jim_);
 
-    assertThat(loans).isNull();
+    assertThat(loans).isEmpty();
   }
 
 
@@ -583,7 +583,7 @@ public class TestLoanDAO
 
     List<ILoan> loans = dao.findLoansByBookTitle("Scoop");
 
-    assertThat(loans).isNull();
+    assertThat(loans).isEmpty();
   }
 
 

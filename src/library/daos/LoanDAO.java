@@ -128,7 +128,6 @@ public class LoanDAO
 
 
 
-  // TODO: if no loans return null or empty list?
   //TODO: equals, override equals, or use ==?
   /*
    * Returns a list of all loans in the committed loan collection associated
@@ -139,9 +138,6 @@ public class LoanDAO
   @Override
   public List<ILoan> findLoansByBorrower(IMember borrower)
   {
-    if (loanMap_.isEmpty()) {
-      return null;
-    }
     List<ILoan> borrowerLoans= new ArrayList<>();
     for (ILoan loan : loanMap_.values()) {
       if (loan.getBorrower() == borrower) {
@@ -153,7 +149,6 @@ public class LoanDAO
 
 
 
-  // TODO: remove null
   /*
    * Returns a list of all loans in the committed loan collection associated
    * with books with the given title.
@@ -164,9 +159,6 @@ public class LoanDAO
   @Override
   public List<ILoan> findLoansByBookTitle(String title)
   {
-    if (loanMap_.isEmpty()) {
-      return null;
-    }
     List<ILoan> bookTitleLoans = new ArrayList<>();
     for (ILoan loan : loanMap_.values()) {
       if (loan.getBook().getTitle().equalsIgnoreCase(title)) {
