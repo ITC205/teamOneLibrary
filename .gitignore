@@ -1,59 +1,29 @@
-<<<<<<< HEAD
 # Java
 *.class
 out
-
-# Package Files - except for lib folder#
-*.jar
-!/lib/*.jar
-*.war
-*.ear
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
-
-# Eclipse
-.classpath
-.project
-.settings/
-
-# Intellij
-.idea/
-*.iml
-*.iws
-
-# Mac
-.DS_Store
-=======
-# Java
-*.class
-
-# Package Files - except for lib folder#
-*.jar
-!/lib/*.jar
-*.war
-*.ear
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
-
-# Eclipse
-.classpath
-.project
-.settings/
-
-# Intellij
-.idea/
-*.iml
-*.iws
-
-# Mac
-.DS_Store
 /bin/
->>>>>>> origin/development
+
+# Package Files - except for lib folder#
+*.jar
+!/lib/*.jar
+*.war
+*.ear
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# virtual machine crash logs
+hs_err_pid*
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+# Intellij
+.idea/
+*.iml
+*.iws
+
+# Mac
+.DS_Store
