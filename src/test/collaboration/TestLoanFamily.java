@@ -114,14 +114,14 @@ public class TestLoanFamily
 
 
   @Test
-  public void createLoanAddsOnePendingLoanToLibrary()
+  public void createLoanDoesNotAddPendingLoanToLibrary()
   {
     ILoanHelper loanHelper = new LoanHelper();
     LoanDAO dao = new LoanDAO(loanHelper);
 
     ILoan loan = dao.createLoan(jim_, catch22_);
 
-    assertThat(dao.listLoans().size()).isEqualTo(1);
+    assertThat(dao.listLoans().size()).isEqualTo(0);
     assertThat(loan.getID()).isEqualTo(0);
     assertThat(loan.isCurrent()).isFalse();
   }
@@ -129,7 +129,7 @@ public class TestLoanFamily
 
 
   @Test
-  public void commitLoanMakesLoanCurrentAndSetsID()
+  public void commitLoanMakesLoanCurrentAndSetsIDAndAddsToLibrary()
   {
     ILoanHelper loanHelper = new LoanHelper();
     LoanDAO dao = new LoanDAO(loanHelper);
@@ -139,6 +139,7 @@ public class TestLoanFamily
 
     assertThat(loan.getID()).isEqualTo(1);
     assertThat(loan.isCurrent()).isTrue();
+    assertThat(dao.listLoans().size()).isEqualTo(1);
   }
 
 
@@ -184,8 +185,8 @@ public class TestLoanFamily
   {
     ILoanHelper loanHelper = new LoanHelper();
     LoanDAO dao = new LoanDAO(loanHelper);
-    Date dueDate = dateBuilder(24, 10, 2015);
-    Date today = dateBuilder(25, 10, 2015);
+    Date dueDate = dateBuilder(24, 10, 2010);
+    Date today = dateBuilder(25, 10, 2010);
 
     ILoan firstLoan = dao.createLoan(jim_, catch22_);
     dao.commitLoan(firstLoan);
@@ -202,8 +203,8 @@ public class TestLoanFamily
 
     assertThat(firstLoan.isOverDue()).isTrue();
     assertThat(secondLoan.isOverDue()).isTrue();
-    assertThat(thirdLoan.isOverDue()).isTrue();
-    assertThat(fourthLoan.isOverDue()).isTrue();
+    assertThat(thirdLoan.isOverDue()).isFalse();
+    assertThat(fourthLoan.isOverDue()).isFalse();
     assertThat(dao.findOverDueLoans()).isNotEmpty();
     assertThat(dao.findOverDueLoans()).containsExactly(firstLoan, secondLoan);
   }
