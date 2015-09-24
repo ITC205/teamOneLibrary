@@ -210,6 +210,7 @@ public class LoanBuilder
     ILoan loan = new Loan(book_, borrower_, borrowDate_, dueDate_);
     // use helper to set state of new Loan
     setPrivateState(loan, state_);
+    setPrivateID(loan, id_);
     return loan;
   }
 
