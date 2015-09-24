@@ -412,7 +412,7 @@ public class TestLoan
   }
 
   // ==========================================================================
-  // Primary methods testing - with stubs, LoanBuilder.newLoan() (for generating
+  // isOverDue() testing - with stubs, LoanBuilder.newLoan() (for generating
   // custom Loans) & LoanBuilder.dateBuilder() (for simpler date creation)
   // ==========================================================================
 
@@ -454,6 +454,10 @@ public class TestLoan
   }
 
 
+
+  // ==========================================================================
+  // isCurrent() testing - with stubs & LoanBuilder
+  // ==========================================================================
 
   @Test
   public void isCurrentWhenStateCurrentIsTrue()
@@ -514,7 +518,11 @@ public class TestLoan
   }
 
 
-  
+
+  // ==========================================================================
+  // checkOverDue() testing - with stubs & LoanBuilder
+  // ==========================================================================
+
   @Test
   public void checkOverDueWhenLoanDueNextCenturyIsFalse()
   {
@@ -720,6 +728,9 @@ public class TestLoan
   }
 
 
+  // ==========================================================================
+  // complete() testing - with stubs & LoanBuilder
+  // ==========================================================================
 
   @Test
   public void completeWhenStateCurrentSetsStateToComplete()
@@ -802,7 +813,7 @@ public class TestLoan
   }
 
   // ==========================================================================
-  // Commit() testing - with stubs, simple mocks & LoanBuilder
+  // commit() testing - with stubs, simple mocks & LoanBuilder
   // ==========================================================================
 
   @Test
@@ -1030,6 +1041,9 @@ public class TestLoan
   }
 
 
+  // ==========================================================================
+  // toString() testing - with stubs & LoanBuilder
+  // ==========================================================================
 
   @Test
   public void toStringWhenStatePending()
@@ -1065,7 +1079,7 @@ public class TestLoan
 
 
   @Test
-  public void toStringWhenStateCurrent()
+  public void toStringWhenStateCurrentAndIdSet()
   {
     // Given stubs for book and member
     IBook book = stubBook();
@@ -1080,13 +1094,14 @@ public class TestLoan
                           .withBorrower(borrower)
                           .withBorrowDate(20, 11, 2015)
                           .withDueDate(31, 11, 2015)
+                          .withID(99)
                           .makeCurrent().build();
-    // When
+
     String loanString = loan.toString();
 
     // Then expect loanString to match (note differences in Date months)
     // including explicitly set id
-    String expectedString = "Loan ID:  0\n" +
+    String expectedString = "Loan ID:  99\n" +
                             "Author:   Charles Dickens\n" +
                             "Title:    Great Expectations\n" +
                             "Borrower: Neil Armstrong\n" +
@@ -1095,5 +1110,4 @@ public class TestLoan
     assertThat(loanString).isEqualTo(expectedString);
   }
 
-  // TODO: add tests for isCurrent - if it gets added!
 }
