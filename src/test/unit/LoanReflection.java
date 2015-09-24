@@ -236,6 +236,37 @@ public class LoanReflection
 
 
   /*
+ * Uses Reflection API to directly set the Loan's private id.
+ * @param loan ILoan The loan under test.
+ * @param int newId The id to set on the Loan.
+ */
+  public static void setPrivateID(ILoan loan, int newId)
+  {
+    try {
+      Class<?> loanClass = loan.getClass();
+      Field id = loanClass.getDeclaredField("id_");
+
+      // Enable direct modification of private field
+      if (!id.isAccessible()) {
+        id.setAccessible(true);
+      }
+
+      id.set(loan, newId);
+    }
+    catch (NoSuchFieldException exception) {
+      fail("NoSuchFieldException should not occur");
+    }
+    catch (IllegalAccessException exception) {
+      fail("IllegalAccessException should not occur");
+    }
+    catch (Exception exception) {
+      fail("Exception should not occur");
+    }
+  }
+
+
+
+  /*
   * Uses Reflection API to directly set the LoanDAO's private
   * nextID_ field.
   * @param loanDao LoanDAO The LoanDAO being used.
