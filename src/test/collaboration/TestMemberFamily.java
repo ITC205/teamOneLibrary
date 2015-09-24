@@ -1,5 +1,7 @@
 package test.collaboration;
 
+import java.util.List;
+
 import junit.framework.TestCase;
 import library.daos.MemberDAO;
 import library.daos.MemberHelper;
@@ -81,28 +83,58 @@ public class TestMemberFamily extends TestCase
 	  
 	  public void testGetMemberByIdInvalid()
 	  {
-		  
+		  MemberHelper helper = new MemberHelper();
+		  MemberDAO memberDAO = new MemberDAO(helper);
+		  memberDAO.addMember(firstNames[1],lastNames[1],contactPhoneNumbers[1],emailAddresses[1]);
+		  IMember returnedMember = memberDAO.getMemberByID(2);
+		  assertEquals(null, returnedMember);
 	  }
 	  
 	  
 	  
 	  public void testListMembers()
 	  {
-		  
+		  MemberHelper helper = new MemberHelper();
+		  MemberDAO memberDAO = new MemberDAO(helper);
+		  memberDAO.addMember(firstNames[1],lastNames[1],contactPhoneNumbers[1],emailAddresses[1]);
+		  memberDAO.addMember(firstNames[2],lastNames[2],contactPhoneNumbers[2],emailAddresses[2]);
+		  memberDAO.addMember(firstNames[3],lastNames[3],contactPhoneNumbers[3],emailAddresses[3]);
+		  memberDAO.addMember(firstNames[4],lastNames[4],contactPhoneNumbers[4],emailAddresses[4]);
+		    List<IMember> memberList = memberDAO.listMembers();
+		    assertEquals(4, memberList.size());
+		    assertEquals(lastNames[1], memberList.get(0).getLastName());
+		    assertEquals(firstNames[2], memberList.get(1).getFirstName());
+		    assertEquals(emailAddresses[3], memberList.get(2).getEmailAddress());
+		    assertEquals(contactPhoneNumbers[4], memberList.get(3).getContactPhone());
 	  }
 	  
 	  
 	  
 	  public void testFindMembersByLastName()
 	  {
-		  
+		  MemberHelper helper = new MemberHelper();
+		  MemberDAO memberDAO = new MemberDAO(helper);
+		  memberDAO.addMember(firstNames[1],lastNames[1],contactPhoneNumbers[1],emailAddresses[1]);
+		  memberDAO.addMember(firstNames[2],lastNames[2],contactPhoneNumbers[2],emailAddresses[2]);
+		  memberDAO.addMember(firstNames[3],lastNames[3],contactPhoneNumbers[3],emailAddresses[3]);
+		  memberDAO.addMember(firstNames[4],lastNames[4],contactPhoneNumbers[4],emailAddresses[4]);
+		    List<IMember> memberList = memberDAO.findMembersByLastName(lastNames[2]);
+		    assertEquals(1, memberList.size());
+		    assertEquals(lastNames[2], memberList.get(0).getLastName());
 	  }
 	  
 	  
 	  
 	  public void testFindMembersByLastNameDoesNotExist()
 	  {
-		  
+		  MemberHelper helper = new MemberHelper();
+		  MemberDAO memberDAO = new MemberDAO(helper);
+		  memberDAO.addMember(firstNames[1],lastNames[1],contactPhoneNumbers[1],emailAddresses[1]);
+		  memberDAO.addMember(firstNames[2],lastNames[2],contactPhoneNumbers[2],emailAddresses[2]);
+		  memberDAO.addMember(firstNames[3],lastNames[3],contactPhoneNumbers[3],emailAddresses[3]);
+		  memberDAO.addMember(firstNames[4],lastNames[4],contactPhoneNumbers[4],emailAddresses[4]);
+		    List<IMember> memberList = memberDAO.findMembersByLastName("Jackson");
+		    assertEquals(0, memberList.size());
 	  }
 	  
 	  
