@@ -868,13 +868,13 @@ public class TestLoanDAO
     setUpSecondLoan();
     dao.commitLoan(secondSamLoansEmma_);
     setUpFifthLoan();
-    dao.commitLoan(fifthJillLoansDune_);
+    dao.commitLoan(thirdJillLoansCatch22_);
 
     dao.findOverDueLoans();
 
     verify(firstJimLoansCatch22_).isOverDue();
     verify(secondSamLoansEmma_).isOverDue();
-    verify(fifthJillLoansDune_).isOverDue();
+    verify(thirdJillLoansCatch22_).isOverDue();
     verifyNoMoreInteractions(fourthJimLoansScoop_);
     verifyNoMoreInteractions(fifthJillLoansDune_);
     verifyNoMoreInteractions(sixthSamLoansEmma_);
