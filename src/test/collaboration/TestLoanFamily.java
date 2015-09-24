@@ -26,7 +26,7 @@ import static test.unit.LoanBuilder.*;
 import static test.unit.LoanReflection.*;
 
 /**
- *
+ * Tests collaborations of Loan family - Loan, LoanHelper & LoanDAO.
  */
 public class TestLoanFamily
 {
@@ -72,13 +72,11 @@ public class TestLoanFamily
     when(dune_.getState()).thenReturn(EBookState.ON_LOAN);
   }
 
-
   public void setUpJim()
   {
     when(jim_.getFirstName()).thenReturn("Jim");
     when(jim_.getLastName()).thenReturn("Johnson");
   }
-
 
   public void setUpSam()
   {
@@ -86,13 +84,11 @@ public class TestLoanFamily
     when(sam_.getLastName()).thenReturn("Malone");
   }
 
-
   public void setUpJill()
   {
     when(jill_.getFirstName()).thenReturn("Jill");
     when(jill_.getLastName()).thenReturn("Underhill");
   }
-
 
   public void setUpBob()
   {
@@ -100,10 +96,8 @@ public class TestLoanFamily
     when(bob_.getLastName()).thenReturn("Dylan");
   }
 
-
-
   //===========================================================================
-  //
+  // Test main interactions
   //===========================================================================
 
   @Test
@@ -120,19 +114,22 @@ public class TestLoanFamily
 
 
   @Test
-  public void createLibraryWithOnePendingLoan()
+  public void createLoanAddsOnePendingLoanToLibrary()
   {
     ILoanHelper loanHelper = new LoanHelper();
     LoanDAO dao = new LoanDAO(loanHelper);
 
     ILoan loan = dao.createLoan(jim_, catch22_);
+
+    assertThat(dao.listLoans().size()).isEqualTo(1);
     assertThat(loan.getID()).isEqualTo(0);
+    assertThat(loan.isCurrent()).isFalse();
   }
 
 
 
   @Test
-  public void createLibraryWithOneCurrentLoan()
+  public void commitLoanMakesLoanCurrentAndSetsID()
   {
     ILoanHelper loanHelper = new LoanHelper();
     LoanDAO dao = new LoanDAO(loanHelper);
@@ -147,23 +144,68 @@ public class TestLoanFamily
 
 
   @Test
-  public void createLibraryWithOneLoanAboutToBecomeOverDue()
+  public void listLoansEmptyLibraryReturnsEmpty()
+  {
+    ILoanHelper loanHelper = new LoanHelper();
+    LoanDAO dao = new LoanDAO(loanHelper);
+
+    assertThat(dao.listLoans()).isEmpty();
+  }
+
+
+
+  @Test
+  public void listLoansReturnsAllLoans()
+  {
+    ILoanHelper loanHelper = new LoanHelper();
+    LoanDAO dao = new LoanDAO(loanHelper);
+    setUpJim();
+    setUpCatch22();
+    ILoan firstLoan = dao.createLoan(jim_, catch22_);
+    dao.commitLoan(firstLoan);
+    ILoan secondLoan = dao.createLoan(sam_, emma_);
+    dao.commitLoan(secondLoan);
+    ILoan thirdLoan = dao.createLoan(jill_, catch22_);
+    dao.commitLoan(thirdLoan);
+    ILoan fourthLoan = dao.createLoan(jim_, scoop_);
+    dao.commitLoan(fourthLoan);
+    assertThat(dao.listLoans()).hasSize(4);
+
+    List<ILoan> allLoans = dao.listLoans();
+
+    assertThat(allLoans).containsExactly(firstLoan, secondLoan, thirdLoan,
+                                         fourthLoan);
+  }
+
+
+
+  @Test
+  public void findOverDueLoansReturnsOverDueLoans()
   {
     ILoanHelper loanHelper = new LoanHelper();
     LoanDAO dao = new LoanDAO(loanHelper);
     Date dueDate = dateBuilder(24, 10, 2015);
     Date today = dateBuilder(25, 10, 2015);
 
-    ILoan loan = dao.createLoan(jim_, catch22_);
-    dao.commitLoan(loan);
-    setPrivateDueDate((Loan)loan, dueDate);
-    assertThat(loan.isOverDue()).isFalse();
-    assertThat(dao.findOverDueLoans()).isEmpty();
+    ILoan firstLoan = dao.createLoan(jim_, catch22_);
+    dao.commitLoan(firstLoan);
+    setPrivateDueDate((Loan)firstLoan, dueDate);
+    ILoan secondLoan = dao.createLoan(sam_, emma_);
+    dao.commitLoan(secondLoan);
+    setPrivateDueDate((Loan)secondLoan, dueDate);
+    ILoan thirdLoan = dao.createLoan(jill_, catch22_);
+    dao.commitLoan(thirdLoan);
+    ILoan fourthLoan = dao.createLoan(jill_, catch22_);
+    dao.commitLoan(fourthLoan);
 
     dao.updateOverDueStatus(today);
 
-    assertThat(loan.isOverDue()).isTrue();
+    assertThat(firstLoan.isOverDue()).isTrue();
+    assertThat(secondLoan.isOverDue()).isTrue();
+    assertThat(thirdLoan.isOverDue()).isTrue();
+    assertThat(fourthLoan.isOverDue()).isTrue();
     assertThat(dao.findOverDueLoans()).isNotEmpty();
+    assertThat(dao.findOverDueLoans()).containsExactly(firstLoan, secondLoan);
   }
 
 
@@ -184,26 +226,7 @@ public class TestLoanFamily
 
 
   @Test
-  public void singleLoanCanBeFoundByBookTitle()
-  {
-    ILoanHelper loanHelper = new LoanHelper();
-    LoanDAO dao = new LoanDAO(loanHelper);
-    setUpCatch22();
-    ILoan loan = dao.createLoan(jim_, catch22_);
-    dao.commitLoan(loan);
-
-    List<ILoan> catch22Loans = dao.findLoansByBookTitle("CATCH-22");
-
-    assertThat(catch22Loans).containsExactly(loan);
-  }
-
-
-
-
-
-
-  @Test
-  public void multipleLoansCanBeFoundByBorrower()
+  public void findLoansByBorrowerReturnsAllBorrowerLoans()
   {
     ILoanHelper loanHelper = new LoanHelper();
     LoanDAO dao = new LoanDAO(loanHelper);
@@ -259,7 +282,7 @@ public class TestLoanFamily
 
 
   @Test
-  public void multipleLoansCanBeFoundByBookTitle()
+  public void findLoanByBookTitleReturnsCorrectList()
   {
     ILoanHelper loanHelper = new LoanHelper();
     LoanDAO dao = new LoanDAO(loanHelper);
@@ -289,7 +312,7 @@ public class TestLoanFamily
 
 
   @Test
-  public void findLoanByWrongBookTitleReturnsEmptyList()
+  public void findLoanByBookTitleReturnsEmptyListIfTitleNotMatch()
   {
     ILoanHelper loanHelper = new LoanHelper();
     LoanDAO dao = new LoanDAO(loanHelper);
@@ -319,7 +342,7 @@ public class TestLoanFamily
 
 
   @Test
-  public void multipleLoansCanBeFoundByID()
+  public void getLoanByIDReturnsCorrectLoan()
   {
     ILoanHelper loanHelper = new LoanHelper();
     LoanDAO dao = new LoanDAO(loanHelper);
@@ -344,7 +367,7 @@ public class TestLoanFamily
 
 
   @Test
-  public void findLoanByInvalidIDReturnsNull()
+  public void getLoanByInvalidIDReturnsNull()
   {
     ILoanHelper loanHelper = new LoanHelper();
     LoanDAO dao = new LoanDAO(loanHelper);
@@ -368,27 +391,22 @@ public class TestLoanFamily
 
 
   @Test
-  public void allLoansCanBeListed()
+  public void updateOverDueStatusCausesDueLoanToBecomeOverDue()
   {
     ILoanHelper loanHelper = new LoanHelper();
     LoanDAO dao = new LoanDAO(loanHelper);
-    setUpJim();
-    setUpCatch22();
-    ILoan firstLoan = dao.createLoan(jim_, catch22_);
-    dao.commitLoan(firstLoan);
-    ILoan secondLoan = dao.createLoan(sam_, emma_);
-    dao.commitLoan(secondLoan);
-    ILoan thirdLoan = dao.createLoan(jill_, catch22_);
-    dao.commitLoan(thirdLoan);
-    ILoan fourthLoan = dao.createLoan(jim_, scoop_);
-    dao.commitLoan(fourthLoan);
-    assertThat(dao.listLoans()).hasSize(4);
+    Date dueDate = dateBuilder(24, 10, 2015);
+    Date today = dateBuilder(25, 10, 2015);
 
-    List<ILoan> allLoans = dao.listLoans();
+    ILoan loan = dao.createLoan(jim_, catch22_);
+    dao.commitLoan(loan);
+    setPrivateDueDate((Loan)loan, dueDate);
+    assertThat(loan.isOverDue()).isFalse();
+    assertThat(dao.findOverDueLoans()).isEmpty();
 
-    assertThat(allLoans).containsExactly(firstLoan, secondLoan, thirdLoan,
-                                         fourthLoan);
+    dao.updateOverDueStatus(today);
+
+    assertThat(loan.isOverDue()).isTrue();
   }
-
 
 }
