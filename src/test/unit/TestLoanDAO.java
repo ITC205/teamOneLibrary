@@ -10,6 +10,7 @@ import library.interfaces.entities.ILoan;
 import library.interfaces.daos.ILoanHelper;
 import library.interfaces.daos.ILoanDAO;
 
+import library.entities.Loan;
 import library.interfaces.entities.EBookState;
 
 import library.daos.LoanDAO;
@@ -131,8 +132,7 @@ public class TestLoanDAO
   }
 
   //===========================================================================
-  // Test constructor - with LoanBuilder (for stubs) & LoanReflection (to
-  // create new LoanDAOs)
+  // Test constructor - with LoanBuilder (for stubs)
   //===========================================================================
 
   @Test
@@ -161,8 +161,8 @@ public class TestLoanDAO
   }
 
   //===========================================================================
-  // Test createLoan -  - with LoanBuilder (for stubs & mocks) &
-  // LoanReflection (to create new LoanDAOs) & fixtures for creating loan
+  // Test createLoan - with LoanBuilder (for stubs & mocks) & fixtures
+  // for creating loan
   //===========================================================================
 
   @Test
@@ -252,39 +252,7 @@ public class TestLoanDAO
     }
   }
 
-  //===========================================================================
-  // Test listLoans - with LoanBuilder (for stubs) & LoanReflection (to create
-  // LoanDAO & add Loans to loanMap)
-  //===========================================================================
 
-  @Test
-  public void loanListIsEmptyInitially()
-  {
-    ILoanHelper loanHelper = stubHelper();
-    LoanDAO dao = new LoanDAO(loanHelper);
-
-    List<ILoan> allLoans = dao.listLoans();
-
-    assert(allLoans).isEmpty();
-  }
-
-
-
-  @Test
-  public void loanListReturnsLoansManuallySetInLoanMap()
-  {
-    ILoanHelper loanHelper = stubHelper();
-    LoanDAO dao = new LoanDAO(loanHelper);
-    ILoan[] loans = {firstJimLoansCatch22_, secondSamLoansEmma_};
-
-    setPrivateLoanMap(dao, loans);
-    List<ILoan> allLoans = dao.listLoans();
-
-    assertThat(allLoans).isNotEmpty();
-    assertThat(allLoans).hasSize(2);
-    assertThat(allLoans).containsExactly(firstJimLoansCatch22_,
-                                         secondSamLoansEmma_);
-  }
 
   //===========================================================================
   // Testing the test fixtures :-)
@@ -405,6 +373,73 @@ public class TestLoanDAO
   }
 
   //===========================================================================
+  // Test listLoans - with LoanBuilder (for stubs) & LoanReflection (to
+  // add Loans to loanMap)
+  //===========================================================================
+
+  @Test
+  public void loanListIsEmptyInitially()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = new LoanDAO(loanHelper);
+
+    List<ILoan> allLoans = dao.listLoans();
+
+    assert(allLoans).isEmpty();
+  }
+
+
+
+  @Test
+  public void listLoansReturnsLoansManuallySetInLoanMap()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = new LoanDAO(loanHelper);
+    ILoan[] loans = {firstJimLoansCatch22_, secondSamLoansEmma_};
+
+    setPrivateLoanMap(dao, loans);
+    List<ILoan> allLoans = dao.listLoans();
+
+    assertThat(allLoans).isNotEmpty();
+    assertThat(allLoans).hasSize(2);
+    assertThat(allLoans).containsExactly(firstJimLoansCatch22_,
+                                         secondSamLoansEmma_);
+  }
+
+
+
+  @Test
+  public void listLoansReturnsCommittedLoans()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = new LoanDAO(loanHelper);
+    List<ILoan> allLoans = dao.listLoans();
+    assertThat(allLoans).isEmpty();
+    setUpFirstLoan();
+    dao.commitLoan(firstJimLoansCatch22_);
+    setUpSecondLoan();
+    dao.commitLoan(secondSamLoansEmma_);
+    setUpThirdLoan();
+    dao.commitLoan(thirdJillLoansCatch22_);
+    setUpFourthLoan();
+    dao.commitLoan(fourthJimLoansScoop_);
+    setUpFifthLoan();
+    dao.commitLoan(fifthJillLoansDune_);
+    setUpSixthLoan();
+    dao.commitLoan(sixthSamLoansEmma_);
+
+    allLoans = dao.listLoans();
+
+    assertThat(allLoans).hasSize(6);
+    assertThat(allLoans).containsExactly(firstJimLoansCatch22_,
+                                         secondSamLoansEmma_,
+                                         thirdJillLoansCatch22_,
+                                         fourthJimLoansScoop_,
+                                         fifthJillLoansDune_,
+                                         sixthSamLoansEmma_);
+  }
+
+  //===========================================================================
   // Test getLoanByID - with LoanBuilder (for stubs), LoanReflection
   // (to create new LoanDAOs) & fixtures for loans
   //===========================================================================
@@ -484,8 +519,8 @@ public class TestLoanDAO
   }
 
   //===========================================================================
-  // Test findLoansByBorrower - with LoanBuilder (for stubs), LoanReflection
-  // (to create new LoanDAOs) & fixtures for loans & books
+  // Test findLoansByBorrower - with LoanBuilder (for stubs & mocks)
+  // & fixtures for loans & books
   //===========================================================================
 
   @Test
@@ -499,6 +534,32 @@ public class TestLoanDAO
     List<ILoan> loans = dao.findLoansByBorrower(jim_);
 
     assertThat(loans).isEmpty();
+  }
+
+
+
+  @Test
+  public void findLoansByBorrowerCallsLoanGetBorrower()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = new LoanDAO(loanHelper);
+    List<ILoan> allLoans = dao.listLoans();
+    assertThat(allLoans).isEmpty();
+    setUpFirstLoan();
+    dao.commitLoan(firstJimLoansCatch22_);
+    setUpSecondLoan();
+    dao.commitLoan(secondSamLoansEmma_);
+    setUpThirdLoan();
+    dao.commitLoan(thirdJillLoansCatch22_);
+
+    dao.findLoansByBorrower(bob_);
+
+    verify(firstJimLoansCatch22_).getBorrower();
+    verify(secondSamLoansEmma_).getBorrower();
+    verify(thirdJillLoansCatch22_).getBorrower();
+    verifyZeroInteractions(fourthJimLoansScoop_);
+    verifyZeroInteractions(fifthJillLoansDune_);
+    verifyZeroInteractions(sixthSamLoansEmma_);
   }
 
 
@@ -570,8 +631,8 @@ public class TestLoanDAO
   }
 
   //===========================================================================
-  // Test findLoansByBookTitle - with LoanBuilder (for stubs), LoanReflection
-  // (to create new LoanDAOs) & fixtures for loans & books
+  // Test findLoansByBookTitle - with LoanBuilder (for stubs & mocks)
+  // & fixtures for loans & books
   //===========================================================================
 
   @Test
@@ -585,6 +646,32 @@ public class TestLoanDAO
     List<ILoan> loans = dao.findLoansByBookTitle("Scoop");
 
     assertThat(loans).isEmpty();
+  }
+
+
+
+  @Test
+  public void findLoansByBookTitleCallsLoanGetBookGetTitle()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = new LoanDAO(loanHelper);
+    List<ILoan> allLoans = dao.listLoans();
+    assertThat(allLoans).isEmpty();
+    setUpFirstLoan();
+    dao.commitLoan(firstJimLoansCatch22_);
+    setUpSecondLoan();
+    dao.commitLoan(secondSamLoansEmma_);
+
+    dao.findLoansByBookTitle("Scoop");
+
+    verify(firstJimLoansCatch22_).getBook();
+    verify(catch22_).getTitle();
+    verify(secondSamLoansEmma_).getBook();
+    verify(emma_).getTitle();
+    verifyNoMoreInteractions(thirdJillLoansCatch22_);
+    verifyNoMoreInteractions(fourthJimLoansScoop_);
+    verifyNoMoreInteractions(fifthJillLoansDune_);
+    verifyNoMoreInteractions(sixthSamLoansEmma_);
   }
 
 
@@ -682,8 +769,8 @@ public class TestLoanDAO
   }
 
   //===========================================================================
-  // Test updateOverDueStatus - with LoanBuilder (for stubs & mocks),
-  // LoanReflection (to create new LoanDAOs) & fixtures for loans & books
+  // Test updateOverDueStatus - with LoanBuilder (for stubs & mocks)
+  // & fixtures for loans & books
   //===========================================================================
 
   // TODO: check these, once Jim responds
@@ -738,13 +825,9 @@ public class TestLoanDAO
 
 
 
-
-
-
-
   //===========================================================================
-  // Test findOverDueLoans - with LoanBuilder (for stubs), LoanReflection
-  // (to create new LoanDAOs) & fixtures for loans & books
+  // Test findOverDueLoans - with LoanBuilder (for stubs & mocks) & fixtures
+  // for loans & books
   //===========================================================================
 
   @Test
@@ -771,6 +854,30 @@ public class TestLoanDAO
     List<ILoan> overDueLoans = dao.findOverDueLoans();
 
     assertThat(overDueLoans).isEmpty();
+  }
+
+
+
+  @Test
+  public void findOverDueLoansCallsLoanIsOverDue()
+  {
+    ILoanHelper loanHelper = stubHelper();
+    LoanDAO dao = new LoanDAO(loanHelper);
+    setUpFirstLoan();
+    dao.commitLoan(firstJimLoansCatch22_);
+    setUpSecondLoan();
+    dao.commitLoan(secondSamLoansEmma_);
+    setUpFifthLoan();
+    dao.commitLoan(fifthJillLoansDune_);
+
+    dao.findOverDueLoans();
+
+    verify(firstJimLoansCatch22_).isOverDue();
+    verify(secondSamLoansEmma_).isOverDue();
+    verify(fifthJillLoansDune_).isOverDue();
+    verifyNoMoreInteractions(fourthJimLoansScoop_);
+    verifyNoMoreInteractions(fifthJillLoansDune_);
+    verifyNoMoreInteractions(sixthSamLoansEmma_);
   }
 
 
@@ -836,8 +943,9 @@ public class TestLoanDAO
   }
 
 
-
-
+  //===========================================================================
+  // Test helpers
+  //===========================================================================
 
   // TODO: extract helpers?
 
