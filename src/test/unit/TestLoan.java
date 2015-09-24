@@ -64,8 +64,6 @@ public class TestLoan
     // With valid, but very simple dates in millis
     Date borrowDate = new Date(1);
     Date dueDate = new Date(2);
-    // and valid ID
-    int id = 1;
 
     // When create a valid loan
     ILoan loan = new Loan(book, borrower, borrowDate, dueDate);
@@ -85,8 +83,6 @@ public class TestLoan
     // With valid, but very simple dates in millis
     Date borrowDate = new Date(1);
     Date dueDate = new Date(2);
-    // and valid ID
-    int id = 1;
 
     // When create a valid loan
     ILoan loan = new Loan(book, borrower, borrowDate, dueDate);
@@ -109,8 +105,6 @@ public class TestLoan
     // With valid, but very simple dates in millis
     Date borrowDate = new Date(1);
     Date dueDate = new Date(2);
-    // and valid ID
-    int id = 1;
 
     // When create a loan
     try {
@@ -134,8 +128,6 @@ public class TestLoan
     // With valid, but very simple dates in millis
     Date borrowDate = new Date(1);
     Date dueDate = new Date(2);
-    // and valid ID
-    int id = 1;
 
     // When create a loan
     try {
@@ -159,8 +151,6 @@ public class TestLoan
     // With null borrowDate
     Date borrowDate = null;
     Date dueDate = new Date(2);
-    // and valid ID
-    int id = 1;
 
     // When create a loan
     try {
@@ -184,8 +174,6 @@ public class TestLoan
     // With null due date
     Date borrowDate = new Date(1);
     Date dueDate = null;
-    // and valid ID
-    int id = 1;
 
     // When create a loan
     try {
@@ -209,8 +197,6 @@ public class TestLoan
     // With valid, but very simple dates in millis
     Date borrowDate = new Date(1);
     Date dueDate = new Date(2);
-    // and valid ID
-    int id = 1;
 
     // When create a loan
     try {
@@ -235,8 +221,6 @@ public class TestLoan
     // with formatted dates to be assigned
     Date borrowDate = null;
     Date dueDate = null;
-    // and valid ID
-    int id = 1;
 
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -270,8 +254,6 @@ public class TestLoan
     Date borrowDate = dateFormat.parse("17/09/2015");
     // and dueDate is before the borrowDate
     Date dueDate = dateFormat.parse("16/09/2015");
-    // and valid ID
-    int id = 1;
 
     // When create a loan
     try {
@@ -297,8 +279,6 @@ public class TestLoan
     Date borrowDate = dateFormat.parse("17/09/2015");
     // dueDate is same as the borrowDate
     Date dueDate = dateFormat.parse("17/09/2015");
-    // and valid ID
-    int id = 1;
 
     // When create a loan
     try {
@@ -324,8 +304,6 @@ public class TestLoan
     Date borrowDate = dateFormat.parse("17/09/2015");
     // dueDate is same the borrowDate
     Date dueDate = dateFormat.parse("17/09/2015");
-    // and valid ID
-    int id = 1;
 
     // When create a loan
     try {
@@ -337,90 +315,6 @@ public class TestLoan
       assertThat(exception).hasMessage("Cannot create a new Loan when the " +
                                        "Return Date is before or the same as " +
                                        "the Borrowing Date.");
-    }
-  }
-
-
-
-
-  // TODO: confirm the validity of this test
-  // this test was based on the specification, but it appears the spec is
-  // incorrect, as pending loans are created with an id of zero
-  @Ignore
-  public void createLoanWithZeroIdThrows()
-    throws java.text.ParseException
-  {
-    // Given stubs for book and member
-    IBook book = stubBook();
-    IMember borrower = stubMember();
-    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-    Date borrowDate = dateFormat.parse("01/01/2015");
-    Date dueDate = dateFormat.parse("12/01/2015");
-    // and ID equals zero
-    int id = 0;
-
-    // When create a loan
-    try {
-      ILoan loan = new Loan(book, borrower, borrowDate, dueDate);
-    }
-
-    // Then exception should be thrown
-    catch (Exception exception) {
-      assertThat(exception).isInstanceOf(IllegalArgumentException.class);
-    }
-  }
-
-
-
-  @Test
-  public void createLoanWithNegativeIdThrows()
-    throws java.text.ParseException
-  {
-    // Given stubs for book and member
-    IBook book = stubBook();
-    IMember borrower = stubMember();
-    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-    Date borrowDate = dateFormat.parse("01/01/2015");
-    Date dueDate = dateFormat.parse("12/01/2015");
-    // and ID is negative
-    int id = -1;
-
-    // When create a loan
-    try {
-      ILoan loan = new Loan(book, borrower, borrowDate, dueDate);
-    }
-
-    // Then exception should be thrown
-    catch (Exception exception) {
-      assertThat(exception).isInstanceOf(IllegalArgumentException.class);
-    }
-  }
-
-
-
-  @Test
-  public void createLoanWithNegativeIdThrowsWithCorrectMessage()
-    throws java.text.ParseException
-  {
-    // Given stubs for book and member
-    IBook book = stubBook();
-    IMember borrower = stubMember();
-    // with valid dates to be assigned
-    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-    Date borrowDate = dateFormat.parse("01/01/2015");
-    Date dueDate = dateFormat.parse("12/01/2015");
-    // and negative ID
-    int id = -1;
-
-    // When create a loan
-    try {
-      ILoan loan = new Loan(book, borrower, borrowDate, dueDate);
-    }
-
-    // Then exception should be thrown
-    catch (Exception exception) {
-      assertThat(exception).hasMessage("Cannot create a new Loan with an ID " +
-                                       "less than or equal to zero.");
     }
   }
 
@@ -438,7 +332,6 @@ public class TestLoan
     // With valid dates and ID
     Date borrowDate = new Date(1);
     Date dueDate = new Date(2);
-    int id = 1;
 
     // When create a loan
     ILoan loan = new Loan(book, borrower, borrowDate, dueDate);
@@ -462,7 +355,6 @@ public class TestLoan
     // With valid dates and ID
     Date borrowDate = new Date(1);
     Date dueDate = new Date(2);
-    int id = 1;
 
     // When create a loan
     ILoan loan = new Loan(book, borrower, borrowDate, dueDate);
@@ -488,7 +380,6 @@ public class TestLoan
     // With valid dates and ID
     Date borrowDate = new Date(1);
     Date dueDate = new Date(2);
-    int id = 1;
 
     // When create a loan
     ILoan loan = new Loan(book, borrower, borrowDate, dueDate);
@@ -521,8 +412,8 @@ public class TestLoan
   }
 
   // ==========================================================================
-  // Primary methods testing - with stubs, LoanBuilder (for generating
-  // custom Loans) & dateBuilder (for simpler date creation)
+  // Primary methods testing - with stubs, LoanBuilder.newLoan() (for generating
+  // custom Loans) & LoanBuilder.dateBuilder() (for simpler date creation)
   // ==========================================================================
 
   @Test
@@ -564,6 +455,66 @@ public class TestLoan
 
 
 
+  @Test
+  public void isCurrentWhenStateCurrentIsTrue()
+  {
+    // Given a current loan
+    ILoan loan = newLoan().withBorrowDate(1, 0, 2015)
+                          .withDueDate(15, 0, 2015)
+                          .makeCurrent().build();
+
+    boolean isCurrent = loan.isCurrent();
+
+    assertThat(isCurrent).isTrue();
+  }
+
+
+
+  @Test
+  public void isCurrentWhenStatePendingIsFalse()
+  {
+    // Given a current loan
+    ILoan loan = newLoan().withBorrowDate(1, 0, 2015)
+                          .withDueDate(15, 0, 2015)
+                          .makePending().build();
+
+    boolean isCurrent = loan.isCurrent();
+
+    assertThat(isCurrent).isFalse();
+  }
+
+
+
+  @Test
+  public void isCurrentWhenStateOverDueIsFalse()
+  {
+    // Given a current loan
+    ILoan loan = newLoan().withBorrowDate(1, 0, 2015)
+                          .withDueDate(15, 0, 2015)
+                          .makeOverDue().build();
+
+    boolean isCurrent = loan.isCurrent();
+
+    assertThat(isCurrent).isFalse();
+  }
+
+
+
+  @Test
+  public void isCurrentWhenStateCompleteIsFalse()
+  {
+    // Given a current loan
+    ILoan loan = newLoan().withBorrowDate(1, 0, 2015)
+                          .withDueDate(15, 0, 2015)
+                          .makeComplete().build();
+
+    boolean isCurrent = loan.isCurrent();
+
+    assertThat(isCurrent).isFalse();
+  }
+
+
+  
   @Test
   public void checkOverDueWhenLoanDueNextCenturyIsFalse()
   {
@@ -935,6 +886,79 @@ public class TestLoan
 
     // Then loan id should be set
     assertThat(loan.getID()).isEqualTo(999);
+  }
+
+
+
+  @Test
+  public void commitLoanWithZeroIdThrows()
+      throws java.text.ParseException
+  {
+    // Given loan using stubs for book and member
+    IBook book = stubBook();
+    IMember borrower = stubMember();
+    Date borrowDate = dateBuilder(1, 1, 2015);
+    Date dueDate = dateBuilder(15, 1, 2015);
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate);
+
+    // when commit with an id of 0
+    try {
+      loan.commit(0);
+    }
+
+    // Then exception should be thrown
+    catch (Exception exception) {
+      assertThat(exception).isInstanceOf(IllegalArgumentException.class);
+    }
+  }
+
+
+
+  @Test
+  public void commitLoanWithNegativeIdThrows()
+      throws java.text.ParseException
+  {
+    // Given loan using stubs for book and member
+    IBook book = stubBook();
+    IMember borrower = stubMember();
+    Date borrowDate = dateBuilder(1, 1, 2015);
+    Date dueDate = dateBuilder(15, 1, 2015);
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate);
+
+    // when commit with a negative id
+    try {
+      loan.commit(-1);
+    }
+
+    // Then exception should be thrown
+    catch (Exception exception) {
+      assertThat(exception).isInstanceOf(IllegalArgumentException.class);
+    }
+  }
+
+
+
+  @Test
+  public void commitLoanWithNegativeIdThrowsWithCorrectMessage()
+      throws java.text.ParseException
+  {
+    // Given loan using stubs for book and member
+    IBook book = stubBook();
+    IMember borrower = stubMember();
+    Date borrowDate = dateBuilder(1, 1, 2015);
+    Date dueDate = dateBuilder(15, 1, 2015);
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate);
+
+    // when commit with a negative id
+    try {
+      loan.commit(-1);
+    }
+
+    // Then exception should be thrown
+    catch (IllegalArgumentException exception) {
+      assertThat(exception).hasMessage("Cannot commit a Loan with an ID " +
+                                       "less than or equal to zero.");
+    }
   }
 
 
