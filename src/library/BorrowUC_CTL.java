@@ -44,13 +44,25 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	
 	private JPanel previous;
 
-
+	
 	public BorrowUC_CTL(ICardReader reader, IScanner scanner, 
 			IPrinter printer, IDisplay display,
 			IBookDAO bookDAO, ILoanDAO loanDAO, IMemberDAO memberDAO ) {
 
 		this.display = display;
 		this.ui = new BorrowUC_UI(this);
+		this.reader = reader;
+		this.scanner = scanner;
+		this.printer = printer;
+		
+		this.bookDAO = bookDAO;
+		this.loanDAO = loanDAO;
+		this.memberDAO = memberDAO;
+		
+		this.reader.addListener(this);
+		this.scanner.addListener(this);
+		
+		
 		state = EBorrowState.CREATED;
 	}
 	
@@ -72,7 +84,59 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	
 	@Override
 	public void bookScanned(int barcode) {
-		throw new RuntimeException("Not implemented yet");
+		// Implemented by Josh Kent
+		
+		// Clear error message
+		ui.displayErrorMessage("");
+		
+		// Get book
+		IBook book = bookDAO.getBookByID(barcode);
+		
+		// If the book is not found
+		if(book == null) {
+			ui.displayErrorMessage("Book not found");
+			return;
+		}
+		
+		// Check book state
+		EBookState bookState = book.getState();
+		
+		// If the book is not 'Available'
+		if(bookState != EBookState.AVAILABLE) {
+			ui.displayErrorMessage("Book not available");
+			return;
+		}
+		
+		// If the book has already been scanned
+		if(bookList.contains(book)) {
+			ui.displayErrorMessage("Book already scanned");
+			return;
+		}
+		
+		// Add book to bookList
+		bookList.add(book);
+		// Increment scanCount
+		scanCount++;
+		
+		// Create loan and add to loanList
+		ILoan loan = loanDAO.createLoan(borrower, book);
+		loanList.add(loan);
+		
+		// Get bookDetails directly from book
+		String bookDetails = book.toString(); 
+		String loanDetails = buildLoanListDisplay(loanList);
+		
+		ui.displayScannedBookDetails(bookDetails);
+		ui.displayPendingLoan(loanDetails);
+		
+		if(scanCount >= IMember.LOAN_LIMIT) {
+			ui.setState(EBorrowState.CONFIRMING_LOANS);
+			setState(EBorrowState.CONFIRMING_LOANS);
+			
+			ui.displayConfirmingLoan(loanDetails);
+			reader.setEnabled(false);
+			scanner.setEnabled(false);
+		}
 	}
 
 	
