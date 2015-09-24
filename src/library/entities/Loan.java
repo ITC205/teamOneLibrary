@@ -123,7 +123,7 @@ public class Loan
   }
 
   //===========================================================================
-  // Primary methods
+  // Primary methods (& their private helpers)
   //===========================================================================
 
   /**
@@ -152,7 +152,7 @@ public class Loan
   {
     if (!(state_ == ELoanState.PENDING)){
       throw new RuntimeException("Committing a Loan that is not " +
-                                         "Pending is invalid.");
+                                 "Pending is invalid.");
     }
   }
 
@@ -240,6 +240,33 @@ public class Loan
 
 
 
+  private boolean isAfterDueDate(Date currentDate)
+  {
+    Date today = ignoreTime(currentDate);
+    Date due = ignoreTime(dueDate_);
+    return today.after(due);
+  }
+
+
+
+  private Date ignoreTime(Date date)
+  {
+    Calendar calendar = Calendar.getInstance();
+
+    calendar.setTime(date);
+    calendar.set(java.util.Calendar.HOUR_OF_DAY, 0);
+    calendar.set(java.util.Calendar.MINUTE, 0);
+    calendar.set(java.util.Calendar.SECOND, 0);
+    calendar.set(java.util.Calendar.MILLISECOND, 0);
+
+    return calendar.getTime();
+  }
+
+
+  /*
+   * Returns a formatted description of the loan details.
+   * @return String The formatted description of the loan details.
+   */
   @Override
   public String toString()
   {
@@ -262,30 +289,6 @@ public class Loan
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
     String dateString = dateFormat.format(date);
     return dateString;
-  }
-
-
-
-  public boolean isAfterDueDate(Date currentDate)
-  {
-    Date today = ignoreTime(currentDate);
-    Date due = ignoreTime(dueDate_);
-    return today.after(due);
-  }
-
-
-
-  private Date ignoreTime(Date date)
-  {
-    Calendar calendar = Calendar.getInstance();
-
-    calendar.setTime(date);
-    calendar.set(java.util.Calendar.HOUR_OF_DAY, 0);
-    calendar.set(java.util.Calendar.MINUTE, 0);
-    calendar.set(java.util.Calendar.SECOND, 0);
-    calendar.set(java.util.Calendar.MILLISECOND, 0);
-
-    return calendar.getTime();
   }
 
 }
