@@ -40,7 +40,7 @@ import test.unit.LoanBuilder;
  * - Pending loan list exists
  * - BorrowUC_CTL state = SCANNING_BOOKS
  * 
- * @author admin
+ * @author Josh Kent
  *
  */
 public class TestCompleteScansOperation extends TestCase
