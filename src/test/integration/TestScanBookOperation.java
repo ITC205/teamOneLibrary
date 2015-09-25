@@ -31,6 +31,7 @@ import java.util.List;
  * TestScanBookOperation class
  * 
  * Test class that isolates the Scan Book system operation
+ * Code: BBUC_Op3
  * 
  * Operation Preconditions:
  *  - BorrowUC_CTL object exists
@@ -119,6 +120,7 @@ public class TestScanBookOperation extends TestCase
     memberOne = memberDAO.addMember("fNameOne", "lNameOne", "0263636363", 
                            "person@address.com");
    
+    // Establish expected borrow and due dates for any loans created by tests
     Calendar calendar = new GregorianCalendar();
     calendar.setTime(new Date());
     borrowDateString = dateFormat.format(calendar.getTime());
@@ -148,6 +150,10 @@ public class TestScanBookOperation extends TestCase
   @Override
   protected void tearDown() {
     testController = null;
+    
+    bookDAO = null;
+    loanDAO = null;
+    memberDAO = null;
     
     bookOne = null;
     bookTwo = null;
@@ -965,7 +971,7 @@ public class TestScanBookOperation extends TestCase
   
   
   
-  private void setLoanList(ArrayList<ILoan> loanList) {
+  private void setLoanList(List<ILoan> loanList) {
     try {
       // Using Reflection to directly set private field 'borrower'
 
