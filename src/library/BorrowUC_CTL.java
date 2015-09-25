@@ -146,8 +146,8 @@ public class BorrowUC_CTL implements ICardReaderListener,
 		if(scanCount >= IMember.LOAN_LIMIT) {
 		  // Switch to CONFIRMING_LOANS state
 			ui.setState(EBorrowState.CONFIRMING_LOANS);
-//			setState(EBorrowState.CONFIRMING_LOANS); WAITING FOR IMPLEMENTATION
-			state = EBorrowState.CONFIRMING_LOANS; // Substitute for above
+			setState(EBorrowState.CONFIRMING_LOANS); 
+//			state = EBorrowState.CONFIRMING_LOANS; // Substitute for above
 			
 			// Display confirming loan details
 			ui.displayConfirmingLoan(loanDetails);
@@ -160,7 +160,7 @@ public class BorrowUC_CTL implements ICardReaderListener,
 
 	
 	private void setState(EBorrowState state) {
-		throw new RuntimeException("Not implemented yet");
+		this.state = state;
 	}
 
 	@Override
@@ -168,9 +168,34 @@ public class BorrowUC_CTL implements ICardReaderListener,
 		close();
 	}
 	
+	// scansCompleted by Josh Kent
 	@Override
 	public void scansCompleted() {
-		throw new RuntimeException("Not implemented yet");
+	  // Check for valid state
+	  if(state != EBorrowState.SCANNING_BOOKS) {
+	     throw new RuntimeException("BorrowUC_CTL: scansCompleted: method call not"
+	                               + " allowed from " + state);
+	  }
+	  
+	  // Check loan list contains some loans
+	  if(loanList.isEmpty()) {
+	    throw new RuntimeException("BorrowUC_CTL: scansCompleted: loan list is "
+	                               + "empty");
+	  }
+	  
+	  // Change state
+		setState(EBorrowState.CONFIRMING_LOANS);
+		ui.setState(EBorrowState.CONFIRMING_LOANS);
+		
+		// Disable hardware
+		reader.setEnabled(false);
+		scanner.setEnabled(false);
+		
+    // Get loanDetails using buildLoanListDisplay helper
+    String loanDetails = buildLoanListDisplay(loanList);
+    
+    // Display confirming loan details
+    ui.displayConfirmingLoan(loanDetails);
 	}
 
 	@Override
