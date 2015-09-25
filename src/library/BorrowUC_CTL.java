@@ -101,15 +101,30 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	public void cancelled() {
 		close();
 	}
-	
-	@Override
-	public void scansCompleted() {
-		throw new RuntimeException("Not implemented yet");
-	}
+
+  @Override
+  public void scansCompleted() {
+    throw new RuntimeException("Not implemented yet");
+  }
 
 	@Override
 	public void loansConfirmed() {
-		throw new RuntimeException("Not implemented yet");
+
+    setState(EBorrowState.COMPLETED);
+
+    for (ILoan loan : loanList) {
+      loanDAO.commitLoan(loan);
+    }
+
+    String loanDetails = "";
+    for (ILoan loan : loanList) {
+      loanDetails += loan.toString();
+    }
+
+    printer.print(loanDetails);
+    scanner.setEnabled(false);
+    reader.setEnabled(false);
+    display.setDisplay(previous, "Main menu");
 	}
 
 	@Override
