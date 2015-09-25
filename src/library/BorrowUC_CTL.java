@@ -124,7 +124,7 @@ public class BorrowUC_CTL implements ICardReaderListener,
     printer.print(loanDetails);
     scanner.setEnabled(false);
     reader.setEnabled(false);
-    display.setDisplay(previous, "Main menu");
+    display.setDisplay(previous, "Main Menu");
 	}
 
 	@Override
