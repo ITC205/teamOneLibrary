@@ -88,12 +88,16 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	}
 	
 	
-	
+	// bookScanned by Josh Kent
 	@Override
 	public void bookScanned(int barcode) {
-		// Implemented by Josh Kent
-		
-		// Clear error message
+	  // Check for valid state
+	  if(state != EBorrowState.SCANNING_BOOKS) {
+	    throw new RuntimeException("BorrowUC_CTL: bookScanned: method call not "
+	                               + "allowed from " + state);
+	  }
+	  
+		// Clear any error message
 		ui.displayErrorMessage("");
 		
 		// Get book
@@ -131,16 +135,24 @@ public class BorrowUC_CTL implements ICardReaderListener,
 		
 		// Get bookDetails directly from book
 		String bookDetails = book.toString(); 
+		// Get loanDetails using buildLoanListDisplay helper
 		String loanDetails = buildLoanListDisplay(loanList);
 		
+		// Display book and loan details
 		ui.displayScannedBookDetails(bookDetails);
 		ui.displayPendingLoan(loanDetails);
 		
+		// Check if scan count is at or exceeds LOAN_LIMIT (5)
 		if(scanCount >= IMember.LOAN_LIMIT) {
+		  // Switch to CONFIRMING_LOANS state
 			ui.setState(EBorrowState.CONFIRMING_LOANS);
-			setState(EBorrowState.CONFIRMING_LOANS);
+//			setState(EBorrowState.CONFIRMING_LOANS); WAITING FOR IMPLEMENTATION
+			state = EBorrowState.CONFIRMING_LOANS; // Substitute for above
 			
+			// Display confirming loan details
 			ui.displayConfirmingLoan(loanDetails);
+			
+			// Ensure input is disabled
 			reader.setEnabled(false);
 			scanner.setEnabled(false);
 		}
