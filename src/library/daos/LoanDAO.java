@@ -14,7 +14,6 @@ import library.interfaces.entities.ILoan;
 import library.interfaces.daos.ILoanDAO;
 import library.interfaces.daos.ILoanHelper;
 
-import library.entities.Loan;
 
 /**
  * Manages all Loans within the system, from creation of pending loans to
@@ -210,7 +209,7 @@ public class LoanDAO
 
   private Date ignoreTime(Date date)
   {
-    java.util.Calendar calendar = java.util.Calendar.getInstance();
+    java.util.Calendar calendar = Calendar.getInstance();
 
     calendar.setTime(date);
     calendar.set(java.util.Calendar.HOUR_OF_DAY, 0);
@@ -226,7 +225,7 @@ public class LoanDAO
   private Date calculateDueDate(Date borrowDate)
   {
     calendar_.setTime(borrowDate);
-    calendar_.add(java.util.Calendar.DATE, ILoan.LOAN_PERIOD);
+    calendar_.add(Calendar.DATE, ILoan.LOAN_PERIOD);
     return calendar_.getTime();
   }
 
