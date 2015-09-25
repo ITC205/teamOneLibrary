@@ -2,6 +2,7 @@ package test.integration;
 
 import junit.framework.TestCase;
 import library.BorrowUC_CTL;
+import library.daos.*;
 import library.interfaces.EBorrowState;
 import library.interfaces.IBorrowUI;
 import library.interfaces.daos.IBookDAO;
@@ -19,7 +20,11 @@ import library.interfaces.hardware.IScanner;
 import static org.mockito.Mockito.*;
 
 import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 /**
@@ -50,28 +55,24 @@ public class TestScanBookOperation extends TestCase
   private IScanner mockedScanner = mock(IScanner.class);
   private IPrinter mockedPrinter = mock(IPrinter.class);
   private IDisplay mockedDisplay = mock(IDisplay.class);
-  private IBookDAO mockedBookDAO = mock(IBookDAO.class);
-  private ILoanDAO mockedLoanDAO = mock(ILoanDAO.class);
-  private IMemberDAO mockedMemberDAO = mock(IMemberDAO.class);
-  
   private IBorrowUI mockedUI = mock(IBorrowUI.class);
   
-  private IBook mockedBookOne = mock(IBook.class);  // AVAILABLE
-  private IBook mockedBookTwo = mock(IBook.class);  // AVAILABLE
-  private IBook mockedBookThree = mock(IBook.class);// AVAILABLE
-  private IBook mockedBookFour = mock(IBook.class); // AVAILABLE
-  private IBook mockedBookFive = mock(IBook.class); // AVAILABLE
-  private IBook mockedBookSix = mock(IBook.class);  // ON_LOAN
+  private IBookDAO bookDAO;
+  private ILoanDAO loanDAO;
+  private IMemberDAO memberDAO;
   
-  private IMember mockedMemberOne = mock(IMember.class); // Unrestricted
-  private IMember mockedMemberTwo = mock(IMember.class);
-  private IMember mockedMemberThree = mock(IMember.class);
+  private IBook bookOne;  // AVAILABLE
+  private IBook bookTwo;  // AVAILABLE
+  private IBook bookThree;// AVAILABLE
+  private IBook bookFour; // AVAILABLE
+  private IBook bookFive; // AVAILABLE
+  private IBook bookSix;  // ON_LOAN
   
-  private ILoan mockedLoanOne = mock(ILoan.class);  // mockedBookOne
-  private ILoan mockedLoanTwo = mock(ILoan.class);  // mockedBookTwo
-  private ILoan mockedLoanThree = mock(ILoan.class);// mockedBookThree
-  private ILoan mockedLoanFour = mock(ILoan.class); // mockedBookFour
-  private ILoan mockedLoanFive = mock(ILoan.class); // mockedBookFive
+  private IMember memberOne; // Unrestricted, no loans
+  
+  private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+  private String borrowDateString;
+  private String dueDateString;
   
   private BorrowUC_CTL testController;
   
@@ -95,61 +96,38 @@ public class TestScanBookOperation extends TestCase
   
   
   
-  private void setUpMockBehaviour() {
-    // Book behaviour
-    when(mockedBookOne.getID()).thenReturn(1);
-    when(mockedBookOne.getState()).thenReturn(EBookState.AVAILABLE);
-    when(mockedBookOne.toString()).thenReturn("BookOne");
+  private void initialiseVariables() {
     
-    when(mockedBookTwo.getID()).thenReturn(2);
-    when(mockedBookTwo.getState()).thenReturn(EBookState.AVAILABLE);
-    when(mockedBookTwo.toString()).thenReturn("BookTwo");
+    bookDAO = new BookDAO(new BookHelper());
+    memberDAO = new MemberDAO(new MemberHelper());
+    loanDAO = new LoanDAO(new LoanHelper());
     
-    when(mockedBookThree.getID()).thenReturn(3);
-    when(mockedBookThree.getState()).thenReturn(EBookState.AVAILABLE);
-    when(mockedBookThree.toString()).thenReturn("BookThree");
     
-    when(mockedBookFour.getID()).thenReturn(4);
-    when(mockedBookFour.getState()).thenReturn(EBookState.AVAILABLE);
-    when(mockedBookFour.toString()).thenReturn("BookFour");
+    // Fresh books default to AVAILABLE
+    bookOne = bookDAO.addBook("authorOne", "titleOne", "callOne");
+    bookTwo = bookDAO.addBook("authorTwo", "titleTwo", "callTwo");
+    bookThree = bookDAO.addBook("authorThree", "titleThree", "callThree");
+    bookFour = bookDAO.addBook("authorFour", "titleFour", "callFour");
+    bookFive = bookDAO.addBook("authorFive", "titleFive", "callFive");
+    bookSix = bookDAO.addBook("authorSix", "titleSix", "callSix");
     
-    when(mockedBookFive.getID()).thenReturn(5);
-    when(mockedBookFive.getState()).thenReturn(EBookState.AVAILABLE);
-    when(mockedBookFive.toString()).thenReturn("BookFive");
     
-    when(mockedBookSix.getID()).thenReturn(6);
-    when(mockedBookSix.getState()).thenReturn(EBookState.ON_LOAN);
-    when(mockedBookSix.toString()).thenReturn("BookSix");
+    // bookSix is ON_LOAN
+    bookSix.borrow(mock(ILoan.class));
+    assertEquals(EBookState.ON_LOAN, bookSix.getState());
     
-    // Loan behaviour
-    when(mockedLoanOne.toString()).thenReturn("LoanOne BookOne MemberOne");
-    when(mockedLoanTwo.toString()).thenReturn("LoanTwo BookTwo MemberOne");
-    when(mockedLoanThree.toString()).thenReturn("LoanThree BookThree MemberOne");
-    when(mockedLoanFour.toString()).thenReturn("LoanFour BookFour MemberOne");
-    when(mockedLoanFive.toString()).thenReturn("LoanFive BookFive MemberOne");
-    
-    // BookDAO behaviour
-    when(mockedBookDAO.getBookByID(1)).thenReturn(mockedBookOne);
-    when(mockedBookDAO.getBookByID(2)).thenReturn(mockedBookTwo);
-    when(mockedBookDAO.getBookByID(3)).thenReturn(mockedBookThree);
-    when(mockedBookDAO.getBookByID(4)).thenReturn(mockedBookFour);
-    when(mockedBookDAO.getBookByID(5)).thenReturn(mockedBookFive);
-    when(mockedBookDAO.getBookByID(6)).thenReturn(mockedBookSix);
-    when(mockedBookDAO.getBookByID(7)).thenReturn(null);
-    
-    // LoanDAO behaviour
-    when(mockedLoanDAO.createLoan(mockedMemberOne, mockedBookOne))
-                      .thenReturn(mockedLoanOne);
-    when(mockedLoanDAO.createLoan(mockedMemberOne, mockedBookTwo))
-                      .thenReturn(mockedLoanTwo);
-    when(mockedLoanDAO.createLoan(mockedMemberOne, mockedBookThree))
-                      .thenReturn(mockedLoanThree);
-    when(mockedLoanDAO.createLoan(mockedMemberOne, mockedBookFour))
-                      .thenReturn(mockedLoanFour);
-    when(mockedLoanDAO.createLoan(mockedMemberOne, mockedBookFive))
-                      .thenReturn(mockedLoanFive);
+    memberOne = memberDAO.addMember("fNameOne", "lNameOne", "0263636363", 
+                           "person@address.com");
+   
+    Calendar calendar = new GregorianCalendar();
+    calendar.setTime(new Date());
+    borrowDateString = dateFormat.format(calendar.getTime());
+    calendar.add(Calendar.DATE, ILoan.LOAN_PERIOD);
+    dueDateString = dateFormat.format(calendar.getTime());
     
   }
+  
+  
   
   private void setUpPreconditions() {
     
@@ -157,9 +135,9 @@ public class TestScanBookOperation extends TestCase
                                       mockedScanner, 
                                       mockedPrinter,
                                       mockedDisplay,
-                                      mockedBookDAO,
-                                      mockedLoanDAO,
-                                      mockedMemberDAO);
+                                      bookDAO,
+                                      loanDAO,
+                                      memberDAO);
     
     setState(EBorrowState.SCANNING_BOOKS);
     setMockedUI(mockedUI);    
@@ -170,6 +148,18 @@ public class TestScanBookOperation extends TestCase
   @Override
   protected void tearDown() {
     testController = null;
+    
+    bookOne = null;
+    bookTwo = null;
+    bookThree = null;
+    bookFour = null;
+    bookFive = null;
+    bookSix = null;
+    
+    memberOne = null;
+    
+    borrowDateString = null;
+    dueDateString = null;
   }
 
   
@@ -182,10 +172,10 @@ public class TestScanBookOperation extends TestCase
   
   public void testBookScannedSingleBookDefault() {
     // Standard set-up
-    setUpMockBehaviour();
+    initialiseVariables();
     setUpPreconditions();
     // Set mockedMemberOne (member has no loans or restrictions)
-    setMockedMember(mockedMemberOne);
+    setMember(memberOne);
     // Set lists to empty
     setBookList(new ArrayList<IBook>());
     setLoanList(new ArrayList<ILoan>());
@@ -199,18 +189,26 @@ public class TestScanBookOperation extends TestCase
     testController.bookScanned(1);
     // Verify expected method calls
     verify(mockedUI).displayErrorMessage("");
-    verify(mockedBookDAO).getBookByID(1);
-    verify(mockedBookOne).getState();
     
     // Confirm scan count increment
     assertScanCountEquals(1);
     // Confirm lists contain expected values
-    assertBookListContains(mockedBookOne);
-    assertLoanListContains(mockedLoanOne);
+    assertBookListContains(bookOne);
+    List<ILoan> loanList = getLoanList();
+    assertEquals(1, loanList.size());
     
     // Confirm display calls with expected values
-    verify(mockedUI).displayScannedBookDetails("BookOne");
-    verify(mockedUI).displayPendingLoan("LoanOne BookOne MemberOne");
+    verify(mockedUI).displayScannedBookDetails("ID: 1\n"
+                                              + "Author: authorOne\n"
+                                              + "Title: titleOne\n"
+                                              + "Call Number: callOne");
+    
+    verify(mockedUI).displayPendingLoan("Loan ID:  0\n"
+                                       + "Author:   authorOne\n"
+                                       + "Title:    titleOne\n"
+                                       + "Borrower: fNameOne lNameOne\n"
+                                       + "Borrowed: " + borrowDateString +"\n"
+                                       + "Due Date: " + dueDateString);
     
     // Confirm no state change
     assertControllerStateEquals(EBorrowState.SCANNING_BOOKS);
@@ -219,10 +217,10 @@ public class TestScanBookOperation extends TestCase
   
   public void testBookScannedTwoBooksDefault() {
     // Standard set-up
-    setUpMockBehaviour();
+    initialiseVariables();
     setUpPreconditions();
     // Set mockedMemberOne (member has no loans or restrictions)
-    setMockedMember(mockedMemberOne);
+    setMember(memberOne);
     // Set lists to empty
     setBookList(new ArrayList<IBook>());
     setLoanList(new ArrayList<ILoan>());
@@ -234,56 +232,75 @@ public class TestScanBookOperation extends TestCase
     
     // Scan first book
     testController.bookScanned(1);
-    // Verify expected method calls
-    verify(mockedBookDAO).getBookByID(1);
-    verify(mockedBookOne).getState();
     
     // Confirm scan count increment
     assertScanCountEquals(1);
     // Confirm lists contain expected values
-    assertBookListContains(mockedBookOne);
-    assertLoanListContains(mockedLoanOne);
+    assertBookListContains(bookOne);
+    List<ILoan> loanList = getLoanList();
+    assertEquals(1, loanList.size());
     
     // Confirm display calls with expected values
-    verify(mockedUI).displayScannedBookDetails("BookOne");
-    verify(mockedUI).displayPendingLoan("LoanOne BookOne MemberOne");
+    verify(mockedUI).displayScannedBookDetails("ID: 1\n"
+                                              + "Author: authorOne\n"
+                                              + "Title: titleOne\n"
+                                              + "Call Number: callOne");
+    
+    verify(mockedUI).displayPendingLoan("Loan ID:  0\n"
+                                       + "Author:   authorOne\n"
+                                       + "Title:    titleOne\n"
+                                       + "Borrower: fNameOne lNameOne\n"
+                                       + "Borrowed: " + borrowDateString +"\n"
+                                       + "Due Date: " + dueDateString);
     
     // Confirm no state change
     assertControllerStateEquals(EBorrowState.SCANNING_BOOKS);
     
     // Scan second book
     testController.bookScanned(2);
+    
     // Should call this displayErrorMessage exactly the same way twice (once for
     // each book
     verify(mockedUI, times(2)).displayErrorMessage("");
-    // Verify expected method calls
-    verify(mockedBookDAO).getBookByID(2);
-    verify(mockedBookTwo).getState();
-    
+
     // Confirm scan count increment
     assertScanCountEquals(2);
     
     // Confirm lists contain expected values
-    assertBookListContains(mockedBookOne);
-    assertBookListContains(mockedBookTwo);
-    assertLoanListContains(mockedLoanOne);
-    assertLoanListContains(mockedLoanTwo);
+    assertBookListContains(bookOne);
+    assertBookListContains(bookTwo);
+    loanList = getLoanList();
+    assertEquals(2, loanList.size());
     
     // Confirm display calls with expected values
-    verify(mockedUI).displayScannedBookDetails("BookTwo");
-    verify(mockedUI).displayPendingLoan("LoanOne BookOne MemberOne\n\n"
-                                        + "LoanTwo BookTwo MemberOne");
+    verify(mockedUI).displayScannedBookDetails("ID: 2\n"
+                                              + "Author: authorTwo\n"
+                                              + "Title: titleTwo\n"
+                                              + "Call Number: callTwo");
     
+    verify(mockedUI).displayPendingLoan("Loan ID:  0\n"
+                                       + "Author:   authorOne\n"
+                                       + "Title:    titleOne\n"
+                                       + "Borrower: fNameOne lNameOne\n"
+                                       + "Borrowed: " + borrowDateString +"\n"
+                                       + "Due Date: " + dueDateString
+                                       + "\n\n"
+                                       + "Loan ID:  0\n"
+                                       + "Author:   authorTwo\n"
+                                       + "Title:    titleTwo\n"
+                                       + "Borrower: fNameOne lNameOne\n"
+                                       + "Borrowed: " + borrowDateString +"\n"
+                                       + "Due Date: " + dueDateString);
     // Confirm no state change
     assertControllerStateEquals(EBorrowState.SCANNING_BOOKS);
   }
   
   public void testBookScannedFiveBooks() {
     // Standard set-up
-    setUpMockBehaviour();
+    initialiseVariables();
     setUpPreconditions();
     // Set mockedMemberOne (member has no loans or restrictions)
-    setMockedMember(mockedMemberOne);
+    setMember(memberOne);
     // Set lists to empty
     setBookList(new ArrayList<IBook>());
     setLoanList(new ArrayList<ILoan>());
@@ -295,43 +312,63 @@ public class TestScanBookOperation extends TestCase
     
     // Scan first book
     testController.bookScanned(1);
-    // Verify expected method calls
-    verify(mockedBookDAO).getBookByID(1);
-    verify(mockedBookOne).getState();
     
     // Confirm scan count increment
     assertScanCountEquals(1);
     // Confirm lists contain expected values
-    assertBookListContains(mockedBookOne);
-    assertLoanListContains(mockedLoanOne);
+    assertBookListContains(bookOne);
+    List<ILoan> loanList = getLoanList();
+    assertEquals(1, loanList.size());
     
     // Confirm display calls with expected values
-    verify(mockedUI).displayScannedBookDetails("BookOne");
-    verify(mockedUI).displayPendingLoan("LoanOne BookOne MemberOne");
+    // Confirm display calls with expected values
+    verify(mockedUI).displayScannedBookDetails("ID: 1\n"
+                                              + "Author: authorOne\n"
+                                              + "Title: titleOne\n"
+                                              + "Call Number: callOne");
+    
+    verify(mockedUI).displayPendingLoan("Loan ID:  0\n"
+                                       + "Author:   authorOne\n"
+                                       + "Title:    titleOne\n"
+                                       + "Borrower: fNameOne lNameOne\n"
+                                       + "Borrowed: " + borrowDateString +"\n"
+                                       + "Due Date: " + dueDateString);
     
     // Confirm no state change
     assertControllerStateEquals(EBorrowState.SCANNING_BOOKS);
     
     // Scan second book =======================================================
     testController.bookScanned(2);
-    // Verify expected method calls
-    verify(mockedBookDAO).getBookByID(2);
-    verify(mockedBookTwo).getState();
     
     // Confirm scan count increment
     assertScanCountEquals(2);
     
     // Confirm lists contain expected values
-    assertBookListContains(mockedBookOne);
-    assertBookListContains(mockedBookTwo);
+    assertBookListContains(bookOne);
+    assertBookListContains(bookTwo);
     
-    assertLoanListContains(mockedLoanOne);
-    assertLoanListContains(mockedLoanTwo);
+    loanList = getLoanList();
+    assertEquals(2, loanList.size());
     
     // Confirm display calls with expected values
-    verify(mockedUI).displayScannedBookDetails("BookTwo");
-    verify(mockedUI).displayPendingLoan("LoanOne BookOne MemberOne\n\n"
-                                        + "LoanTwo BookTwo MemberOne");
+    verify(mockedUI).displayScannedBookDetails("ID: 2\n"
+                                              + "Author: authorTwo\n"
+                                              + "Title: titleTwo\n"
+                                              + "Call Number: callTwo");
+    
+    verify(mockedUI).displayPendingLoan("Loan ID:  0\n"
+                                       + "Author:   authorOne\n"
+                                       + "Title:    titleOne\n"
+                                       + "Borrower: fNameOne lNameOne\n"
+                                       + "Borrowed: " + borrowDateString +"\n"
+                                       + "Due Date: " + dueDateString
+                                       + "\n\n"
+                                       + "Loan ID:  0\n"
+                                       + "Author:   authorTwo\n"
+                                       + "Title:    titleTwo\n"
+                                       + "Borrower: fNameOne lNameOne\n"
+                                       + "Borrowed: " + borrowDateString +"\n"
+                                       + "Due Date: " + dueDateString);
     
     // Confirm no state change
     assertControllerStateEquals(EBorrowState.SCANNING_BOOKS);
@@ -339,92 +376,159 @@ public class TestScanBookOperation extends TestCase
     // Scan third book ========================================================
     testController.bookScanned(3);
     
-    // Verify expected method calls
-    verify(mockedBookDAO).getBookByID(3);
-    verify(mockedBookThree).getState();
-    
     // Confirm scan count increment
     assertScanCountEquals(3);
     
     // Confirm lists contain expected values
-    assertBookListContains(mockedBookOne);
-    assertBookListContains(mockedBookTwo);
-    assertBookListContains(mockedBookThree);
+    assertBookListContains(bookOne);
+    assertBookListContains(bookTwo);
+    assertBookListContains(bookThree);
     
-    assertLoanListContains(mockedLoanOne);
-    assertLoanListContains(mockedLoanTwo);
-    assertLoanListContains(mockedLoanThree);
+    loanList = getLoanList();
+    assertEquals(3, loanList.size());
     
     // Confirm display calls with expected values
-    verify(mockedUI).displayScannedBookDetails("BookThree");
-    verify(mockedUI).displayPendingLoan("LoanOne BookOne MemberOne\n\n"
-                                        + "LoanTwo BookTwo MemberOne\n\n"
-                                        + "LoanThree BookThree MemberOne");
+    verify(mockedUI).displayScannedBookDetails("ID: 3\n"
+                                              + "Author: authorThree\n"
+                                              + "Title: titleThree\n"
+                                              + "Call Number: callThree");
+    
+    verify(mockedUI).displayPendingLoan("Loan ID:  0\n"
+                                       + "Author:   authorOne\n"
+                                       + "Title:    titleOne\n"
+                                       + "Borrower: fNameOne lNameOne\n"
+                                       + "Borrowed: " + borrowDateString +"\n"
+                                       + "Due Date: " + dueDateString
+                                       + "\n\n"
+                                       + "Loan ID:  0\n"
+                                       + "Author:   authorTwo\n"
+                                       + "Title:    titleTwo\n"
+                                       + "Borrower: fNameOne lNameOne\n"
+                                       + "Borrowed: " + borrowDateString +"\n"
+                                       + "Due Date: " + dueDateString
+                                       + "\n\n"
+                                       + "Loan ID:  0\n"
+                                       + "Author:   authorThree\n"
+                                       + "Title:    titleThree\n"
+                                       + "Borrower: fNameOne lNameOne\n"
+                                       + "Borrowed: " + borrowDateString +"\n"
+                                       + "Due Date: " + dueDateString);
     
     // Confirm no state change
     assertControllerStateEquals(EBorrowState.SCANNING_BOOKS);
     
     // Scan fourth book ========================================================
     testController.bookScanned(4);
-    verify(mockedBookDAO).getBookByID(4);
-    verify(mockedBookFour).getState();
     
     // Confirm scan count increment
     assertScanCountEquals(4);
     
     // Confirm lists contain expected values
-    assertBookListContains(mockedBookOne);
-    assertBookListContains(mockedBookTwo);
-    assertBookListContains(mockedBookThree);
-    assertBookListContains(mockedBookFour);
+    assertBookListContains(bookOne);
+    assertBookListContains(bookTwo);
+    assertBookListContains(bookThree);
+    assertBookListContains(bookFour);
     
-    assertLoanListContains(mockedLoanOne);
-    assertLoanListContains(mockedLoanTwo);
-    assertLoanListContains(mockedLoanThree);
-    assertLoanListContains(mockedLoanFour);
+    loanList = getLoanList();
+    assertEquals(4, loanList.size());
     
     // Confirm display calls with expected values
-    verify(mockedUI).displayScannedBookDetails("BookFour");
-    verify(mockedUI).displayPendingLoan("LoanOne BookOne MemberOne\n\n"
-                                        + "LoanTwo BookTwo MemberOne\n\n"
-                                        + "LoanThree BookThree MemberOne\n\n"
-                                        + "LoanFour BookFour MemberOne");
+    verify(mockedUI).displayScannedBookDetails("ID: 4\n"
+                                              + "Author: authorFour\n"
+                                              + "Title: titleFour\n"
+                                              + "Call Number: callFour");
+    
+    verify(mockedUI).displayPendingLoan("Loan ID:  0\n"
+                                       + "Author:   authorOne\n"
+                                       + "Title:    titleOne\n"
+                                       + "Borrower: fNameOne lNameOne\n"
+                                       + "Borrowed: " + borrowDateString +"\n"
+                                       + "Due Date: " + dueDateString
+                                       + "\n\n"
+                                       + "Loan ID:  0\n"
+                                       + "Author:   authorTwo\n"
+                                       + "Title:    titleTwo\n"
+                                       + "Borrower: fNameOne lNameOne\n"
+                                       + "Borrowed: " + borrowDateString +"\n"
+                                       + "Due Date: " + dueDateString
+                                       + "\n\n"
+                                       + "Loan ID:  0\n"
+                                       + "Author:   authorThree\n"
+                                       + "Title:    titleThree\n"
+                                       + "Borrower: fNameOne lNameOne\n"
+                                       + "Borrowed: " + borrowDateString +"\n"
+                                       + "Due Date: " + dueDateString
+                                       + "\n\n"
+                                       + "Loan ID:  0\n"
+                                       + "Author:   authorFour\n"
+                                       + "Title:    titleFour\n"
+                                       + "Borrower: fNameOne lNameOne\n"
+                                       + "Borrowed: " + borrowDateString +"\n"
+                                       + "Due Date: " + dueDateString);
     
     // Confirm no state change
     assertControllerStateEquals(EBorrowState.SCANNING_BOOKS);
     
     // Scan fifth book ========================================================
     testController.bookScanned(5);
+    
     // Should call this displayErrorMessage exactly the same way (once for
     // each book
     verify(mockedUI, times(5)).displayErrorMessage("");
-    // Verify expected method calls
-    verify(mockedBookDAO).getBookByID(5);
-    verify(mockedBookFive).getState();
     
     // Confirm scan count increment
     assertScanCountEquals(5);
     
     // Confirm lists contain expected values
-    assertBookListContains(mockedBookOne);
-    assertBookListContains(mockedBookTwo);
-    assertBookListContains(mockedBookThree);
-    assertBookListContains(mockedBookFour);
-    assertBookListContains(mockedBookFive);
+    assertBookListContains(bookOne);
+    assertBookListContains(bookTwo);
+    assertBookListContains(bookThree);
+    assertBookListContains(bookFour);
+    assertBookListContains(bookFive);
     
-    assertLoanListContains(mockedLoanOne);
-    assertLoanListContains(mockedLoanTwo);
-    assertLoanListContains(mockedLoanThree);
-    assertLoanListContains(mockedLoanFour);
-    assertLoanListContains(mockedLoanFive);
+    loanList = getLoanList();
+    assertEquals(5, loanList.size());
     
     // Confirm display calls with expected values
-    verify(mockedUI).displayScannedBookDetails("BookFive");
-    verify(mockedUI).displayPendingLoan("LoanOne BookOne MemberOne\n\n"
-                                        + "LoanTwo BookTwo MemberOne\n\n"
-                                        + "LoanThree BookThree MemberOne\n\n"
-                                        + "LoanFour BookFour MemberOne\n\n"
-                                        + "LoanFive BookFive MemberOne");
+    verify(mockedUI).displayScannedBookDetails("ID: 5\n"
+                                              + "Author: authorFive\n"
+                                              + "Title: titleFive\n"
+                                              + "Call Number: callFive");
+    
+    verify(mockedUI).displayPendingLoan("Loan ID:  0\n"
+                                       + "Author:   authorOne\n"
+                                       + "Title:    titleOne\n"
+                                       + "Borrower: fNameOne lNameOne\n"
+                                       + "Borrowed: " + borrowDateString +"\n"
+                                       + "Due Date: " + dueDateString
+                                       + "\n\n"
+                                       + "Loan ID:  0\n"
+                                       + "Author:   authorTwo\n"
+                                       + "Title:    titleTwo\n"
+                                       + "Borrower: fNameOne lNameOne\n"
+                                       + "Borrowed: " + borrowDateString +"\n"
+                                       + "Due Date: " + dueDateString
+                                       + "\n\n"
+                                       + "Loan ID:  0\n"
+                                       + "Author:   authorThree\n"
+                                       + "Title:    titleThree\n"
+                                       + "Borrower: fNameOne lNameOne\n"
+                                       + "Borrowed: " + borrowDateString +"\n"
+                                       + "Due Date: " + dueDateString
+                                       + "\n\n"
+                                       + "Loan ID:  0\n"
+                                       + "Author:   authorFour\n"
+                                       + "Title:    titleFour\n"
+                                       + "Borrower: fNameOne lNameOne\n"
+                                       + "Borrowed: " + borrowDateString +"\n"
+                                       + "Due Date: " + dueDateString
+                                       + "\n\n"
+                                       + "Loan ID:  0\n"
+                                       + "Author:   authorFive\n"
+                                       + "Title:    titleFive\n"
+                                       + "Borrower: fNameOne lNameOne\n"
+                                       + "Borrowed: " + borrowDateString +"\n"
+                                       + "Due Date: " + dueDateString);
     
     
     // Scan count five should trigger state change 
@@ -432,11 +536,40 @@ public class TestScanBookOperation extends TestCase
     assertControllerStateEquals(EBorrowState.CONFIRMING_LOANS);
     
     // Verify displayConfirmingLoan call
-    verify(mockedUI).displayConfirmingLoan("LoanOne BookOne MemberOne\n\n"
-            + "LoanTwo BookTwo MemberOne\n\n"
-            + "LoanThree BookThree MemberOne\n\n"
-            + "LoanFour BookFour MemberOne\n\n"
-            + "LoanFive BookFive MemberOne");
+    verify(mockedUI).displayConfirmingLoan("Loan ID:  0\n"
+                                          + "Author:   authorOne\n"
+                                          + "Title:    titleOne\n"
+                                          + "Borrower: fNameOne lNameOne\n"
+                                          + "Borrowed: " + borrowDateString +"\n"
+                                          + "Due Date: " + dueDateString
+                                          + "\n\n"
+                                          + "Loan ID:  0\n"
+                                          + "Author:   authorTwo\n"
+                                          + "Title:    titleTwo\n"
+                                          + "Borrower: fNameOne lNameOne\n"
+                                          + "Borrowed: " + borrowDateString +"\n"
+                                          + "Due Date: " + dueDateString
+                                          + "\n\n"
+                                          + "Loan ID:  0\n"
+                                          + "Author:   authorThree\n"
+                                          + "Title:    titleThree\n"
+                                          + "Borrower: fNameOne lNameOne\n"
+                                          + "Borrowed: " + borrowDateString +"\n"
+                                          + "Due Date: " + dueDateString
+                                          + "\n\n"
+                                          + "Loan ID:  0\n"
+                                          + "Author:   authorFour\n"
+                                          + "Title:    titleFour\n"
+                                          + "Borrower: fNameOne lNameOne\n"
+                                          + "Borrowed: " + borrowDateString +"\n"
+                                          + "Due Date: " + dueDateString
+                                          + "\n\n"
+                                          + "Loan ID:  0\n"
+                                          + "Author:   authorFive\n"
+                                          + "Title:    titleFive\n"
+                                          + "Borrower: fNameOne lNameOne\n"
+                                          + "Borrowed: " + borrowDateString +"\n"
+                                          + "Due Date: " + dueDateString);
     
     // Verify disabling of hardware
     verify(mockedCardReader).setEnabled(false);
@@ -447,10 +580,10 @@ public class TestScanBookOperation extends TestCase
   
   public void testBookScannedFromInvalidState() {
     // Standard set-up
-    setUpMockBehaviour();
+    initialiseVariables();
     setUpPreconditions();
     // Set mockedMemberOne (member has no loans or restrictions)
-    setMockedMember(mockedMemberOne);
+    setMember(memberOne);
     // Set lists to empty
     setBookList(new ArrayList<IBook>());
     setLoanList(new ArrayList<ILoan>());
@@ -473,10 +606,10 @@ public class TestScanBookOperation extends TestCase
   
   public void testBookScannedBookNotFound() {
     // Standard set-up
-    setUpMockBehaviour();
+    initialiseVariables();
     setUpPreconditions();
     // Set mockedMemberOne (member has no loans or restrictions)
-    setMockedMember(mockedMemberOne);
+    setMember(memberOne);
     // Set lists to empty
     setBookList(new ArrayList<IBook>());
     setLoanList(new ArrayList<ILoan>());
@@ -503,10 +636,10 @@ public class TestScanBookOperation extends TestCase
   
   public void testBookScannedBookNotAvailable() {
     // Standard set-up
-    setUpMockBehaviour();
+    initialiseVariables();
     setUpPreconditions();
     // Set mockedMemberOne (member has no loans or restrictions)
-    setMockedMember(mockedMemberOne);
+    setMember(memberOne);
     // Set lists to empty
     setBookList(new ArrayList<IBook>());
     setLoanList(new ArrayList<ILoan>());
@@ -533,10 +666,10 @@ public class TestScanBookOperation extends TestCase
   
   public void testBookScannedBookAlreadyScanned() {
     // Standard set-up
-    setUpMockBehaviour();
+    initialiseVariables();
     setUpPreconditions();
     // Set mockedMemberOne (member has no loans or restrictions)
-    setMockedMember(mockedMemberOne);
+    setMember(memberOne);
     // Set lists to empty
     setBookList(new ArrayList<IBook>());
     setLoanList(new ArrayList<ILoan>());
@@ -552,12 +685,23 @@ public class TestScanBookOperation extends TestCase
     // Confirm scan count increment
     assertScanCountEquals(1);
     // Confirm lists contain expected values
-    assertBookListContains(mockedBookOne);
-    assertLoanListContains(mockedLoanOne);
+    assertBookListContains(bookOne);
+    List<ILoan> loanList = getLoanList();
+    assertEquals(1, loanList.size());
     
     // Confirm display calls with expected values
-    verify(mockedUI).displayScannedBookDetails("BookOne");
-    verify(mockedUI).displayPendingLoan("LoanOne BookOne MemberOne");
+    // Confirm display calls with expected values
+    verify(mockedUI).displayScannedBookDetails("ID: 1\n"
+                                              + "Author: authorOne\n"
+                                              + "Title: titleOne\n"
+                                              + "Call Number: callOne");
+    
+    verify(mockedUI).displayPendingLoan("Loan ID:  0\n"
+                                       + "Author:   authorOne\n"
+                                       + "Title:    titleOne\n"
+                                       + "Borrower: fNameOne lNameOne\n"
+                                       + "Borrowed: " + borrowDateString +"\n"
+                                       + "Due Date: " + dueDateString);
     
     // Confirm no state change
     assertControllerStateEquals(EBorrowState.SCANNING_BOOKS);
@@ -565,10 +709,8 @@ public class TestScanBookOperation extends TestCase
     // Scan same book a second time
     testController.bookScanned(1);
     
-    // Verify expected method calls (twice
+    // Verify expected method call (twice)
     verify(mockedUI, times(2)).displayErrorMessage("");
-    verify(mockedBookDAO, times(2)).getBookByID(1);
-    verify(mockedBookOne, times(2)).getState();
     
     // Verify expected method call once
     verify(mockedUI).displayErrorMessage("Book already scanned");
@@ -620,45 +762,9 @@ public class TestScanBookOperation extends TestCase
   
   
   
-  public void assertLoanListContains(ILoan loan) {
-    try {
-      // Using Reflection to directly set private field 'scanCount'
-
-      Class<?> borrowUC_CTLClass = testController.getClass();
-      Field loanListField = borrowUC_CTLClass.getDeclaredField("loanList");
-
-      // Enable direct modification of private field
-      if (!loanListField.isAccessible()) {
-        loanListField.setAccessible(true);
-      }
-
-      @SuppressWarnings("unchecked")
-      List<ILoan> loanListValue = (List<ILoan>) loanListField.get(testController);
-      assertTrue(loanListValue.contains(loan));
-
-    }
-    catch (NoSuchFieldException e) {
-      fail("NoSuchFieldException should not occur");
-    }
-    catch (SecurityException e) {
-      fail("SecurityException should not occur");
-    }
-    catch (IllegalArgumentException e) {
-      fail("IllegalArgumentException should not occur");
-    }
-    catch (IllegalAccessException e) {
-      fail("IllegalAccessException should not occur");
-    }
-    catch (ClassCastException e) {
-      fail("ClassCastException should not occur");
-    }
-  }
-  
-  
-  
   public void assertBookListContains(IBook book) {
     try {
-      // Using Reflection to directly set private field 'scanCount'
+      // Using Reflection to directly access bookList
 
       Class<?> borrowUC_CTLClass = testController.getClass();
       Field bookListField = borrowUC_CTLClass.getDeclaredField("bookList");
@@ -796,7 +902,7 @@ public class TestScanBookOperation extends TestCase
   
   
   
-  private void setMockedMember(IMember mockedMember) {
+  private void setMember(IMember mockedMember) {
     try {
       // Using Reflection to directly set private field 'borrower'
 
@@ -886,6 +992,42 @@ public class TestScanBookOperation extends TestCase
     catch (IllegalAccessException e) {
       fail("IllegalAccessException should not occur");
     }
+  }
+  
+  
+  
+  public List<ILoan> getLoanList() {
+    try {
+      // Using Reflection to directly access loanList
+
+      Class<?> borrowUC_CTLClass = testController.getClass();
+      Field loanListField = borrowUC_CTLClass.getDeclaredField("loanList");
+
+      // Enable direct modification of private field
+      if (!loanListField.isAccessible()) {
+        loanListField.setAccessible(true);
+      }
+
+      @SuppressWarnings("unchecked")
+      List<ILoan> loanListValue = (List<ILoan>) loanListField.get(testController);
+      return loanListValue;
+    }
+    catch (NoSuchFieldException e) {
+      fail("NoSuchFieldException should not occur");
+    }
+    catch (SecurityException e) {
+      fail("SecurityException should not occur");
+    }
+    catch (IllegalArgumentException e) {
+      fail("IllegalArgumentException should not occur");
+    }
+    catch (IllegalAccessException e) {
+      fail("IllegalAccessException should not occur");
+    }
+    catch (ClassCastException e) {
+      fail("ClassCastException should not occur");
+    }
+    return null;
   }
   
 }
