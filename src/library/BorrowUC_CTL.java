@@ -110,17 +110,23 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	@Override
 	public void loansConfirmed() {
 
+    if(state != EBorrowState.CONFIRMING_LOANS) {
+      throw new RuntimeException("BorrowUC_CTL: loansConfirmed: cannot call " +
+                                 "method when state is: " + state);
+    }
+
+    if(loanList.isEmpty()) {
+      throw new RuntimeException("BorrowUC_CTL: loansConfirmed: cannot call " +
+                                 "method when there are no pending loans");
+    }
+
     setState(EBorrowState.COMPLETED);
 
     for (ILoan loan : loanList) {
       loanDAO.commitLoan(loan);
     }
 
-    String loanDetails = "";
-    for (ILoan loan : loanList) {
-      loanDetails += loan.toString();
-    }
-
+    String loanDetails = buildLoanListDisplay(loanList);
     printer.print(loanDetails);
     scanner.setEnabled(false);
     reader.setEnabled(false);

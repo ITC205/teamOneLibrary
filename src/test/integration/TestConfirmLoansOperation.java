@@ -71,6 +71,7 @@ public class TestConfirmLoansOperation
   //===========================================================================
 
   library.BorrowUC_CTL controller;
+  List<ILoan> pendingLoans;
 
   ICardReader reader = mock(ICardReader.class);
   IScanner scanner = mock(IScanner.class);
@@ -111,14 +112,20 @@ public class TestConfirmLoansOperation
     loans = new LoanDAO(loanHelper);
     controller = new library.BorrowUC_CTL(reader, scanner, printer, display,
                                           books, loans, members);
+
   }
 
-  public void systemReadyForConfirmLoans()
+  public void setState_ConfirmingLoans()
   {
     setPrivateState(controller, EBorrowState.CONFIRMING_LOANS);
     // other stuff to set up displays etc
   }
 
+public void setPendingLoansEmpty()
+{
+  List<ILoan> noPendingLoans = new ArrayList<>();
+  setPrivateLoanList(controller, noPendingLoans);
+}
 
 
   //===========================================================================
@@ -153,13 +160,12 @@ public class TestConfirmLoansOperation
   public void preConditionsAreMet()
   {
     initializeController();
-    systemReadyForConfirmLoans();
+    setPendingLoansEmpty();
+    setState_ConfirmingLoans();
 
     ILoan firstLoan = loans.createLoan(jim, catch22);
     List<ILoan> pendingLoans = new ArrayList<>();
     pendingLoans.add(firstLoan);
-    assertThat(loans.listLoans()).isEmpty();
-    assertThat(firstLoan.getID()).isEqualTo(0);
     setPrivateLoanList(controller, pendingLoans);
 
     // assert pre-conditions met
@@ -167,6 +173,48 @@ public class TestConfirmLoansOperation
     assertThat(getPrivateState(controller))
         .isEqualTo(EBorrowState.CONFIRMING_LOANS);
     assertThat(getPrivateLoanList(controller)).isNotEmpty();
+  }
+
+  @Test
+  public void loansConfirmed_throws_whenStateNotConfirmingLoans()
+  {
+    initializeController();
+    setPendingLoansEmpty();
+    // no call to setState_ConfirmingLoans()
+
+    ILoan firstLoan = loans.createLoan(jim, catch22);
+    List<ILoan> pendingLoans = new ArrayList<>();
+    pendingLoans.add(firstLoan);
+    setPrivateLoanList(controller, pendingLoans);
+
+    try {
+      controller.loansConfirmed();
+    }
+    catch (Exception exception) {
+      assertThat(exception).isInstanceOf(RuntimeException.class);
+      assertThat(exception).hasMessageContaining("cannot call method when " +
+                                                 "state is: ");
+    }
+  }
+
+
+  @Test
+  public void loansConfirmed_throws_whenNoPendingLoans()
+  {
+    initializeController();
+    setPendingLoansEmpty();
+    setState_ConfirmingLoans();
+    List<ILoan> pendingLoans = getPrivateLoanList(controller);
+    assertThat(pendingLoans).isEmpty();
+
+    try {
+      controller.loansConfirmed();
+    }
+    catch (Exception exception) {
+      assertThat(exception).isInstanceOf(RuntimeException.class);
+      assertThat(exception).hasMessageContaining("cannot call method when " +
+                                                 "there are no pending loans");
+    }
   }
 
 
@@ -178,8 +226,8 @@ public class TestConfirmLoansOperation
   public void confirmLoan_OneBookHappyPath_ResultsCorrect()
   {
     initializeController();
-    systemReadyForConfirmLoans();
-
+    setPendingLoansEmpty();
+    setState_ConfirmingLoans();
     ILoan firstLoan = loans.createLoan(jim, catch22);
     List<ILoan> pendingLoans = new ArrayList<>();
     pendingLoans.add(firstLoan);
@@ -201,47 +249,62 @@ public class TestConfirmLoansOperation
   public void confirmLoan_ThreeBooksHappyPath_ResultsCorrect()
   {
     initializeController();
-    systemReadyForConfirmLoans();
+    setPendingLoansEmpty();
+    setState_ConfirmingLoans();
     IMember borrower = jim;
     List<IBook> bookList = setUpBookList(catch22, emma, atonement);
     List<ILoan> pendingLoans = setUpPendingLoans(borrower, bookList);
     Date today = ignoreTime(new Date());
     Date due = calculateDueDate(today);
     setPrivateLoanList(controller, pendingLoans);
+    Date borrowDate;
+    Date dueDate;
 
     controller.loansConfirmed();
 
-    ILoan firstLoan = loans.getLoanByID(1);
-    ILoan secondLoan = loans.getLoanByID(2);
-    ILoan thirdLoan = loans.getLoanByID(3);
-
     assertThat(loans.listLoans()).hasSize(3);
+
+    // first loan
+    ILoan firstLoan = loans.getLoanByID(1);
     assertThat(firstLoan.getBorrower()).isSameAs(jim);
-    assertThat(secondLoan.getBorrower()).isSameAs(jim);
-    assertThat(thirdLoan.getBorrower()).isSameAs(jim);
     assertThat(firstLoan.getBook()).isSameAs(catch22);
-    assertThat(secondLoan.getBook()).isSameAs(emma);
-    assertThat(thirdLoan.getBook()).isSameAs(atonement);
-    Date borrowDate = getPrivateBorrowDate((Loan)firstLoan);
+    borrowDate = getPrivateBorrowDate((Loan)firstLoan);
     assertThat(borrowDate).isEqualTo(today);
+    dueDate = getPrivateDueDate((Loan)firstLoan);
+    assertThat(dueDate).isEqualTo(calculateDueDate(today));
+    assertThat(firstLoan.isCurrent()).isTrue();
+    assertThat(catch22.getState()).isEqualTo(EBookState.ON_LOAN);
+
+    // second loan
+    ILoan secondLoan = loans.getLoanByID(2);
+    assertThat(secondLoan.getBorrower()).isSameAs(jim);
+    assertThat(secondLoan.getBook()).isSameAs(emma);
     borrowDate = getPrivateBorrowDate((Loan)secondLoan);
     assertThat(borrowDate).isEqualTo(today);
+    dueDate = getPrivateDueDate((Loan)secondLoan);
+    assertThat(dueDate).isEqualTo(due);
+    assertThat(secondLoan.isCurrent()).isTrue();
+    assertThat(emma.getState()).isEqualTo(EBookState.ON_LOAN);
+
+    //third loan
+    ILoan thirdLoan = loans.getLoanByID(3);
+    assertThat(thirdLoan.getBorrower()).isSameAs(jim);
+    assertThat(thirdLoan.getBook()).isSameAs(atonement);
     borrowDate = getPrivateBorrowDate((Loan)thirdLoan);
     assertThat(borrowDate).isEqualTo(today);
-
-    Date dueDate = getPrivateDueDate((Loan)firstLoan);
-    assertThat(dueDate).isEqualTo(calculateDueDate(today));
-    dueDate = getPrivateDueDate((Loan)secondLoan);
-    assertThat(dueDate).isEqualTo(calculateDueDate(today));
     dueDate = getPrivateDueDate((Loan)thirdLoan);
-    assertThat(dueDate).isEqualTo(calculateDueDate(today));
-    assertThat(loans.findLoansByBorrower(jim)).containsExactly(firstLoan,
-                                                               secondLoan,
-                                                               thirdLoan);
-    assertThat(loans.listLoans()).containsExactly(firstLoan,
-                                                  secondLoan,
-                                                  thirdLoan);
+    assertThat(dueDate).isEqualTo(due);
+    assertThat(thirdLoan.isCurrent()).isTrue();
+    assertThat(atonement.getState()).isEqualTo(EBookState.ON_LOAN);
 
+    assertThat(jim.getLoans())
+                  .containsExactly(firstLoan, secondLoan, thirdLoan);
+
+    assertThat(loans.findLoansByBorrower(jim))
+                    .containsExactly(firstLoan, secondLoan, thirdLoan);
+
+    assertThat(loans.listLoans())
+                    .containsExactly(firstLoan, secondLoan, thirdLoan);
   }
 
   //===========================================================================
