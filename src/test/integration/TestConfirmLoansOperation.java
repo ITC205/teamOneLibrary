@@ -38,6 +38,7 @@ import library.BorrowUC_CTL;
 import library.interfaces.EBorrowState;
 
 import org.junit.Test;
+import org.junit.Ignore;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -70,7 +71,7 @@ public class TestConfirmLoansOperation
   // Fixtures
   //===========================================================================
 
-  library.BorrowUC_CTL controller;
+  BorrowUC_CTL controller;
   List<ILoan> pendingLoans;
 
   ICardReader reader = mock(ICardReader.class);
@@ -79,17 +80,17 @@ public class TestConfirmLoansOperation
   IDisplay display = mock(IDisplay.class);
 
   IBookHelper bookHelper = new BookHelper();
-  IBookDAO books = new BookDAO(bookHelper);
+  IBookDAO books = spy(new BookDAO(bookHelper));
 
   ILoanHelper loanHelper = new LoanHelper();
   ILoanDAO loans;
 
   IMemberHelper memberHelper = new MemberHelper();
-  IMemberDAO members = new MemberDAO(memberHelper);
+  IMemberDAO members = spy(new MemberDAO(memberHelper));
 
-  IBook catch22 = books.addBook("Joseph Heller", "CATCH-22", "101.1 [2]");
-  IBook emma = books.addBook("Jane Austen", "Emma", "102.5");
-  IBook scoop = books.addBook("Evelyn Waugh", "Scoop", "103.21");
+  IBook catch22 = spy(books.addBook("Joseph Heller", "CATCH-22", "101.1 [2]"));
+  IBook emma = spy(books.addBook("Jane Austen", "Emma", "102.5"));
+  IBook scoop = spy(books.addBook("Evelyn Waugh", "Scoop", "103.21"));
   IBook dune = books.addBook("Frank Herbert", "Dune", "104 [21]");
   IBook janeEyre = books.addBook("Charlotte Brontë", "Jane Eyre", "105.2");
   IBook animalFarm = books.addBook("George Orwell", "Animal Farm", "106 [1]");
@@ -98,10 +99,11 @@ public class TestConfirmLoansOperation
   IBook dracula = books.addBook("Bram Stoker", "Dracula", "109.1 [21]");
   IBook middlemarch = books.addBook("George Eliot", "Middlemarch", "110");
   IBook hobbit = books.addBook("J.R.R. Tolkien", "The Hobbit", "111.23");
-  IBook atonement = books.addBook("Ian McEwan", "Atonement", "112.2 [22]");
+  IBook atonement = spy(books.addBook("Ian McEwan", "Atonement", "112.2 [22]"));
   IBook iClaudius = books.addBook("Robert Graves", "I, Claudius", "113 [2]");
 
-  IMember jim = members.addMember("Jim", "Johnson", "999123", "jim@gmail.com");
+  IMember jim = spy(members.addMember("Jim", "Johnson", "999123", "jim@gmail" +
+                                                                      ".com"));
   IMember sam = members.addMember("Sam", "Malone", "888124", "sam@yahoo.com");
   IMember jill = members.addMember("Jill", "Hill", "777125", "jill@gmail.com");
   IMember bob = members.addMember("Bob", "Dylan", "666126", "bob@dylan.com");
@@ -109,7 +111,7 @@ public class TestConfirmLoansOperation
 
   public void initializeController()
   {
-    loans = new LoanDAO(loanHelper);
+    loans = spy(new LoanDAO(loanHelper));
     controller = new library.BorrowUC_CTL(reader, scanner, printer, display,
                                           books, loans, members);
 
@@ -157,7 +159,7 @@ public void setPendingLoansEmpty()
 
 
   @Test
-  public void preConditionsAreMet()
+  public void preConditionsCanBeMet()
   {
     initializeController();
     setPendingLoansEmpty();
@@ -223,7 +225,7 @@ public void setPendingLoansEmpty()
   //===========================================================================
 
   @Test
-  public void confirmLoan_OneBookHappyPath_ResultsCorrect()
+  public void confirmLoan_OneBook_EmptyLibrary_ResultsCorrect()
   {
     initializeController();
     setPendingLoansEmpty();
@@ -246,7 +248,33 @@ public void setPendingLoansEmpty()
 
 
   @Test
-  public void confirmLoan_ThreeBooksHappyPath_ResultsCorrect()
+  public void confirmLoan_OneBook_EmptyLibrary_CorrectCallsMade()
+  {
+    initializeController();
+    setPendingLoansEmpty();
+    setState_ConfirmingLoans();
+    ILoan firstLoan = spy(loans.createLoan(jim, catch22));
+    List<ILoan> pendingLoans = new ArrayList<>();
+    pendingLoans.add(firstLoan);
+    assertThat(loans.listLoans()).isEmpty();
+    assertThat(firstLoan.getID()).isEqualTo(0);
+    setPrivateLoanList(controller, pendingLoans);
+
+    controller.loansConfirmed();
+
+    verify(loans).commitLoan(anyObject());
+    verify(firstLoan).commit(anyInt());
+    verify(jim).addLoan(firstLoan);
+    verify(catch22).borrow(firstLoan);
+    verify(printer).print(anyString());
+    verify(scanner).setEnabled(false);
+    verify(reader).setEnabled(false);
+    verify(display).setDisplay(any(), anyString());
+  }
+
+
+  @Test
+  public void confirmLoan_ThreeBooks_EmptyLibrary_ResultsCorrect()
   {
     initializeController();
     setPendingLoansEmpty();
