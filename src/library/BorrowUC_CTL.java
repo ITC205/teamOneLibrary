@@ -98,8 +98,11 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	                               "method when memberDAO is null");
 	  }
 	  
-	  String loanDetails = "";
-	  // Check if member exists
+    if (memberDAO.getMemberByID(borrowerId) == null)
+    {
+      throw new RuntimeException("BorrowUC_CTL: cardSwiped: member does not exist");
+    }
+	   String loanDetails = "";
 	  IMember borrower = memberDAO.getMemberByID(borrowerId);
 	  List<ILoan> loanList = borrower.getLoans();
 	  scanCount = loanList.size();
@@ -108,7 +111,11 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	  {
 	    reader.setEnabled(false);
 	    scanner.setEnabled(true);
-	    ui.displayMemberDetails(borrower.getId(), borrower.getFirstName(), borrower.getContactPhone());
+	    
+	    // Not implemented yet:
+//	    ui.displayMemberDetails(borrowerId, 
+//	                            borrower.getFirstName() + " " + borrower.getLastName(), 
+//                              borrower.getContactPhone());
 	    if (loanList.size() > 0)
 	    {
 	      for (int n = 0; n < loanList.size(); n++)
@@ -128,7 +135,9 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	  {
 	    reader.setEnabled(false);
 	    scanner.setEnabled(false);
-	    ui.displayMemberDetails(borrower.getId(), borrower.getFirstName(), borrower.getContactPhone());
+	    
+	    // Not implemented yet:
+	//    ui.displayMemberDetails(borrower.getId(), borrower.getFirstName(), borrower.getContactPhone());
 	    if (loanList.size() > 0)
 	    {
 	      for (int n = 0; n < loanList.size(); n++)
@@ -159,7 +168,7 @@ public class BorrowUC_CTL implements ICardReaderListener,
 
 	
 	private void setState(EBorrowState state) {
-		throw new RuntimeException("Not implemented yet");
+		this.state = state;
 	}
 
 	@Override

@@ -47,9 +47,6 @@ public class TestCardSwipedMethod extends TestCase
   bookDAO = new BookDAO(new BookHelper());
   loanDAO = new LoanDAO(new LoanHelper());
   memberDAO = new MemberDAO(new MemberHelper());
-  
-  testController = new BorrowUC_CTL(mockReader, mockScanner, mockPrinter,
-      mockDisplay, bookDAO, loanDAO, memberDAO);
 }
   
   
@@ -76,12 +73,11 @@ public class TestCardSwipedMethod extends TestCase
   
   protected void addLoans()
   {
-    loanDAO.createLoan(memberDAO.getMemberByID(0), bookDAO.getBookByID(0));
-    loanDAO.createLoan(memberDAO.getMemberByID(0), bookDAO.getBookByID(1));
-    loanDAO.createLoan(memberDAO.getMemberByID(0), bookDAO.getBookByID(2));
-    loanDAO.createLoan(memberDAO.getMemberByID(0), bookDAO.getBookByID(3));
-    loanDAO.createLoan(memberDAO.getMemberByID(0), bookDAO.getBookByID(4));
-    loanDAO.createLoan(memberDAO.getMemberByID(0), bookDAO.getBookByID(5));
+    loanDAO.createLoan(memberDAO.getMemberByID(2), bookDAO.getBookByID(1));
+    loanDAO.createLoan(memberDAO.getMemberByID(2), bookDAO.getBookByID(2));
+    loanDAO.createLoan(memberDAO.getMemberByID(2), bookDAO.getBookByID(3));
+    loanDAO.createLoan(memberDAO.getMemberByID(2), bookDAO.getBookByID(4));
+    loanDAO.createLoan(memberDAO.getMemberByID(2), bookDAO.getBookByID(5));
   }
   
   
@@ -121,28 +117,61 @@ public class TestCardSwipedMethod extends TestCase
   
   public void testMemberDoesNotExist()
   {
-    
+    try
+    {
+    createMocks();
+    setState(EBorrowState.INITIALIZED);
+    testController.cardSwiped(10);
+    }
+    catch (Throwable ex)
+    {
+      exception = ex;
+    }
+    assertTrue(exception instanceof RuntimeException);   
   }
   
   
   
   public void testAllowedMemberNoLoans()
   {
-    
+    createMocks();
+    addMembers();
+    createBooks();
+    addLoans();
+    testController = new BorrowUC_CTL(mockReader, mockScanner, mockPrinter,
+        mockDisplay, bookDAO, loanDAO, memberDAO);
+    setState(EBorrowState.INITIALIZED);
+    testController.cardSwiped(1);
+    assertEquals(EBorrowState.SCANNING_BOOKS, getState());
   }
   
   
   
   public void testAllowedMemberWithLoans()
   {
-    
+    createMocks();
+    addMembers();
+    createBooks();
+    addLoans();
+    testController = new BorrowUC_CTL(mockReader, mockScanner, mockPrinter,
+        mockDisplay, bookDAO, loanDAO, memberDAO);
+    setState(EBorrowState.INITIALIZED);
+    testController.cardSwiped(2);
+    assertEquals(EBorrowState.SCANNING_BOOKS, getState());
   }
   
   
   
   public void testAllowedMemberNoFines()
   {
-    
+    createMocks();
+    addMembers();
+    createBooks();
+    addLoans();
+    testController = new BorrowUC_CTL(mockReader, mockScanner, mockPrinter,
+        mockDisplay, bookDAO, loanDAO, memberDAO);
+    setState(EBorrowState.INITIALIZED);
+    assertEquals(EBorrowState.INITIALIZED, getState());
   }
   
   
@@ -224,5 +253,32 @@ public class TestCardSwipedMethod extends TestCase
         // TODO Auto-generated catch block
         e.printStackTrace();
       }
+  }
+  
+  
+  
+  private EBorrowState getState()
+  {
+    EBorrowState controllerState = null;
+    try {
+      Class<?> borrowUC_CTLClass = testController.getClass();
+      Field state = borrowUC_CTLClass.getDeclaredField("state");
+      state.setAccessible(true);
+      controllerState = (EBorrowState) state.get(testController);
+      return controllerState;
+    } catch (NoSuchFieldException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (SecurityException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (IllegalArgumentException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (IllegalAccessException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return controllerState;
   }
 }
