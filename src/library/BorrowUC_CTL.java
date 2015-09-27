@@ -99,6 +99,7 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	  }
 	  
 	  String loanDetails = "";
+	  // Check if member exists
 	  IMember borrower = memberDAO.getMemberByID(borrowerId);
 	  List<ILoan> loanList = borrower.getLoans();
 	  scanCount = loanList.size();
@@ -108,11 +109,14 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	    reader.setEnabled(false);
 	    scanner.setEnabled(true);
 	    ui.displayMemberDetails(borrower.getId(), borrower.getFirstName(), borrower.getContactPhone());
-	    for (int n = 0; n < loanList.size(); n++)
+	    if (loanList.size() > 0)
 	    {
-	      loanDetails.concat(loanList.get(n).toString() + "\n");
+	      for (int n = 0; n < loanList.size(); n++)
+	      {
+	        loanDetails.concat(loanList.get(n).toString() + "\n");
+	      }
+	      ui.displayExistingLoan(loanDetails);
 	    }
-	    ui.displayExistingLoan(loanDetails);
 
 	    if (borrower.getTotalFines() > 0)
 	    {
@@ -125,11 +129,14 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	    reader.setEnabled(false);
 	    scanner.setEnabled(false);
 	    ui.displayMemberDetails(borrower.getId(), borrower.getFirstName(), borrower.getContactPhone());
-	    for (int n = 0; n < loanList.size(); n++)
+	    if (loanList.size() > 0)
 	    {
-	      loanDetails.concat(loanList.get(n).toString() + "\n");
+	      for (int n = 0; n < loanList.size(); n++)
+	      {
+	        loanDetails.concat(loanList.get(n).toString() + "\n");
+	      }
+	      ui.displayExistingLoan(loanDetails);
 	    }
-	    ui.displayExistingLoan(loanDetails);
 	    if (borrower.getTotalFines() > 0)
 	    {
 	      ui.displayOutstandingFineMessage(borrower.getTotalFines());
