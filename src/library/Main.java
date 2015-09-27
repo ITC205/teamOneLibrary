@@ -1,40 +1,76 @@
 package library;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import library.hardware.CardReader;
 import library.hardware.Display;
 import library.hardware.Printer;
 import library.hardware.Scanner;
 
-import java.util.Calendar;
-import java.util.Date;
-
 import library.interfaces.IMainListener;
+
 import library.interfaces.daos.IBookDAO;
 import library.interfaces.daos.ILoanDAO;
 import library.interfaces.daos.IMemberDAO;
+import library.interfaces.daos.IBookHelper;
+import library.interfaces.daos.ILoanHelper;
+import library.interfaces.daos.IMemberHelper;
+
 import library.interfaces.entities.IBook;
 import library.interfaces.entities.ILoan;
 import library.interfaces.entities.IMember;
+
+import library.daos.BookDAO;
+import library.daos.LoanDAO;
+import library.daos.MemberDAO;
+import library.daos.BookHelper;
+import library.daos.LoanHelper;
+import library.daos.MemberHelper;
+
 import library.panels.MainPanel;
 
-public class Main implements IMainListener {
+public class Main
+  implements IMainListener {
 
-	private CardReader reader;
-	private Scanner scanner;
-	private Printer printer;
-	private Display display;
-	private IBookDAO bookDAO;
-	private ILoanDAO loanDAO;
-	private IMemberDAO memberDAO;
-	
-	public Main() {
-		reader = new CardReader();
-		scanner = new Scanner();
-		printer = new Printer();
-		display = new Display();
-		
+  //===========================================================================
+  // Variables - modified
+  //===========================================================================
+
+  private CardReader reader;
+  private Scanner scanner;
+  private Printer printer;
+  private Display display;
+
+  private IBookHelper bookHelper;
+  private ILoanHelper loanHelper;
+  private IMemberHelper memberHelper;
+
+  private IBookDAO bookDAO;
+  private ILoanDAO loanDAO;
+  private IMemberDAO memberDAO;
+
+  //===========================================================================
+  // Variables - modified
+  //===========================================================================
+
+  public Main() {
+    reader = new CardReader();
+    scanner = new Scanner();
+    printer = new Printer();
+    display = new Display();
+
+    bookHelper = new BookHelper();
+    loanHelper = new LoanHelper();
+    memberHelper = new MemberHelper();
+
+    bookDAO = new BookDAO(bookHelper);
+    loanDAO = new LoanDAO(loanHelper);
+    memberDAO = new MemberDAO(memberHelper);
+
+
 		//setupTestData();
-	}
+  }
 
 
 	public void showGUI() {		
@@ -44,17 +80,21 @@ public class Main implements IMainListener {
 		display.setVisible(true);
 	}
 
-	
-	@Override
+  //===========================================================================
+  // borrowBooks() - modified
+  //===========================================================================
+
+  @Override
 	public void borrowBooks() {
-		BorrowUC_CTL ctl = new BorrowUC_CTL(reader, scanner, printer, display, 
-				 null, null, null);
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-            	ctl.initialise();
-            }
-        });		
-	}
+    BorrowUC_CTL ctl = new BorrowUC_CTL(reader, scanner, printer, display,
+                                        bookDAO, loanDAO, memberDAO);
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        ctl.initialise();
+      }
+    });
+  }
+
 
 	
 	private void setupTestData() {
