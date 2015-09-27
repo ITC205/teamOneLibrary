@@ -115,14 +115,24 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	  {
 	    //Display BorrowBookUI restricted panel
 	    //Enable Cancel button
-	    //Disable cardReader
-	    //Disable scanner
-	    //Display borrower.toString()
-	    //Display existing loans
-	    //Display borrower.getFines() if needed
-	    //Display overdue message if relevant
-	    //Display borrowing restricted error message
-//	    BorrowBooKCTL.setState(BORROWING_RESTRICTED)
+	    reader.setEnabled(false);
+	    scanner.setEnabled(false);
+	    ui.displayMemberDetails(borrower.getId(), borrower.getFirstName(), borrower.getContactPhone());
+	    for (int n = 0; n < borrower.getLoans().size(); n++)
+      {
+        loanDetails.concat(borrower.getLoans().get(n).toString() + "\n");
+      }
+      ui.displayExistingLoan(loanDetails);
+      if (borrower.getTotalFines() > 0)
+      {
+        ui.displayOutstandingFineMessage(borrower.getTotalFines());
+      }
+      if (borrower.hasOverDueLoans())
+      {
+        ui.displayOverDueMessage();
+      }
+      ui.displayErrorMessage("Borrowing Restricted");
+      setState(EBorrowState.BORROWING_RESTRICTED);
 
 	  }
 	}
