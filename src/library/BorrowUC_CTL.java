@@ -82,29 +82,38 @@ public class BorrowUC_CTL implements ICardReaderListener,
 		display.setDisplay(previous, "Main Menu");
 	}
 	
-	
+
 
 	@Override
 	public void cardSwiped(int borrowerId) 
 	{
+	  if (state != EBorrowState.INITIALIZED)
+	  {
+	    throw new RuntimeException("BorrowUC_CTL: cardSwiped: cannot call " +
+	        "method when state is: " + state);
+	  }
+	  if (memberDAO == null)
+	  {
+	    throw new RuntimeException("BorrowUC_CTL: cardSwiped: cannot call " +
+	                               "method when memberDAO is null");
+	  }
+	  
 	  String loanDetails = "";
-  if (state == EBorrowState.INITIALIZED)
-  {
+	  IMember borrower = memberDAO.getMemberByID(borrowerId);
+	  List<ILoan> loanList = borrower.getLoans();
+	  scanCount = loanList.size();
 
-	IMember borrower = memberDAO.getMemberByID(borrowerId);
 	  if (borrower.getState() == EMemberState.BORROWING_ALLOWED)
 	  {
-	    //Display BorrowBookUI scanning panel
-	    //Enable Complete and Cancel buttons
 	    reader.setEnabled(false);
 	    scanner.setEnabled(true);
 	    ui.displayMemberDetails(borrower.getId(), borrower.getFirstName(), borrower.getContactPhone());
-	    for (int n = 0; n < borrower.getLoans().size(); n++)
+	    for (int n = 0; n < loanList.size(); n++)
 	    {
-	      loanDetails.concat(borrower.getLoans().get(n).toString() + "\n");
+	      loanDetails.concat(loanList.get(n).toString() + "\n");
 	    }
 	    ui.displayExistingLoan(loanDetails);
-	    
+
 	    if (borrower.getTotalFines() > 0)
 	    {
 	      ui.displayOutstandingFineMessage(borrower.getTotalFines());
@@ -113,32 +122,28 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	  }
 	  else
 	  {
-	    //Display BorrowBookUI restricted panel
-	    //Enable Cancel button
 	    reader.setEnabled(false);
 	    scanner.setEnabled(false);
 	    ui.displayMemberDetails(borrower.getId(), borrower.getFirstName(), borrower.getContactPhone());
-	    for (int n = 0; n < borrower.getLoans().size(); n++)
-      {
-        loanDetails.concat(borrower.getLoans().get(n).toString() + "\n");
-      }
-      ui.displayExistingLoan(loanDetails);
-      if (borrower.getTotalFines() > 0)
-      {
-        ui.displayOutstandingFineMessage(borrower.getTotalFines());
-      }
-      if (borrower.hasOverDueLoans())
-      {
-        ui.displayOverDueMessage();
-      }
-      ui.displayErrorMessage("Borrowing Restricted");
-      setState(EBorrowState.BORROWING_RESTRICTED);
-
+	    for (int n = 0; n < loanList.size(); n++)
+	    {
+	      loanDetails.concat(loanList.get(n).toString() + "\n");
+	    }
+	    ui.displayExistingLoan(loanDetails);
+	    if (borrower.getTotalFines() > 0)
+	    {
+	      ui.displayOutstandingFineMessage(borrower.getTotalFines());
+	    }
+	    if (borrower.hasOverDueLoans())
+	    {
+	      ui.displayOverDueMessage();
+	    }
+	    ui.displayErrorMessage("Borrowing Restricted");
+	    setState(EBorrowState.BORROWING_RESTRICTED);
 	  }
 	}
-	}
-	
-	
+
+
 	
 	@Override
 	public void bookScanned(int barcode) {
