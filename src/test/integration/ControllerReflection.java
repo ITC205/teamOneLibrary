@@ -9,16 +9,12 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
 import library.BorrowUC_CTL;
+import  library.interfaces.EBorrowState;
 
 import library.interfaces.entities.ILoan;
 import library.interfaces.entities.IMember;
 
-import  library.interfaces.EBorrowState;
-
-
 import library.entities.Loan;
-
-
 
 import static org.assertj.core.api.Assertions.fail;
 
@@ -37,18 +33,17 @@ public class ControllerReflection
  * @param controller BorrowUC_CTL The main controller.
  * @return EBorrowState The current state of the controller.
  */
-  public static EBorrowState getPrivateState(BorrowUC_CTL controller)
+  public static library.interfaces.EBorrowState getPrivateState(BorrowUC_CTL controller)
   {
     try {
-      Class<?> controllerClass = controller.getClass();
-      Field state = controllerClass.getDeclaredField("state");
+      Field state = BorrowUC_CTL.class.getDeclaredField("state");
 
       // Enable direct modification of private field
       if (!state.isAccessible()) {
         state.setAccessible(true);
       }
 
-      return (EBorrowState)state.get(controller);
+      return (library.interfaces.EBorrowState)state.get(controller);
     }
 
     catch (NoSuchFieldException exception) {
@@ -71,11 +66,11 @@ public class ControllerReflection
    * @param controller BorrowUC_CTL The main controller.
    * @param newState EBorrowState The new state to be set on the controller.
    */
-  public static void setPrivateState(BorrowUC_CTL controller, EBorrowState newState)
+  public static void setPrivateState(BorrowUC_CTL controller,
+                                     library.interfaces.EBorrowState newState)
   {
     try {
-      Class<?> controllerClass = controller.getClass();
-      Field state = controllerClass.getDeclaredField("state");
+      Field state = BorrowUC_CTL.class.getDeclaredField("state");
 
       // Enable direct modification of private field
       if (!state.isAccessible()) {
@@ -96,18 +91,15 @@ public class ControllerReflection
     }
   }
 
-
-
-
   //===========================================================================
-  // ?
+  // loanList getter & setter
   //===========================================================================
 
   /*
- * Uses Reflection API to directly set BorrowUC_CTL's private loanList.
- * @param controller BorrowUC_CTL The main controller.
- * @param pendingLoans List<ILoan> The list of pending loans to be set.
- */
+   * Uses Reflection API to directly set BorrowUC_CTL's private loanList.
+   * @param controller BorrowUC_CTL The main controller.
+   * @return List<ILoan> The list of pending loans.
+   */
   public static List<ILoan> getPrivateLoanList(BorrowUC_CTL controller)
   {
     try {
@@ -117,7 +109,6 @@ public class ControllerReflection
       if (!loanList.isAccessible()) {
         loanList.setAccessible(true);
       }
-
       return (List<ILoan>)loanList.get(controller);
     }
 
@@ -150,7 +141,6 @@ public class ControllerReflection
       if (!loanList.isAccessible()) {
         loanList.setAccessible(true);
       }
-
       loanList.set(controller, pendingLoans);
     }
 
@@ -164,44 +154,6 @@ public class ControllerReflection
       fail("Exception should not occur");
     }
   }
-
-
-  //===========================================================================
-  // State setter
-  //===========================================================================
-
-  /*
- * Uses Reflection API to directly access the BorrowUC_CTL's private borrower.
- * @param controller BorrowUC_CTL The main controller.
- * @return IMember The current borrower set in the controller.
- */
-  public static IMember getPrivateBorrower(BorrowUC_CTL controller)
-  {
-    try {
-      Field borrower = BorrowUC_CTL.class.getDeclaredField("borrower");
-
-      // Enable direct modification of private field
-      if (!borrower.isAccessible()) {
-        borrower.setAccessible(true);
-      }
-
-      return (IMember)borrower.get(controller);
-    }
-
-    catch (NoSuchFieldException exception) {
-      fail("NoSuchFieldException should not occur");
-    }
-    catch (IllegalAccessException exception) {
-      fail("IllegalAccessException should not occur");
-    }
-    catch (Exception exception) {
-      fail("Exception should not occur");
-    }
-
-    return null;
-  }
-
-
 
 }
 
