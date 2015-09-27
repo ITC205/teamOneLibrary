@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
+import library.daos.MemberDAO;
 import library.interfaces.EBorrowState;
 import library.interfaces.IBorrowUI;
 import library.interfaces.IBorrowUIListener;
@@ -12,6 +13,7 @@ import library.interfaces.daos.IBookDAO;
 import library.interfaces.daos.ILoanDAO;
 import library.interfaces.daos.IMemberDAO;
 import library.interfaces.entities.EBookState;
+import library.interfaces.entities.EMemberState;
 import library.interfaces.entities.IBook;
 import library.interfaces.entities.ILoan;
 import library.interfaces.entities.IMember;
@@ -81,8 +83,38 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	}
 
 	@Override
-	public void cardSwiped(int memberID) {
-		throw new RuntimeException("Not implemented yet");
+	public void cardSwiped(int borrowerId) 
+	{
+  if (state == EBorrowState.INITIALIZED)
+  {
+
+	IMember borrower = memberDAO.getMemberByID(borrowerId);
+	  if (borrower.getState() == EMemberState.BORROWING_ALLOWED)
+	  {
+	    //Display BorrowBookUI scanning panel
+	    //Enable Complete and Cancel buttons
+	    //Disable CardReader
+	    //Enable scanner (for books)
+	    //Display borrower.toString()
+	    //Display existing loans
+	    //Display borrower.getFines() if needed
+//	    BorrowBookCTL.setState(SCANNING_BOOKS)
+//	  }
+//	  else
+//	  {
+	    //Display BorrowBookUI restricted panel
+	    //Enable Cancel button
+	    //Disable cardReader
+	    //Disable scanner
+	    //Display borrower.toString()
+	    //Display existing loans
+	    //Display borrower.getFines() if needed
+	    //Display overdue message if relevant
+	    //Display borrowing restricted error message
+//	    BorrowBooKCTL.setState(BORROWING_RESTRICTED)
+
+	  }
+	}
 	}
 	
 	
