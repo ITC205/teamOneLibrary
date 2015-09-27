@@ -81,10 +81,13 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	public void close() {
 		display.setDisplay(previous, "Main Menu");
 	}
+	
+	
 
 	@Override
 	public void cardSwiped(int borrowerId) 
 	{
+	  String loanDetails = "";
   if (state == EBorrowState.INITIALIZED)
   {
 
@@ -93,15 +96,23 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	  {
 	    //Display BorrowBookUI scanning panel
 	    //Enable Complete and Cancel buttons
-	    //Disable CardReader
-	    //Enable scanner (for books)
-	    //Display borrower.toString()
-	    //Display existing loans
-	    //Display borrower.getFines() if needed
-//	    BorrowBookCTL.setState(SCANNING_BOOKS)
-//	  }
-//	  else
-//	  {
+	    reader.setEnabled(false);
+	    scanner.setEnabled(true);
+	    ui.displayMemberDetails(borrower.getId(), borrower.getFirstName(), borrower.getContactPhone());
+	    for (int n = 0; n < borrower.getLoans().size(); n++)
+	    {
+	      loanDetails.concat(borrower.getLoans().get(n).toString() + "\n");
+	    }
+	    ui.displayExistingLoan(loanDetails);
+	    
+	    if (borrower.getTotalFines() > 0)
+	    {
+	      ui.displayOutstandingFineMessage(borrower.getTotalFines());
+	    }
+	    setState(EBorrowState.SCANNING_BOOKS);
+	  }
+	  else
+	  {
 	    //Display BorrowBookUI restricted panel
 	    //Enable Cancel button
 	    //Disable cardReader
