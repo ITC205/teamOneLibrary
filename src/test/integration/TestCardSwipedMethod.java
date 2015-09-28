@@ -4,6 +4,9 @@ import junit.framework.TestCase;
 import static org.mockito.Mockito.*;
 
 import java.lang.reflect.Field;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import library.BorrowUC_CTL;
 import library.daos.BookDAO;
@@ -12,14 +15,18 @@ import library.daos.LoanDAO;
 import library.daos.LoanHelper;
 import library.daos.MemberDAO;
 import library.daos.MemberHelper;
+import library.entities.Loan;
 import library.interfaces.EBorrowState;
 import library.interfaces.daos.IBookDAO;
 import library.interfaces.daos.ILoanDAO;
 import library.interfaces.daos.IMemberDAO;
+import library.interfaces.entities.IBook;
+import library.interfaces.entities.ILoan;
 import library.interfaces.hardware.ICardReader;
 import library.interfaces.hardware.IDisplay;
 import library.interfaces.hardware.IPrinter;
 import library.interfaces.hardware.IScanner;
+
 
 public class TestCardSwipedMethod extends TestCase
 {
@@ -71,13 +78,75 @@ public class TestCardSwipedMethod extends TestCase
   }
   
   
+  
   protected void addLoans()
   {
-    loanDAO.createLoan(memberDAO.getMemberByID(2), bookDAO.getBookByID(1));
-    loanDAO.createLoan(memberDAO.getMemberByID(2), bookDAO.getBookByID(2));
-    loanDAO.createLoan(memberDAO.getMemberByID(2), bookDAO.getBookByID(3));
-    loanDAO.createLoan(memberDAO.getMemberByID(2), bookDAO.getBookByID(4));
-    loanDAO.createLoan(memberDAO.getMemberByID(2), bookDAO.getBookByID(5));
+    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+    Date dateBorrowed;
+    try {
+      dateBorrowed = dateFormat.parse("01/10/15");
+      Date dateDue = dateFormat.parse("15/10/15");
+      
+      ILoan loan1 = new Loan(bookDAO.getBookByID(1), memberDAO.getMemberByID(2), dateBorrowed, dateDue);
+      ILoan loan2 = new Loan(bookDAO.getBookByID(2), memberDAO.getMemberByID(2), dateBorrowed, dateDue);
+      ILoan loan3 = new Loan(bookDAO.getBookByID(3), memberDAO.getMemberByID(2), dateBorrowed, dateDue);
+      ILoan loan4 = new Loan(bookDAO.getBookByID(4), memberDAO.getMemberByID(2), dateBorrowed, dateDue);
+      
+      loanDAO.createLoan(memberDAO.getMemberByID(2), bookDAO.getBookByID(1));
+      loanDAO.createLoan(memberDAO.getMemberByID(2), bookDAO.getBookByID(2));
+      loanDAO.createLoan(memberDAO.getMemberByID(2), bookDAO.getBookByID(3));
+      loanDAO.createLoan(memberDAO.getMemberByID(2), bookDAO.getBookByID(4));
+      
+      loanDAO.commitLoan(loan1);
+      loanDAO.commitLoan(loan2);
+      loanDAO.commitLoan(loan3);
+      loanDAO.commitLoan(loan4);
+
+      
+    } catch (ParseException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
+  }
+  
+  
+  
+  protected void addLoansOverLimit()
+  {
+    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+    Date dateBorrowed;
+    try {
+      dateBorrowed = dateFormat.parse("01/10/15");
+      Date dateDue = dateFormat.parse("15/10/15");
+      
+      ILoan loan1 = new Loan(bookDAO.getBookByID(1), memberDAO.getMemberByID(2), dateBorrowed, dateDue);
+      ILoan loan2 = new Loan(bookDAO.getBookByID(2), memberDAO.getMemberByID(2), dateBorrowed, dateDue);
+      ILoan loan3 = new Loan(bookDAO.getBookByID(3), memberDAO.getMemberByID(2), dateBorrowed, dateDue);
+      ILoan loan4 = new Loan(bookDAO.getBookByID(4), memberDAO.getMemberByID(2), dateBorrowed, dateDue);
+      ILoan loan5 = new Loan(bookDAO.getBookByID(5), memberDAO.getMemberByID(2), dateBorrowed, dateDue);
+      ILoan loan6 = new Loan(bookDAO.getBookByID(6), memberDAO.getMemberByID(2), dateBorrowed, dateDue);
+      
+      loanDAO.createLoan(memberDAO.getMemberByID(2), bookDAO.getBookByID(1));
+      loanDAO.createLoan(memberDAO.getMemberByID(2), bookDAO.getBookByID(2));
+      loanDAO.createLoan(memberDAO.getMemberByID(2), bookDAO.getBookByID(3));
+      loanDAO.createLoan(memberDAO.getMemberByID(2), bookDAO.getBookByID(4));
+      loanDAO.createLoan(memberDAO.getMemberByID(2), bookDAO.getBookByID(5));
+      
+      loanDAO.commitLoan(loan1);
+      loanDAO.commitLoan(loan2);
+      loanDAO.commitLoan(loan3);
+      loanDAO.commitLoan(loan4);
+      loanDAO.commitLoan(loan5);
+      loanDAO.commitLoan(loan6);
+      
+    } catch (ParseException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
+
+
   }
   
   
@@ -159,60 +228,58 @@ public class TestCardSwipedMethod extends TestCase
     testController.cardSwiped(2);
     assertEquals(EBorrowState.SCANNING_BOOKS, getState());
   }
+
   
   
-  
-  public void testAllowedMemberNoFines()
+  public void testAllowedMemberWithFines()
   {
     createMocks();
     addMembers();
+    memberDAO.getMemberByID(1).addFine(2.0f);
     createBooks();
     addLoans();
     testController = new BorrowUC_CTL(mockReader, mockScanner, mockPrinter,
         mockDisplay, bookDAO, loanDAO, memberDAO);
     setState(EBorrowState.INITIALIZED);
-    assertEquals(EBorrowState.INITIALIZED, getState());
-  }
-  
-  
-  
-  public void testAllowedMemberWithFines()
-  {
-    
+    testController.cardSwiped(1);
+    assertEquals(EBorrowState.SCANNING_BOOKS, getState());
   }
   
   
   
   public void testDisallowedMemberNoLoans()
   {
-    
+    createMocks();
+    addMembers();
+    memberDAO.getMemberByID(3).addFine(50.0f);
+    testController = new BorrowUC_CTL(mockReader, mockScanner, mockPrinter,
+        mockDisplay, bookDAO, loanDAO, memberDAO);
+    setState(EBorrowState.INITIALIZED);
+    testController.cardSwiped(3);
+    assertEquals(EBorrowState.BORROWING_RESTRICTED, getState());
   }
   
   
   
   public void testDisallowedMemberWithLoans()
   {
-    
-  }
-  
-  
-  
-  public void testDisallowedMemberNoFines()
-  {
-    
-  }
-  
-  
-  
-  public void testDisallowedMemberWithFines()
-  {
-    
-  }
-  
-  
-  
-  public void testDisallowedMemberNoOverdueLoans()
-  {
+    createMocks();
+    addMembers();
+    createBooks();
+    try
+    {
+    addLoansOverLimit();
+    testController = new BorrowUC_CTL(mockReader, mockScanner, mockPrinter,
+        mockDisplay, bookDAO, loanDAO, memberDAO);
+    setState(EBorrowState.INITIALIZED);
+    testController.cardSwiped(2);
+    assertEquals(EBorrowState.BORROWING_RESTRICTED, getState());
+    }
+    catch (Throwable ex)
+    {
+      exception = ex;
+    }
+    assertTrue(exception instanceof IllegalArgumentException);
     
   }
   
