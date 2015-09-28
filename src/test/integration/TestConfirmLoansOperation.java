@@ -138,11 +138,10 @@ public class TestConfirmLoansOperation
   @Test
   public void preConditionsCanBeMet()
   {
-
     initializeController();
     List<ILoan> pendingLoans = new ArrayList<>();
-    ILoan firstLoan = loans_.createLoan(jim, catch22);
-    pendingLoans.add(firstLoan);
+    ILoan firstPendingLoan = loans_.createLoan(jim, catch22);
+    pendingLoans.add(firstPendingLoan);
     setPendingLoans(pendingLoans);
     setState_ConfirmingLoans();
 
@@ -180,8 +179,8 @@ public class TestConfirmLoansOperation
   {
     initializeController();
     setState_ConfirmingLoans();
-    List<ILoan> pendingLoans = getPrivateLoanList(controller_);
-    assertThat(pendingLoans).isEmpty();
+    List<ILoan> pendingLoans = new ArrayList<>();
+    setPendingLoans(pendingLoans);
 
     try {
       controller_.loansConfirmed();
