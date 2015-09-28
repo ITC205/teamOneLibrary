@@ -56,7 +56,7 @@ public class Book implements IBook
     if(!isBookIdValid(bookID)) {
       throw new IllegalArgumentException("Book: constructor: value for 'bookID'"
                                          + " must be a positive integer"
-                                         + " (>= 0)");
+                                         + " (> 0)");
     }
     
     author_ = author;
