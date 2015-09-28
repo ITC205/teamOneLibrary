@@ -8,7 +8,6 @@ import static org.assertj.core.api.Assertions.*;
 
 import static test.helper.DateBuilder.*;
 import static test.helper.DoubleBuilder.*;
-import static test.helper.LoanBuilder.*;
 import static test.helper.LoanReflection.*;
 
 import library.interfaces.entities.ELoanState;

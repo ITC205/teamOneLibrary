@@ -30,21 +30,17 @@ import library.daos.LoanHelper;
 import library.daos.MemberDAO;
 import library.daos.MemberHelper;
 
-import library.entities.Book;
 import library.entities.Loan;
-import library.entities.Member;
 
 import library.BorrowUC_CTL;
 import library.interfaces.EBorrowState;
 
 import org.junit.Test;
-import org.junit.Ignore;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import static test.unit.LoanBuilder.*;
-import static test.unit.LoanReflection.*;
+import static test.helper.LoanReflection.*;
 import static test.integration.ControllerReflection.*;
 
 

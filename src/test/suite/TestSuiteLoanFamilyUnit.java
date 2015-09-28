@@ -1,4 +1,4 @@
-package test.unit;
+package test.suite;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -12,9 +12,9 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(org.junit.runners.Suite.class)
 @SuiteClasses(
   {
-      TestLoan.class,
-      TestLoanHelper.class,
-      TestLoanDAO.class
+    test.unit.TestLoan.class,
+    test.unit.TestLoanHelper.class,
+    test.unit.TestLoanDAO.class
   })
 
 public class TestSuiteLoanFamilyUnit
