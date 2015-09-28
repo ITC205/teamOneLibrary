@@ -112,21 +112,21 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	    reader.setEnabled(false);
 	    scanner.setEnabled(true);
 	    
-//	    ui.displayMemberDetails(borrowerId, 
-//	                            borrower.getFirstName() + " " + borrower.getLastName(), 
- //                             borrower.getContactPhone());
+	    ui.displayMemberDetails(borrowerId, 
+	                            borrower.getFirstName() + " " + borrower.getLastName(), 
+                              borrower.getContactPhone());
 	    if (loanList.size() > 0)
 	    {
 	      for (int n = 0; n < loanList.size(); n++)
 	      {
 	        loanDetails.concat(loanList.get(n).toString() + "\n");
 	      }
-//	      ui.displayExistingLoan(loanDetails);
+	      ui.displayExistingLoan(loanDetails);
 	    }
 
 	    if (borrower.getTotalFines() > 0)
 	    {
-//	      ui.displayOutstandingFineMessage(borrower.getTotalFines());
+	      ui.displayOutstandingFineMessage(borrower.getTotalFines());
 	    }
 	    setState(EBorrowState.SCANNING_BOOKS);
 	  }
@@ -135,24 +135,24 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	    reader.setEnabled(false);
 	    scanner.setEnabled(false);
 
-//	    ui.displayMemberDetails(borrower.getId(), borrower.getFirstName(), borrower.getContactPhone());
+	    ui.displayMemberDetails(borrower.getId(), borrower.getFirstName(), borrower.getContactPhone());
 	    if (loanList.size() > 0)
 	    {
 	      for (int n = 0; n < loanList.size(); n++)
 	      {
 	        loanDetails.concat(loanList.get(n).toString() + "\n");
 	      }
-//	      ui.displayExistingLoan(loanDetails);
+	      ui.displayExistingLoan(loanDetails);
 	    }
 	    if (borrower.getTotalFines() > 0)
 	    {
-//	      ui.displayOutstandingFineMessage(borrower.getTotalFines());
+	      ui.displayOutstandingFineMessage(borrower.getTotalFines());
 	    }
 	    if (borrower.hasOverDueLoans())
 	    {
-//	      ui.displayOverDueMessage();
+	      ui.displayOverDueMessage();
 	    }
-//	    ui.displayErrorMessage("Borrowing Restricted");
+	    ui.displayErrorMessage("Borrowing Restricted");
 	    setState(EBorrowState.BORROWING_RESTRICTED);
 	  }
 	}

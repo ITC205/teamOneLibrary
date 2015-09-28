@@ -17,10 +17,10 @@ import library.daos.MemberDAO;
 import library.daos.MemberHelper;
 import library.entities.Loan;
 import library.interfaces.EBorrowState;
+import library.interfaces.IBorrowUI;
 import library.interfaces.daos.IBookDAO;
 import library.interfaces.daos.ILoanDAO;
 import library.interfaces.daos.IMemberDAO;
-import library.interfaces.entities.IBook;
 import library.interfaces.entities.ILoan;
 import library.interfaces.hardware.ICardReader;
 import library.interfaces.hardware.IDisplay;
@@ -35,27 +35,28 @@ public class TestCardSwipedMethod extends TestCase
   IScanner mockScanner;
   IPrinter mockPrinter;
   IDisplay mockDisplay;
-  
+  private IBorrowUI mockBorrowUI = mock(IBorrowUI.class);
+
   IBookDAO bookDAO;
   ILoanDAO loanDAO;
   IMemberDAO memberDAO;
   BorrowUC_CTL testController;
-  
+
   Throwable exception;
-  
-  
-  
+
+
+
   protected void createMocks()
   {
-  mockReader = mock(ICardReader.class);
-  mockScanner = mock(IScanner.class);
-  mockPrinter = mock(IPrinter.class);
-  mockDisplay = mock(IDisplay.class);
-  bookDAO = new BookDAO(new BookHelper());
-  loanDAO = new LoanDAO(new LoanHelper());
-  memberDAO = new MemberDAO(new MemberHelper());
-}
-  
+    mockReader = mock(ICardReader.class);
+    mockScanner = mock(IScanner.class);
+    mockPrinter = mock(IPrinter.class);
+    mockDisplay = mock(IDisplay.class);
+    bookDAO = new BookDAO(new BookHelper());
+    loanDAO = new LoanDAO(new LoanHelper());
+    memberDAO = new MemberDAO(new MemberHelper());
+  }
+
   
   
   protected void addMembers()
@@ -209,8 +210,10 @@ public class TestCardSwipedMethod extends TestCase
     addLoans();
     testController = new BorrowUC_CTL(mockReader, mockScanner, mockPrinter,
         mockDisplay, bookDAO, loanDAO, memberDAO);
+    setMockBorrowUI(mockBorrowUI);
     setState(EBorrowState.INITIALIZED);
     testController.cardSwiped(1);
+    verify(mockBorrowUI).displayMemberDetails(1, "fname1 lastname1", "111111");
     assertEquals(EBorrowState.SCANNING_BOOKS, getState());
   }
   
@@ -224,6 +227,7 @@ public class TestCardSwipedMethod extends TestCase
     addLoans();
     testController = new BorrowUC_CTL(mockReader, mockScanner, mockPrinter,
         mockDisplay, bookDAO, loanDAO, memberDAO);
+    setMockBorrowUI(mockBorrowUI);
     setState(EBorrowState.INITIALIZED);
     testController.cardSwiped(2);
     assertEquals(EBorrowState.SCANNING_BOOKS, getState());
@@ -240,6 +244,7 @@ public class TestCardSwipedMethod extends TestCase
     addLoans();
     testController = new BorrowUC_CTL(mockReader, mockScanner, mockPrinter,
         mockDisplay, bookDAO, loanDAO, memberDAO);
+    setMockBorrowUI(mockBorrowUI);
     setState(EBorrowState.INITIALIZED);
     testController.cardSwiped(1);
     assertEquals(EBorrowState.SCANNING_BOOKS, getState());
@@ -254,6 +259,7 @@ public class TestCardSwipedMethod extends TestCase
     memberDAO.getMemberByID(3).addFine(50.0f);
     testController = new BorrowUC_CTL(mockReader, mockScanner, mockPrinter,
         mockDisplay, bookDAO, loanDAO, memberDAO);
+    setMockBorrowUI(mockBorrowUI);
     setState(EBorrowState.INITIALIZED);
     testController.cardSwiped(3);
     assertEquals(EBorrowState.BORROWING_RESTRICTED, getState());
@@ -280,7 +286,6 @@ public class TestCardSwipedMethod extends TestCase
       exception = ex;
     }
     assertTrue(exception instanceof IllegalArgumentException);
-    
   }
   
   
@@ -347,5 +352,39 @@ public class TestCardSwipedMethod extends TestCase
       e.printStackTrace();
     }
     return controllerState;
+  }
+  
+  
+  
+  private void setMockBorrowUI(IBorrowUI mockBorrowUI) 
+  {
+      Class<?> borrowUC_CTLClass = testController.getClass();
+      Field ui;
+      try 
+      {
+        ui = borrowUC_CTLClass.getDeclaredField("ui");
+        ui.setAccessible(true);
+        ui.set(testController, mockBorrowUI);
+      } 
+      catch (NoSuchFieldException e) 
+      {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      } 
+      catch (SecurityException e)
+      {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      catch (IllegalArgumentException e) 
+      {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      } 
+      catch (IllegalAccessException e) 
+      {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
   }
 }
