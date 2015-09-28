@@ -225,26 +225,72 @@ public void setPendingLoansEmpty()
   //===========================================================================
 
   @Test
-  public void confirmLoan_OneBook_EmptyLibrary_ResultsCorrect()
+  public void confirmLoan_OnePending_NoLoans_PendingBecomesCommitted()
   {
     initializeController();
     setPendingLoansEmpty();
     setState_ConfirmingLoans();
-    ILoan firstLoan = loans.createLoan(jim, catch22);
+    ILoan firstPendingLoan = loans.createLoan(jim, catch22);
     List<ILoan> pendingLoans = new ArrayList<>();
-    pendingLoans.add(firstLoan);
-    assertThat(loans.listLoans()).isEmpty();
-    assertThat(firstLoan.getID()).isEqualTo(0);
+    pendingLoans.add(firstPendingLoan);
     setPrivateLoanList(controller, pendingLoans);
+
+    assertThat(loans.listLoans().isEmpty());
+    assertThat(firstPendingLoan.getID()).isEqualTo(0);
 
     controller.loansConfirmed();
 
     assertThat(loans.listLoans()).hasSize(1);
-    assertThat(loans.getLoanByID(1).getBorrower()).isSameAs(jim);
-    assertThat(loans.getLoanByID(1).getBook()).isSameAs(catch22);
-    assertThat(loans.getLoanByID(1)).isSameAs(firstLoan);
-    assertThat(firstLoan.getID()).isEqualTo(1);
+    ILoan firstCommittedLoan = loans.getLoanByID(1);
+    assertThat(firstPendingLoan).isSameAs(firstCommittedLoan);
+    assertThat(firstPendingLoan.getID()).isEqualTo(1); // not 0
   }
+
+
+
+  @Test
+  public void confirmLoan_OnePending_NoLoans_DetailsCorrect()
+  {
+    initializeController();
+    setPendingLoansEmpty();
+    setState_ConfirmingLoans();
+    Date today = ignoreTime(new Date());
+    Date due = calculateDueDate(today);
+    Date borrowDate;
+    Date dueDate;
+    ILoan firstLoan = loans.createLoan(jim, catch22);
+    List<ILoan> pendingLoans = new ArrayList<>();
+    pendingLoans.add(firstLoan);
+    setPrivateLoanList(controller, pendingLoans);
+    assertThat(loans.listLoans()).isEmpty();
+    assertThat(firstLoan.getID()).isEqualTo(0);
+    assertThat(firstLoan.isCurrent()).isFalse();
+    assertThat(catch22.getState()).isEqualTo(EBookState.AVAILABLE);
+
+    controller.loansConfirmed();
+
+    assertThat(loans.listLoans()).hasSize(1);
+    ILoan firstCommittedLoan = loans.getLoanByID(1);
+
+    assertThat(firstCommittedLoan.getBorrower()).isSameAs(jim);
+    assertThat(firstCommittedLoan.getBook()).isSameAs(catch22);
+    borrowDate = getPrivateBorrowDate((Loan)firstLoan);
+    assertThat(borrowDate).isEqualTo(today);
+    dueDate = getPrivateDueDate((Loan)firstLoan);
+    assertThat(dueDate).isEqualTo(calculateDueDate(today));
+    assertThat(firstLoan.isCurrent()).isTrue();
+    assertThat(catch22.getState()).isEqualTo(EBookState.ON_LOAN);
+
+    assertThat(jim.getLoans())
+        .containsExactly(firstCommittedLoan);
+
+    assertThat(loans.findLoansByBorrower(jim))
+        .containsExactly(firstCommittedLoan);
+
+    assertThat(loans.listLoans())
+        .containsExactly(firstCommittedLoan);
+  }
+
 
 
   @Test
