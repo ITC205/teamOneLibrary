@@ -1,15 +1,17 @@
 package test.integration;
 
-import java.util.List;
 import java.util.ArrayList;
-
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
-import library.interfaces.hardware.ICardReader;
-import library.interfaces.hardware.IScanner;
-import library.interfaces.hardware.IPrinter;
-import library.interfaces.hardware.IDisplay;
+import org.junit.Before;
+import org.junit.Test;
+import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.*;
+
+import static test.helper.ControllerReflection.*;
+import static test.helper.LoanReflection.*;
 
 import library.interfaces.daos.IBookDAO;
 import library.interfaces.daos.IBookHelper;
@@ -17,11 +19,14 @@ import library.interfaces.daos.ILoanDAO;
 import library.interfaces.daos.ILoanHelper;
 import library.interfaces.daos.IMemberDAO;
 import library.interfaces.daos.IMemberHelper;
-
+import library.interfaces.entities.EBookState;
 import library.interfaces.entities.IBook;
 import library.interfaces.entities.IMember;
 import library.interfaces.entities.ILoan;
-import library.interfaces.entities.EBookState;
+import library.interfaces.hardware.ICardReader;
+import library.interfaces.hardware.IDisplay;
+import library.interfaces.hardware.IPrinter;
+import library.interfaces.hardware.IScanner;
 
 import library.daos.BookDAO;
 import library.daos.BookHelper;
@@ -29,20 +34,10 @@ import library.daos.LoanDAO;
 import library.daos.LoanHelper;
 import library.daos.MemberDAO;
 import library.daos.MemberHelper;
-
 import library.entities.Loan;
 
 import library.BorrowUC_CTL;
 import library.interfaces.EBorrowState;
-
-import org.junit.Test;
-
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
-import static test.helper.LoanReflection.*;
-import static test.integration.ControllerReflection.*;
-
 
 /**
  * Test Confirm Loans operation.
@@ -55,10 +50,10 @@ import static test.integration.ControllerReflection.*;
  *
  * Post-conditions:
  *  - Main Menu is displayed
- *  - All pending loans are committed and recorded
- *  - Loan slip of committed loans printed
+ *  - All pending loans_ are committed and recorded
+ *  - Loan slip of committed loans_ printed
  *  - cardReader is disabled
- *  - scanner is disabled
+ *  - scanner_ is disabled
  *  - BorrowBookCTL state == COMPLETED
  */
 public class TestConfirmLoansOperation
@@ -67,63 +62,61 @@ public class TestConfirmLoansOperation
   // Fixtures
   //===========================================================================
 
-  BorrowUC_CTL controller;
-  List<ILoan> pendingLoans;
+  BorrowUC_CTL controller_;
 
-  ICardReader reader = mock(ICardReader.class);
-  IScanner scanner = mock(IScanner.class);
-  IPrinter printer = mock(IPrinter.class);
-  IDisplay display = mock(IDisplay.class);
+  ICardReader reader_ = mock(ICardReader.class);
+  IScanner scanner_ = mock(IScanner.class);
+  IPrinter printer_ = mock(IPrinter.class);
+  IDisplay display_ = mock(IDisplay.class);
 
-  IBookHelper bookHelper = new BookHelper();
-  IBookDAO books = spy(new BookDAO(bookHelper));
+  IBookHelper bookHelper_ = new BookHelper();
+  IBookDAO books_ = spy(new BookDAO(bookHelper_));
 
-  ILoanHelper loanHelper = new LoanHelper();
-  ILoanDAO loans;
+  ILoanHelper loanHelper_ = new LoanHelper();
+  ILoanDAO loans_;
 
-  IMemberHelper memberHelper = new MemberHelper();
-  IMemberDAO members = spy(new MemberDAO(memberHelper));
+  IMemberHelper memberHelper_ = new MemberHelper();
+  IMemberDAO members_ = spy(new MemberDAO(memberHelper_));
 
-  IBook catch22 = spy(books.addBook("Joseph Heller", "CATCH-22", "101.1 [2]"));
-  IBook emma = spy(books.addBook("Jane Austen", "Emma", "102.5"));
-  IBook scoop = spy(books.addBook("Evelyn Waugh", "Scoop", "103.21"));
-  IBook dune = books.addBook("Frank Herbert", "Dune", "104 [21]");
-  IBook janeEyre = books.addBook("Charlotte Brontë", "Jane Eyre", "105.2");
-  IBook animalFarm = books.addBook("George Orwell", "Animal Farm", "106 [1]");
-  IBook ulysses = books.addBook("James Joyce", "Ulysses", "107.345");
-  IBook onTheRoad = books.addBook("Jack Kerouac", "On the Road", "108.1");
-  IBook dracula = books.addBook("Bram Stoker", "Dracula", "109.1 [21]");
-  IBook middlemarch = books.addBook("George Eliot", "Middlemarch", "110");
-  IBook hobbit = books.addBook("J.R.R. Tolkien", "The Hobbit", "111.23");
-  IBook atonement = spy(books.addBook("Ian McEwan", "Atonement", "112.2 [22]"));
-  IBook iClaudius = books.addBook("Robert Graves", "I, Claudius", "113 [2]");
+  IBook catch22 = spy(books_.addBook("Joseph Heller", "CATCH-22", "101.1 [2]"));
+  IBook emma = spy(books_.addBook("Jane Austen", "Emma", "102.5"));
+  IBook scoop = spy(books_.addBook("Evelyn Waugh", "Scoop", "103.21"));
+  IBook dune = books_.addBook("Frank Herbert", "Dune", "104 [21]");
+  IBook janeEyre = books_.addBook("Charlotte Brontë", "Jane Eyre", "105.2");
+  IBook animalFarm = books_.addBook("George Orwell", "Animal Farm", "106 [1]");
+  IBook ulysses = books_.addBook("James Joyce", "Ulysses", "107.345");
+  IBook onTheRoad = books_.addBook("Jack Kerouac", "On the Road", "108.1");
+  IBook dracula = books_.addBook("Bram Stoker", "Dracula", "109.1 [21]");
+  IBook middlemarch = books_.addBook("George Eliot", "Middlemarch", "110");
+  IBook hobbit = books_.addBook("J.R.R. Tolkien", "The Hobbit", "111.23");
+  IBook atonement = spy(books_.addBook("Ian McEwan", "Atonement", "112.2 [22]"));
+  IBook iClaudius = books_.addBook("Robert Graves", "I, Claudius", "113 [2]");
 
-  IMember jim = spy(members.addMember("Jim", "Johnson", "999123", "jim@gmail" +
+  IMember jim = spy(members_.addMember("Jim", "Johnson", "999123", "jim@gmail" +
                                                                       ".com"));
-  IMember sam = members.addMember("Sam", "Malone", "888124", "sam@yahoo.com");
-  IMember jill = members.addMember("Jill", "Hill", "777125", "jill@gmail.com");
-  IMember bob = members.addMember("Bob", "Dylan", "666126", "bob@dylan.com");
-  IMember eric = members.addMember("Eric", "Idle", "555127", "eric@life.com");
+  IMember sam = members_.addMember("Sam", "Malone", "888124", "sam@yahoo.com");
+  IMember jill = members_.addMember("Jill", "Hill", "777125", "jill@gmail.com");
+  IMember bob = members_.addMember("Bob", "Dylan", "666126", "bob@dylan.com");
+  IMember eric = members_.addMember("Eric", "Idle", "555127", "eric@life.com");
 
   public void initializeController()
   {
-    loans = spy(new LoanDAO(loanHelper));
-    controller = new library.BorrowUC_CTL(reader, scanner, printer, display,
-                                          books, loans, members);
-
+    loans_ = spy(new LoanDAO(loanHelper_));
+    controller_ = new library.BorrowUC_CTL(reader_, scanner_, printer_, display_,
+                                           books_, loans_, members_);
+    setPrivateLoanList(controller_, new ArrayList<>());
   }
 
   public void setState_ConfirmingLoans()
   {
-    setPrivateState(controller, EBorrowState.CONFIRMING_LOANS);
+    setPrivateState(controller_, EBorrowState.CONFIRMING_LOANS);
     // other stuff to set up displays etc
   }
 
-public void setPendingLoansEmpty()
-{
-  List<ILoan> noPendingLoans = new ArrayList<>();
-  setPrivateLoanList(controller, noPendingLoans);
-}
+  public void setPendingLoans(List<ILoan> pendingLoans)
+  {
+    setPrivateLoanList(controller_, pendingLoans);
+  }
 
 
   //===========================================================================
@@ -131,62 +124,48 @@ public void setPendingLoansEmpty()
   //===========================================================================
 
   @Test
-  public void initialStateOfLibrary()
+  public void canInitializeControllerWithFixtures()
   {
     initializeController();
-    assertThat(books.listBooks()).hasSize(13);
-    assertThat(members.listMembers()).hasSize(5);
-    assertThat(loans.listLoans()).isEmpty();
+    assertThat(books_.listBooks()).isNotEmpty();
+    assertThat(members_.listMembers()).isNotEmpty();
+
+    assertThat(loans_.listLoans()).isEmpty();
   }
 
-
-  @Test
-  public void canAddLoans()
-  {
-    initializeController();
-    ILoan firstLoan = loans.createLoan(eric, iClaudius);
-    ILoan secondLoan = loans.createLoan(bob, atonement);
-    assertThat(loans.listLoans()).isEmpty();
-    loans.commitLoan(firstLoan);
-    loans.commitLoan(secondLoan);
-
-    assertThat(loans.listLoans()).hasSize(2);
-  }
 
 
   @Test
   public void preConditionsCanBeMet()
   {
+
     initializeController();
-    setPendingLoansEmpty();
+    List<ILoan> pendingLoans = new ArrayList<>();
+    ILoan firstLoan = loans_.createLoan(jim, catch22);
+    pendingLoans.add(firstLoan);
+    setPendingLoans(pendingLoans);
     setState_ConfirmingLoans();
 
-    ILoan firstLoan = loans.createLoan(jim, catch22);
-    List<ILoan> pendingLoans = new ArrayList<>();
-    pendingLoans.add(firstLoan);
-    setPrivateLoanList(controller, pendingLoans);
-
     // assert pre-conditions met
-    assertThat(controller.getClass()).isEqualTo(BorrowUC_CTL.class);
-    assertThat(getPrivateState(controller))
-        .isEqualTo(EBorrowState.CONFIRMING_LOANS);
-    assertThat(getPrivateLoanList(controller)).isNotEmpty();
+    assertThat(controller_.getClass()).isEqualTo(BorrowUC_CTL.class);
+    assertThat(getPrivateState(controller_)).isEqualTo(EBorrowState
+                                            .CONFIRMING_LOANS);
+    assertThat(getPrivateLoanList(controller_)).isNotEmpty();
   }
 
   @Test
   public void loansConfirmed_throws_whenStateNotConfirmingLoans()
   {
     initializeController();
-    setPendingLoansEmpty();
     // no call to setState_ConfirmingLoans()
 
-    ILoan firstLoan = loans.createLoan(jim, catch22);
+    ILoan firstLoan = loans_.createLoan(jim, catch22);
     List<ILoan> pendingLoans = new ArrayList<>();
     pendingLoans.add(firstLoan);
-    setPrivateLoanList(controller, pendingLoans);
+    setPrivateLoanList(controller_, pendingLoans);
 
     try {
-      controller.loansConfirmed();
+      controller_.loansConfirmed();
     }
     catch (Exception exception) {
       assertThat(exception).isInstanceOf(RuntimeException.class);
@@ -200,13 +179,12 @@ public void setPendingLoansEmpty()
   public void loansConfirmed_throws_whenNoPendingLoans()
   {
     initializeController();
-    setPendingLoansEmpty();
     setState_ConfirmingLoans();
-    List<ILoan> pendingLoans = getPrivateLoanList(controller);
+    List<ILoan> pendingLoans = getPrivateLoanList(controller_);
     assertThat(pendingLoans).isEmpty();
 
     try {
-      controller.loansConfirmed();
+      controller_.loansConfirmed();
     }
     catch (Exception exception) {
       assertThat(exception).isInstanceOf(RuntimeException.class);
@@ -224,20 +202,19 @@ public void setPendingLoansEmpty()
   public void confirmLoan_OnePending_NoLoans_PendingBecomesCommitted()
   {
     initializeController();
-    setPendingLoansEmpty();
     setState_ConfirmingLoans();
-    ILoan firstPendingLoan = loans.createLoan(jim, catch22);
+    ILoan firstPendingLoan = loans_.createLoan(jim, catch22);
     List<ILoan> pendingLoans = new ArrayList<>();
     pendingLoans.add(firstPendingLoan);
-    setPrivateLoanList(controller, pendingLoans);
+    setPrivateLoanList(controller_, pendingLoans);
 
-    assertThat(loans.listLoans().isEmpty());
+    assertThat(loans_.listLoans().isEmpty());
     assertThat(firstPendingLoan.getID()).isEqualTo(0);
 
-    controller.loansConfirmed();
+    controller_.loansConfirmed();
 
-    assertThat(loans.listLoans()).hasSize(1);
-    ILoan firstCommittedLoan = loans.getLoanByID(1);
+    assertThat(loans_.listLoans()).hasSize(1);
+    ILoan firstCommittedLoan = loans_.getLoanByID(1);
     assertThat(firstPendingLoan).isSameAs(firstCommittedLoan);
     assertThat(firstPendingLoan.getID()).isEqualTo(1); // not 0
   }
@@ -248,25 +225,24 @@ public void setPendingLoansEmpty()
   public void confirmLoan_OnePending_NoLoans_DetailsCorrect()
   {
     initializeController();
-    setPendingLoansEmpty();
     setState_ConfirmingLoans();
     Date today = ignoreTime(new Date());
     Date due = calculateDueDate(today);
     Date borrowDate;
     Date dueDate;
-    ILoan firstLoan = loans.createLoan(jim, catch22);
+    ILoan firstLoan = loans_.createLoan(jim, catch22);
     List<ILoan> pendingLoans = new ArrayList<>();
     pendingLoans.add(firstLoan);
-    setPrivateLoanList(controller, pendingLoans);
-    assertThat(loans.listLoans()).isEmpty();
+    setPrivateLoanList(controller_, pendingLoans);
+    assertThat(loans_.listLoans()).isEmpty();
     assertThat(firstLoan.getID()).isEqualTo(0);
     assertThat(firstLoan.isCurrent()).isFalse();
     assertThat(catch22.getState()).isEqualTo(EBookState.AVAILABLE);
 
-    controller.loansConfirmed();
+    controller_.loansConfirmed();
 
-    assertThat(loans.listLoans()).hasSize(1);
-    ILoan firstCommittedLoan = loans.getLoanByID(1);
+    assertThat(loans_.listLoans()).hasSize(1);
+    ILoan firstCommittedLoan = loans_.getLoanByID(1);
 
     assertThat(firstCommittedLoan.getBorrower()).isSameAs(jim);
     assertThat(firstCommittedLoan.getBook()).isSameAs(catch22);
@@ -280,10 +256,10 @@ public void setPendingLoansEmpty()
     assertThat(jim.getLoans())
         .containsExactly(firstCommittedLoan);
 
-    assertThat(loans.findLoansByBorrower(jim))
+    assertThat(loans_.findLoansByBorrower(jim))
         .containsExactly(firstCommittedLoan);
 
-    assertThat(loans.listLoans())
+    assertThat(loans_.listLoans())
         .containsExactly(firstCommittedLoan);
   }
 
@@ -293,25 +269,24 @@ public void setPendingLoansEmpty()
   public void confirmLoan_OneBook_EmptyLibrary_CorrectCallsMade()
   {
     initializeController();
-    setPendingLoansEmpty();
     setState_ConfirmingLoans();
-    ILoan firstLoan = spy(loans.createLoan(jim, catch22));
+    ILoan firstLoan = spy(loans_.createLoan(jim, catch22));
     List<ILoan> pendingLoans = new ArrayList<>();
     pendingLoans.add(firstLoan);
-    assertThat(loans.listLoans()).isEmpty();
+    assertThat(loans_.listLoans()).isEmpty();
     assertThat(firstLoan.getID()).isEqualTo(0);
-    setPrivateLoanList(controller, pendingLoans);
+    setPrivateLoanList(controller_, pendingLoans);
 
-    controller.loansConfirmed();
+    controller_.loansConfirmed();
 
-    verify(loans).commitLoan(anyObject());
+    verify(loans_).commitLoan(anyObject());
     verify(firstLoan).commit(anyInt());
     verify(jim).addLoan(firstLoan);
     verify(catch22).borrow(firstLoan);
-    verify(printer).print(anyString());
-    verify(scanner).setEnabled(false);
-    verify(reader).setEnabled(false);
-    verify(display).setDisplay(any(), anyString());
+    verify(printer_).print(anyString());
+    verify(scanner_).setEnabled(false);
+    verify(reader_).setEnabled(false);
+    verify(display_).setDisplay(any(), anyString());
   }
 
 
@@ -319,23 +294,22 @@ public void setPendingLoansEmpty()
   public void confirmLoan_ThreeBooks_EmptyLibrary_ResultsCorrect()
   {
     initializeController();
-    setPendingLoansEmpty();
     setState_ConfirmingLoans();
     IMember borrower = jim;
     List<IBook> bookList = setUpBookList(catch22, emma, atonement);
     List<ILoan> pendingLoans = setUpPendingLoans(borrower, bookList);
     Date today = ignoreTime(new Date());
     Date due = calculateDueDate(today);
-    setPrivateLoanList(controller, pendingLoans);
+    setPrivateLoanList(controller_, pendingLoans);
     Date borrowDate;
     Date dueDate;
 
-    controller.loansConfirmed();
+    controller_.loansConfirmed();
 
-    assertThat(loans.listLoans()).hasSize(3);
+    assertThat(loans_.listLoans()).hasSize(3);
 
     // first loan
-    ILoan firstLoan = loans.getLoanByID(1);
+    ILoan firstLoan = loans_.getLoanByID(1);
     assertThat(firstLoan.getBorrower()).isSameAs(jim);
     assertThat(firstLoan.getBook()).isSameAs(catch22);
     borrowDate = getPrivateBorrowDate((Loan)firstLoan);
@@ -346,7 +320,7 @@ public void setPendingLoansEmpty()
     assertThat(catch22.getState()).isEqualTo(EBookState.ON_LOAN);
 
     // second loan
-    ILoan secondLoan = loans.getLoanByID(2);
+    ILoan secondLoan = loans_.getLoanByID(2);
     assertThat(secondLoan.getBorrower()).isSameAs(jim);
     assertThat(secondLoan.getBook()).isSameAs(emma);
     borrowDate = getPrivateBorrowDate((Loan)secondLoan);
@@ -357,7 +331,7 @@ public void setPendingLoansEmpty()
     assertThat(emma.getState()).isEqualTo(EBookState.ON_LOAN);
 
     //third loan
-    ILoan thirdLoan = loans.getLoanByID(3);
+    ILoan thirdLoan = loans_.getLoanByID(3);
     assertThat(thirdLoan.getBorrower()).isSameAs(jim);
     assertThat(thirdLoan.getBook()).isSameAs(atonement);
     borrowDate = getPrivateBorrowDate((Loan)thirdLoan);
@@ -370,10 +344,10 @@ public void setPendingLoansEmpty()
     assertThat(jim.getLoans())
                   .containsExactly(firstLoan, secondLoan, thirdLoan);
 
-    assertThat(loans.findLoansByBorrower(jim))
+    assertThat(loans_.findLoansByBorrower(jim))
                     .containsExactly(firstLoan, secondLoan, thirdLoan);
 
-    assertThat(loans.listLoans())
+    assertThat(loans_.listLoans())
                     .containsExactly(firstLoan, secondLoan, thirdLoan);
   }
 
@@ -383,7 +357,7 @@ public void setPendingLoansEmpty()
 
 
   //===========================================================================
-  // Loan helper
+  // Loan helpers
   //===========================================================================
 
   private List<ILoan> setUpPendingLoans(IMember borrower,
@@ -391,7 +365,7 @@ public void setPendingLoansEmpty()
   {
     List<ILoan> pendingLoans = new ArrayList<>();
     for (IBook book : bookList) {
-      ILoan loan = loans.createLoan(borrower, book);
+      ILoan loan = loans_.createLoan(borrower, book);
       pendingLoans.add(loan);
     }
     return pendingLoans;
@@ -422,6 +396,8 @@ public void setPendingLoansEmpty()
 
     return calendar.getTime();
   }
+
+
 
   private Date calculateDueDate(Date date)
   {
