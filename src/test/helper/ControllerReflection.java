@@ -1,22 +1,20 @@
-package test.integration;
+package test.helper;
 
 import java.util.List;
 import java.util.Date;
 import java.util.Map;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 
-import library.BorrowUC_CTL;
-import  library.interfaces.EBorrowState;
+import static org.assertj.core.api.Assertions.fail;
 
+import library.interfaces.EBorrowState;
 import library.interfaces.entities.ILoan;
 import library.interfaces.entities.IMember;
 
 import library.entities.Loan;
 
-import static org.assertj.core.api.Assertions.fail;
+import library.BorrowUC_CTL;
 
 /**
  * Provides static helper methods that use reflection to access and set private
@@ -33,10 +31,10 @@ public class ControllerReflection
  * @param controller BorrowUC_CTL The main controller.
  * @return EBorrowState The current state of the controller.
  */
-  public static library.interfaces.EBorrowState getPrivateState(BorrowUC_CTL controller)
+  public static library.interfaces.EBorrowState getPrivateState(library.BorrowUC_CTL controller)
   {
     try {
-      Field state = BorrowUC_CTL.class.getDeclaredField("state");
+      Field state = library.BorrowUC_CTL.class.getDeclaredField("state");
 
       // Enable direct modification of private field
       if (!state.isAccessible()) {
@@ -66,11 +64,11 @@ public class ControllerReflection
    * @param controller BorrowUC_CTL The main controller.
    * @param newState EBorrowState The new state to be set on the controller.
    */
-  public static void setPrivateState(BorrowUC_CTL controller,
+  public static void setPrivateState(library.BorrowUC_CTL controller,
                                      library.interfaces.EBorrowState newState)
   {
     try {
-      Field state = BorrowUC_CTL.class.getDeclaredField("state");
+      Field state = library.BorrowUC_CTL.class.getDeclaredField("state");
 
       // Enable direct modification of private field
       if (!state.isAccessible()) {
@@ -100,10 +98,10 @@ public class ControllerReflection
    * @param controller BorrowUC_CTL The main controller.
    * @return List<ILoan> The list of pending loans.
    */
-  public static List<ILoan> getPrivateLoanList(BorrowUC_CTL controller)
+  public static List<ILoan> getPrivateLoanList(library.BorrowUC_CTL controller)
   {
     try {
-      Field loanList = BorrowUC_CTL.class.getDeclaredField("loanList");
+      Field loanList = library.BorrowUC_CTL.class.getDeclaredField("loanList");
 
       // Enable direct modification of private field
       if (!loanList.isAccessible()) {
@@ -132,10 +130,10 @@ public class ControllerReflection
    * @param controller BorrowUC_CTL The main controller.
    * @param pendingLoans List<ILoan> The list of pending loans to be set.
    */
-  public static void setPrivateLoanList(BorrowUC_CTL controller, List<ILoan> pendingLoans)
+  public static void setPrivateLoanList(library.BorrowUC_CTL controller, List<ILoan> pendingLoans)
   {
     try {
-      Field loanList = BorrowUC_CTL.class.getDeclaredField("loanList");
+      Field loanList = library.BorrowUC_CTL.class.getDeclaredField("loanList");
 
       // Enable direct modification of private field
       if (!loanList.isAccessible()) {
