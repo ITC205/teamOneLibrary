@@ -59,7 +59,7 @@ public class LoanBuilder
   // Primary methods
   //===========================================================================
 
-  /*
+  /**
    * Provides a new TestLoanBuilder instance that can then be customized
    * through the use of the helper methods to set desired attributes of the
    * Loan to be built. Usage example:
@@ -72,7 +72,7 @@ public class LoanBuilder
 
 
 
-  /*
+  /**
    * Generates the Loan to be built. Usage example:
    *   IBook book = newLoan().withBook(book).withBorrower(borrower).build()
    */

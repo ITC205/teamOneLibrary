@@ -263,7 +263,7 @@ public class Loan
   }
 
 
-  /*
+  /**
    * Returns a formatted description of the loan details.
    * @return String The formatted description of the loan details.
    */

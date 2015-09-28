@@ -8,7 +8,8 @@ import library.interfaces.entities.IMember;
 import library.interfaces.entities.ILoan;
 
 /**
- *
+ * Provides static helpers that simply provide an explicitly named interface to
+ * create stubs and mocks using Mockito.
  */
 public class DoubleBuilder
 {
@@ -69,7 +70,7 @@ public class DoubleBuilder
   /**
    * Create stub Book with Mockito. Simply provides an explicitly named method
    * to show that a mock is being used (not a stub or other fakes/doubles) :-)
-   * @return stub Book.
+   * @return mock Book.
    */
   public static IBook mockBook()
   {
@@ -104,8 +105,8 @@ public class DoubleBuilder
 
   /**
    * Create stub Member with Mockito. Simply provides an explicitly named method
-   * to show that stubs are being used (not mocks or other fakes/doubles) :-)
-   * @return stub Member.
+   * to show that a mock is being used (not a stub or other fakes/doubles) :-)
+   * @return mock Member.
    */
   public static IMember mockMember()
   {

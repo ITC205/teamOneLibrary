@@ -26,7 +26,7 @@ public class LoanReflection
   // State getter & setter
   //===========================================================================
 
-  /*
+  /**
    * Uses Reflection API to directly access Loan's private state and return
    * the current state of the Loan.
    * @param loan Loan The loan under test.
@@ -59,10 +59,10 @@ public class LoanReflection
 
 
 
-  /*
+  /**
    * Uses Reflection API to directly set the Loan's private state.
    * @param loan ILoan The loan under test.
-   * @param ELoanState The state to set on the Loan.
+   * @param newState The state to set on the Loan.
    */
   public static void setPrivateState(ILoan loan, ELoanState newState)
   {
@@ -91,7 +91,7 @@ public class LoanReflection
   // Borrow date getter & setter
   //===========================================================================
 
-  /*
+  /**
    * Uses Reflection API to access & return the Loan's private borrow date.
    * @param loan Loan The loan under test.
    * @return Date The borrowing date of the Loan.
@@ -127,7 +127,7 @@ public class LoanReflection
   // Due date getter & setter
   //===========================================================================
 
-  /*
+  /**
    * Uses Reflection API to directly access & return the Loan's private due date.
    * @param loan Loan The loan under test.
    * @return Date The due date of the Loan.
@@ -159,7 +159,7 @@ public class LoanReflection
 
 
 
-  /*
+  /**
    * Uses Reflection API to directly set the Loan's private due date.
    * @param loan Loan The loan under test.
    * @param date Date The date that will be set as the due date of the Loan.
@@ -192,13 +192,13 @@ public class LoanReflection
   // nextID getter & setter
   //===========================================================================
 
-  /*
+  /**
    * Uses Reflection API to directly access & return the LoanDAO's private
    * nextID field.
    * @param loanDao LoanDAO The LoanDAO being used.
    * @return int The next ID to be used for committing loans.
    */
-  public static int getPrivateNextId(library.daos.LoanDAO loanDao)
+  public static int getPrivateNextId(LoanDAO loanDao)
   {
     try {
       Class<?> loanDaoClass = loanDao.getClass();
@@ -225,14 +225,13 @@ public class LoanReflection
 
 
 
-  /*
+  /**
    * Uses Reflection API to directly set the LoanDAO's private
    * nextID_ field.
    * @param loanDao LoanDAO The LoanDAO being used.
    * @param newNextID int The desired next ID.
-   * @return int The next ID to be used for committing loans.
    */
-  public static void setPrivateNextId(library.daos.LoanDAO loanDao, int newNextID)
+  public static void setPrivateNextId(LoanDAO loanDao, int newNextID)
   {
     try {
       Class<?> loanDaoClass = loanDao.getClass();
@@ -260,10 +259,10 @@ public class LoanReflection
   // ID setter
   //===========================================================================
 
-  /*
+  /**
    * Uses Reflection API to directly set the Loan's private id.
    * @param loan ILoan The loan under test.
-   * @param int newId The id to set on the Loan.
+   * @param newId int The id to set on the Loan.
    */
   public static void setPrivateID(ILoan loan, int newId)
   {
@@ -292,12 +291,12 @@ public class LoanReflection
   // loanMap setter
   //===========================================================================
 
-  /*
+  /**
    * Uses Reflection API to directly add Loans to the LoanDAO's private LoanMap.
    * @param loanDao LoanDAO The LoanDAO being used.
-   * @param loan ILoan The Loan to be added.
+   * @param loans ILoan[] The array of Loans to be added.
    */
-  public static void setPrivateLoanMap(library.daos.LoanDAO loanDao, ILoan[] loans)
+  public static void setPrivateLoanMap(LoanDAO loanDao, ILoan[] loans)
   {
     try {
       Class<?> loanDaoClass = loanDao.getClass();
