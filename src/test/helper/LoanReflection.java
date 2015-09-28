@@ -1,41 +1,29 @@
-package test.unit;
+package test.helper;
 
 import java.util.Date;
 import java.util.Map;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
+
+import static org.assertj.core.api.Assertions.fail;
 
 import library.interfaces.entities.ILoan;
 import library.interfaces.entities.ELoanState;
 
-import library.interfaces.daos.ILoanHelper;
-
-
+import library.daos.LoanDAO;
 import library.entities.Loan;
 
-import library.daos.LoanHelper;
-import library.daos.LoanDAO;
-
-import static org.assertj.core.api.Assertions.fail;
 
 /**
  * Provides static helper methods that use reflection to access and set private
  * state of a given Loan, and to instantiate a LoanHelper.
+ *
+ * @author nicholasbaldwin
  */
 public class LoanReflection
 {
   //===========================================================================
-  // Constructors
-  //===========================================================================
-
-  private LoanReflection()
-  {
-  }
-
-  //===========================================================================
-  // Primary methods
+  // State getter & setter
   //===========================================================================
 
   /*
@@ -54,7 +42,6 @@ public class LoanReflection
       if (!state.isAccessible()) {
         state.setAccessible(true);
       }
-
       return (ELoanState)state.get(loan);
     }
 
@@ -68,138 +55,6 @@ public class LoanReflection
       fail("Exception should not occur");
     }
     return null;
-  }
-
-
-
-  /*
-   * Uses Reflection API to access & return the Loan's private borrow date.
-   * @param loan Loan The loan under test.
-   * @return Date The borrowing date of the Loan.
-   */
-  public static Date getPrivateBorrowDate(Loan loan)
-  {
-    try {
-      Class<?> loanClass = loan.getClass();
-      Field borrowDate = loanClass.getDeclaredField("borrowDate_");
-
-      // Enable direct modification of private field
-      if (!borrowDate.isAccessible()) {
-        borrowDate.setAccessible(true);
-      }
-
-      return (Date)borrowDate.get(loan);
-    }
-
-    catch (NoSuchFieldException exception) {
-      fail("NoSuchFieldException should not occur");
-    }
-    catch (IllegalAccessException exception) {
-      fail("IllegalAccessException should not occur");
-    }
-    catch (Exception exception) {
-      fail("Exception should not occur");
-    }
-    return null;
-  }
-
-
-
-  /*
-  * Uses Reflection API to directly access & return the Loan's private due date.
-  * @param loan Loan The loan under test.
-  * @return Date The due date of the Loan.
-  */
-  public static Date getPrivateDueDate(Loan loan)
-  {
-    try {
-      Class<?> loanClass = loan.getClass();
-      Field dueDate = loanClass.getDeclaredField("dueDate_");
-
-      // Enable direct modification of private field
-      if (!dueDate.isAccessible()) {
-        dueDate.setAccessible(true);
-      }
-
-      return (Date)dueDate.get(loan);
-    }
-
-    catch (NoSuchFieldException exception) {
-      fail("NoSuchFieldException should not occur");
-    }
-    catch (IllegalAccessException exception) {
-      fail("IllegalAccessException should not occur");
-    }
-    catch (Exception exception) {
-      fail("Exception should not occur");
-    }
-    return null;
-  }
-
-
-
-  /*
-  * Uses Reflection API to directly access & return the LoanDAO's private
-  * nextID_ field.
-  * @param loanDao LoanDAO The LoanDAO being used.
-  * @return int The next ID to be used for committing loans.
-  */
-  public static int getPrivateNextId(LoanDAO loanDao)
-  {
-    try {
-      Class<?> loanDaoClass = loanDao.getClass();
-      Field nextID = loanDaoClass.getDeclaredField("nextID_");
-
-      // Enable direct modification of private field
-      if (!nextID.isAccessible()) {
-        nextID.setAccessible(true);
-      }
-
-      return (int)nextID.get(loanDao);
-    }
-
-    catch (NoSuchFieldException exception) {
-      fail("NoSuchFieldException should not occur");
-    }
-    catch (IllegalAccessException exception) {
-      fail("IllegalAccessException should not occur");
-    }
-    catch (Exception exception) {
-      fail("Exception should not occur");
-    }
-    return 0;
-  }
-
-
-
-  /*
-  * Uses Reflection API to directly set the Loan's private due date.
-  * @param loan Loan The loan under test.
-  * @param date Date The date that will be set as the due date of the Loan.
-  */
-  public static void setPrivateDueDate(Loan loan, Date date)
-  {
-    try {
-      Class<?> loanClass = loan.getClass();
-      Field dueDate = loanClass.getDeclaredField("dueDate_");
-
-      // Enable direct modification of private field
-      if (!dueDate.isAccessible()) {
-        dueDate.setAccessible(true);
-      }
-
-      dueDate.set(loan, date);
-    }
-
-    catch (NoSuchFieldException exception) {
-      fail("NoSuchFieldException should not occur");
-    }
-    catch (IllegalAccessException exception) {
-      fail("IllegalAccessException should not occur");
-    }
-    catch (Exception exception) {
-      fail("Exception should not occur");
-    }
   }
 
 
@@ -219,7 +74,6 @@ public class LoanReflection
       if (!state.isAccessible()) {
         state.setAccessible(true);
       }
-
       state.set(loan, newState);
     }
     catch (NoSuchFieldException exception) {
@@ -233,26 +87,96 @@ public class LoanReflection
     }
   }
 
-
+  //===========================================================================
+  // Borrow date getter & setter
+  //===========================================================================
 
   /*
- * Uses Reflection API to directly set the Loan's private id.
- * @param loan ILoan The loan under test.
- * @param int newId The id to set on the Loan.
- */
-  public static void setPrivateID(ILoan loan, int newId)
+   * Uses Reflection API to access & return the Loan's private borrow date.
+   * @param loan Loan The loan under test.
+   * @return Date The borrowing date of the Loan.
+   */
+  public static Date getPrivateBorrowDate(Loan loan)
   {
     try {
       Class<?> loanClass = loan.getClass();
-      Field id = loanClass.getDeclaredField("id_");
+      Field borrowDate = loanClass.getDeclaredField("borrowDate_");
 
       // Enable direct modification of private field
-      if (!id.isAccessible()) {
-        id.setAccessible(true);
+      if (!borrowDate.isAccessible()) {
+        borrowDate.setAccessible(true);
       }
-
-      id.set(loan, newId);
+      return (Date)borrowDate.get(loan);
     }
+
+    catch (NoSuchFieldException exception) {
+      fail("NoSuchFieldException should not occur");
+    }
+    catch (IllegalAccessException exception) {
+      fail("IllegalAccessException should not occur");
+    }
+    catch (Exception exception) {
+      fail("Exception should not occur");
+    }
+    return null;
+  }
+
+
+
+  //===========================================================================
+  // Due date getter & setter
+  //===========================================================================
+
+  /*
+   * Uses Reflection API to directly access & return the Loan's private due date.
+   * @param loan Loan The loan under test.
+   * @return Date The due date of the Loan.
+   */
+  public static Date getPrivateDueDate(Loan loan)
+  {
+    try {
+      Class<?> loanClass = loan.getClass();
+      Field dueDate = loanClass.getDeclaredField("dueDate_");
+
+      // Enable direct modification of private field
+      if (!dueDate.isAccessible()) {
+        dueDate.setAccessible(true);
+      }
+      return (Date)dueDate.get(loan);
+    }
+
+    catch (NoSuchFieldException exception) {
+      fail("NoSuchFieldException should not occur");
+    }
+    catch (IllegalAccessException exception) {
+      fail("IllegalAccessException should not occur");
+    }
+    catch (Exception exception) {
+      fail("Exception should not occur");
+    }
+    return null;
+  }
+
+
+
+  /*
+   * Uses Reflection API to directly set the Loan's private due date.
+   * @param loan Loan The loan under test.
+   * @param date Date The date that will be set as the due date of the Loan.
+   */
+  public static void setPrivateDueDate(Loan loan, Date date)
+  {
+    try {
+      Class<?> loanClass = loan.getClass();
+      Field dueDate = loanClass.getDeclaredField("dueDate_");
+
+      // Enable direct modification of private field
+      if (!dueDate.isAccessible()) {
+        dueDate.setAccessible(true);
+      }
+      dueDate.set(loan, date);
+    }
+
     catch (NoSuchFieldException exception) {
       fail("NoSuchFieldException should not occur");
     }
@@ -264,16 +188,17 @@ public class LoanReflection
     }
   }
 
-
+  //===========================================================================
+  // nextID getter & setter
+  //===========================================================================
 
   /*
-  * Uses Reflection API to directly set the LoanDAO's private
-  * nextID_ field.
-  * @param loanDao LoanDAO The LoanDAO being used.
-  * @param newNextID int The desired next ID.
-  * @return int The next ID to be used for committing loans.
-  */
-  protected static void setPrivateNextId(LoanDAO loanDao, int newNextID)
+   * Uses Reflection API to directly access & return the LoanDAO's private
+   * nextID field.
+   * @param loanDao LoanDAO The LoanDAO being used.
+   * @return int The next ID to be used for committing loans.
+   */
+  public static int getPrivateNextId(library.daos.LoanDAO loanDao)
   {
     try {
       Class<?> loanDaoClass = loanDao.getClass();
@@ -283,7 +208,40 @@ public class LoanReflection
       if (!nextID.isAccessible()) {
         nextID.setAccessible(true);
       }
+      return (int)nextID.get(loanDao);
+    }
 
+    catch (NoSuchFieldException exception) {
+      fail("NoSuchFieldException should not occur");
+    }
+    catch (IllegalAccessException exception) {
+      fail("IllegalAccessException should not occur");
+    }
+    catch (Exception exception) {
+      fail("Exception should not occur");
+    }
+    return 0;
+  }
+
+
+
+  /*
+   * Uses Reflection API to directly set the LoanDAO's private
+   * nextID_ field.
+   * @param loanDao LoanDAO The LoanDAO being used.
+   * @param newNextID int The desired next ID.
+   * @return int The next ID to be used for committing loans.
+   */
+  public static void setPrivateNextId(library.daos.LoanDAO loanDao, int newNextID)
+  {
+    try {
+      Class<?> loanDaoClass = loanDao.getClass();
+      Field nextID = loanDaoClass.getDeclaredField("nextID_");
+
+      // Enable direct modification of private field
+      if (!nextID.isAccessible()) {
+        nextID.setAccessible(true);
+      }
       nextID.set(loanDao, newNextID);
     }
 
@@ -298,14 +256,48 @@ public class LoanReflection
     }
   }
 
-
+  //===========================================================================
+  // ID setter
+  //===========================================================================
 
   /*
-  * Uses Reflection API to directly add Loans to the LoanDAO's private LoanMap.
-  * @param loanDao LoanDAO The LoanDAO being used.
-  * @param loan ILoan The Loan to be added.
-  */
-  public static void setPrivateLoanMap(LoanDAO loanDao, ILoan[] loans)
+   * Uses Reflection API to directly set the Loan's private id.
+   * @param loan ILoan The loan under test.
+   * @param int newId The id to set on the Loan.
+   */
+  public static void setPrivateID(ILoan loan, int newId)
+  {
+    try {
+      Class<?> loanClass = loan.getClass();
+      Field id = loanClass.getDeclaredField("id_");
+
+      // Enable direct modification of private field
+      if (!id.isAccessible()) {
+        id.setAccessible(true);
+      }
+      id.set(loan, newId);
+    }
+    catch (NoSuchFieldException exception) {
+      fail("NoSuchFieldException should not occur");
+    }
+    catch (IllegalAccessException exception) {
+      fail("IllegalAccessException should not occur");
+    }
+    catch (Exception exception) {
+      fail("Exception should not occur");
+    }
+  }
+
+  //===========================================================================
+  // loanMap setter
+  //===========================================================================
+
+  /*
+   * Uses Reflection API to directly add Loans to the LoanDAO's private LoanMap.
+   * @param loanDao LoanDAO The LoanDAO being used.
+   * @param loan ILoan The Loan to be added.
+   */
+  public static void setPrivateLoanMap(library.daos.LoanDAO loanDao, ILoan[] loans)
   {
     try {
       Class<?> loanDaoClass = loanDao.getClass();
@@ -332,9 +324,5 @@ public class LoanReflection
       fail("Exception should not occur");
     }
   }
-
-
-
-
 
 }
