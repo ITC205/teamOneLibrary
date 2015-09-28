@@ -350,7 +350,7 @@ public class TestCompleteScansOperation extends TestCase
   
   public void assertControllerStateEquals(EBorrowState state) {
     try {
-      // Using Reflection to directly set private field 'scanCount'
+      // Using Reflection to directly access 'state'
 
       Class<?> borrowUC_CTLClass = testController.getClass();
       Field stateField = borrowUC_CTLClass.getDeclaredField("state");
@@ -360,7 +360,7 @@ public class TestCompleteScansOperation extends TestCase
         stateField.setAccessible(true);
       }
       
-      
+      // Confirm 'state' field matches expected value
       EBorrowState stateValue = (EBorrowState) stateField.get(testController);
       assertEquals(state, stateValue);
 
@@ -485,7 +485,7 @@ public class TestCompleteScansOperation extends TestCase
   
   private void setLoanList(List<ILoan> loanList) {
     try {
-      // Using Reflection to directly set private field 'borrower'
+      // Using Reflection to directly set private field 'loanList'
 
       Class<?> borrowUC_CTLClass = testController.getClass();
       Field loanListField = borrowUC_CTLClass.getDeclaredField("loanList");

@@ -738,7 +738,7 @@ public class TestScanBookOperation extends TestCase
   
   public void assertScanCountEquals(int scanCount) {
     try {
-      // Using Reflection to directly set private field 'scanCount'
+      // Using Reflection to directly access private field 'scanCount'
 
       Class<?> borrowUC_CTLClass = testController.getClass();
       Field scanCountField = borrowUC_CTLClass.getDeclaredField("scanCount");
@@ -747,7 +747,8 @@ public class TestScanBookOperation extends TestCase
       if (!scanCountField.isAccessible()) {
         scanCountField.setAccessible(true);
       }
-
+      
+      // Confirm scanCount field contains the expected value
       int scanCountFieldValue = scanCountField.getInt(testController);
       assertEquals(scanCount, scanCountFieldValue);
 
@@ -779,7 +780,8 @@ public class TestScanBookOperation extends TestCase
       if (!bookListField.isAccessible()) {
         bookListField.setAccessible(true);
       }
-
+      
+      // Confirm bookList contains the given book
       @SuppressWarnings("unchecked")
       List<IBook> bookListValue = (List<IBook>) bookListField.get(testController);
       assertTrue(bookListValue.contains(book));
@@ -806,7 +808,7 @@ public class TestScanBookOperation extends TestCase
   
   public void assertControllerStateEquals(EBorrowState state) {
     try {
-      // Using Reflection to directly set private field 'scanCount'
+      // Using Reflection to access 'state' field
 
       Class<?> borrowUC_CTLClass = testController.getClass();
       Field stateField = borrowUC_CTLClass.getDeclaredField("state");
@@ -816,7 +818,7 @@ public class TestScanBookOperation extends TestCase
         stateField.setAccessible(true);
       }
       
-      
+      // Confirm state matches the expected value
       EBorrowState stateValue = (EBorrowState) stateField.get(testController);
       assertEquals(state, stateValue);
 
@@ -941,7 +943,7 @@ public class TestScanBookOperation extends TestCase
   
   private void setBookList(List<IBook> bookList) {
     try {
-      // Using Reflection to directly set private field 'borrower'
+      // Using Reflection to directly set private field 'bookList'
 
       Class<?> borrowUC_CTLClass = testController.getClass();
       Field bookListField = borrowUC_CTLClass.getDeclaredField("bookList");
@@ -973,7 +975,7 @@ public class TestScanBookOperation extends TestCase
   
   private void setLoanList(List<ILoan> loanList) {
     try {
-      // Using Reflection to directly set private field 'borrower'
+      // Using Reflection to directly set private field 'loanList'
 
       Class<?> borrowUC_CTLClass = testController.getClass();
       Field loanListField = borrowUC_CTLClass.getDeclaredField("loanList");
@@ -1004,7 +1006,7 @@ public class TestScanBookOperation extends TestCase
   
   public List<ILoan> getLoanList() {
     try {
-      // Using Reflection to directly access loanList
+      // Using Reflection to directly access 'loanList'
 
       Class<?> borrowUC_CTLClass = testController.getClass();
       Field loanListField = borrowUC_CTLClass.getDeclaredField("loanList");
