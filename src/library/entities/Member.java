@@ -101,12 +101,8 @@ public class Member
 
   public boolean hasReachedLoanLimit()
   {
-    if (loanList_.size() > IMember.LOAN_LIMIT)
+    if (loanList_.size() >= IMember.LOAN_LIMIT)
     {
-      if (borrowingAllowed())
-      {
-        updateState();
-      }
       return true;
     }
     else
@@ -137,7 +133,7 @@ public class Member
     {
       if (borrowingAllowed())
       {
-        updateState();
+        updateState(EMemberState.BORROWING_DISALLOWED);
       }
       return true;
     }
@@ -154,9 +150,9 @@ public class Member
     if (amount >= 0)
     {
       totalFines_ += amount;
-      if ((totalFines_ >= FINE_LIMIT) && (!borrowingAllowed()))
+      if (hasReachedFineLimit() && (borrowingAllowed()))
           {
-        updateState();
+        updateState(EMemberState.BORROWING_DISALLOWED);
           }
     }
     else
@@ -180,29 +176,26 @@ public class Member
     }
   }
   
-  
-  
+
+
   public void addLoan(ILoan loan) throws IllegalArgumentException
   {
     if (borrowingAllowed())
     {
-      if (hasReachedLoanLimit())
+      if (loan != null)
       {
-        updateState();
+        loanList_.add(loan);
       }
       else
       {
-        if (loan != null)
-            {
-              loanList_.add(loan);
-            }
-        else
-        {
-          throw new IllegalArgumentException("Member: addLoan: Loan cannot be null");
-        }
-      }  
+        throw new IllegalArgumentException("Member: addLoan: Loan cannot be null");
+      }
+      if (hasReachedLoanLimit())
+      {
+        updateState(EMemberState.BORROWING_DISALLOWED);
+      }
     }
-    if (!borrowingAllowed())
+    else
     {
       throw new IllegalArgumentException("Member: addLoan: Member state is BORROWING_DISALLOWED");
     }
@@ -251,16 +244,9 @@ public class Member
   
   
   
-  private void updateState()
+  private void updateState(EMemberState memberState)
   {
-    if (memberState_ == EMemberState.BORROWING_ALLOWED)
-    {
-      memberState_ = EMemberState.BORROWING_DISALLOWED;
-    }
-    else
-    {
-      memberState_ = EMemberState.BORROWING_ALLOWED;
-    }
+    memberState_ = memberState;
   }
   
   
