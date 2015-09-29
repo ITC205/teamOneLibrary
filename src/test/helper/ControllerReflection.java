@@ -9,6 +9,7 @@ import java.lang.reflect.Field;
 import static org.assertj.core.api.Assertions.fail;
 
 import library.interfaces.EBorrowState;
+import library.interfaces.IBorrowUI;
 import library.interfaces.entities.ILoan;
 import library.interfaces.entities.IMember;
 
@@ -276,6 +277,68 @@ public class ControllerReflection
       loanList.set(controller, pendingLoans);
     }
 
+    catch (NoSuchFieldException exception) {
+      fail("NoSuchFieldException should not occur");
+    }
+    catch (IllegalAccessException exception) {
+      fail("IllegalAccessException should not occur");
+    }
+    catch (Exception exception) {
+      fail("Exception should not occur");
+    }
+  }
+
+  //===========================================================================
+  // ui getter & setter
+  //===========================================================================
+
+  /**
+   * Uses Reflection API to directly access BorrowUC_CTL's private ui.
+   * @param controller BorrowUC_CTL The main controller.
+   * @return IBorrowUI The ui.
+   */
+  public IBorrowUI getPrivateUI(BorrowUC_CTL controller)
+  {
+    try {
+      Field ui = BorrowUC_CTL.class.getDeclaredField("ui");
+
+      // Enable direct modification of private field
+      if (!ui.isAccessible()) {
+        ui.setAccessible(true);
+      }
+      return (IBorrowUI)ui.get(controller);
+    }
+    catch (NoSuchFieldException exception) {
+      fail("NoSuchFieldException should not occur");
+    }
+    catch (IllegalAccessException exception) {
+      fail("IllegalAccessException should not occur");
+    }
+    catch (Exception exception) {
+      fail("Exception should not occur");
+    }
+
+    return null;
+  }
+
+
+
+  /**
+   * Uses Reflection API to directly set BorrowUC_CTL's private ui.
+   * @param controller BorrowUC_CTL The main controller.
+   * @param mockUI IBorrowUI The ui to be set.
+   */
+  public void setPrivateUI(BorrowUC_CTL controller, IBorrowUI mockUI)
+  {
+    try {
+      Field ui = BorrowUC_CTL.class.getDeclaredField("ui");
+
+      // Enable direct modification of private field
+      if (!ui.isAccessible()) {
+        ui.setAccessible(true);
+      }
+      ui.set(controller, mockUI);
+    }
     catch (NoSuchFieldException exception) {
       fail("NoSuchFieldException should not occur");
     }
