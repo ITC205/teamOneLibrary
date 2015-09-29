@@ -103,15 +103,31 @@ public class TestRejectLoansOperation
     setPrivateLoanList(controller_, new ArrayList<>());
   }
 
+  public void setBorrower(IMember borrower)
+  {
+    setPrivateBorrower(controller_, borrower);
+  }
+
+  public void setCount()
+  {
+    IMember borrower = getPrivateBorrower(controller_);
+    List<ILoan> loans = borrower.getLoans();
+    int numberLoans = loans.size();
+    setPrivateCount(controller_, numberLoans);
+  }
+
   public void setState_ConfirmingLoans()
   {
     setPrivateState(controller_, EBorrowState.CONFIRMING_LOANS);
-    // other stuff to set up displays etc
   }
 
-  public void setPendingLoans(List<ILoan> pendingLoans)
+  public ILoan addToPendingLoans(IBook book)
   {
-    setPrivateLoanList(controller_, pendingLoans);
+    IMember borrower = getPrivateBorrower(controller_);
+    List<ILoan> pendingLoans = getPrivateLoanList(controller_);
+    ILoan  loan = loans_.createLoan(borrower, book);
+    pendingLoans.add(loan);
+    return loan;
   }
 
   //===========================================================================
@@ -121,32 +137,30 @@ public class TestRejectLoansOperation
   @Test
   public void preConditionsCanBeMet()
   {
-
     initializeController();
-    List<ILoan> pendingLoans = new ArrayList<>();
-    ILoan firstLoan = loans_.createLoan(jim, catch22);
-    pendingLoans.add(firstLoan);
-    setPendingLoans(pendingLoans);
+    setBorrower(jim);
+    setCount();
+    ILoan firstPendingLoan = addToPendingLoans(catch22);
     setState_ConfirmingLoans();
 
     // assert pre-conditions met
     assertThat(controller_.getClass()).isEqualTo(BorrowUC_CTL.class);
-    assertThat(getPrivateState(controller_)).isEqualTo(EBorrowState
-                                                           .CONFIRMING_LOANS);
+    assertThat(getPrivateBorrower(controller_)).isSameAs(jim);
     assertThat(getPrivateLoanList(controller_)).isNotEmpty();
+    assertThat(getPrivateState(controller_)).isEqualTo(EBorrowState
+                                            .CONFIRMING_LOANS);
   }
+
 
 
   @Test
   public void loansRejected_throws_whenStateNotConfirmingLoans()
   {
     initializeController();
+    setBorrower(jim);
+    setCount();
+    ILoan firstPendingLoan = addToPendingLoans(catch22);
     // no call to setState_ConfirmingLoans()
-
-    ILoan firstLoan = loans_.createLoan(jim, catch22);
-    List<ILoan> pendingLoans = new ArrayList<>();
-    pendingLoans.add(firstLoan);
-    setPrivateLoanList(controller_, pendingLoans);
 
     try {
       controller_.loansConfirmed();
@@ -154,18 +168,20 @@ public class TestRejectLoansOperation
     catch (Exception exception) {
       assertThat(exception).isInstanceOf(RuntimeException.class);
       assertThat(exception).hasMessageContaining("cannot call method when " +
-                                                     "state is: ");
+                                                 "state is: ");
     }
   }
+
 
 
   @Test
   public void loansRejected_throws_whenNoPendingLoans()
   {
     initializeController();
+    setBorrower(jim);
+    setCount();
+    // no pending loans added to list
     setState_ConfirmingLoans();
-    List<ILoan> pendingLoans = getPrivateLoanList(controller_);
-    assertThat(pendingLoans).isEmpty();
 
     try {
       controller_.loansConfirmed();
@@ -173,7 +189,7 @@ public class TestRejectLoansOperation
     catch (Exception exception) {
       assertThat(exception).isInstanceOf(RuntimeException.class);
       assertThat(exception).hasMessageContaining("cannot call method when " +
-                                                     "there are no pending loans");
+                                                 "there are no pending loans");
     }
   }
 
@@ -182,15 +198,14 @@ public class TestRejectLoansOperation
   //===========================================================================
 
   @Test
-  public void rejectLoan_OnePending_NoExistingLoans_PendingListCleared()
+  public void rejectLoan_OnePending_NoExistingLoans_PendingListIsEmpty()
   {
     initializeController();
-    List<ILoan> pendingLoans = new ArrayList<>();
-    ILoan firstPendingLoan = loans_.createLoan(jim, catch22);
-    pendingLoans.add(firstPendingLoan);
-    setPendingLoans(pendingLoans);
+    setBorrower(jim);
+    setCount();
+    ILoan firstPendingLoan = addToPendingLoans(catch22);
     setState_ConfirmingLoans();
-
+    List<ILoan> pendingLoans = getPrivateLoanList(controller_);
     assertThat(pendingLoans).containsExactly(firstPendingLoan);
     assertThat(loans_.listLoans().isEmpty());
 
@@ -200,5 +215,133 @@ public class TestRejectLoansOperation
     assertThat(loans_.listLoans().isEmpty());
   }
 
+
+
+  @Test
+  public void rejectLoan_OnePending_NoExistingLoans_BorrowerRetained()
+  {
+    initializeController();
+    setBorrower(jim);
+    setCount();
+    ILoan firstPendingLoan = addToPendingLoans(catch22);
+    setState_ConfirmingLoans();
+
+    controller_.loansRejected();
+
+    IMember borrower = getPrivateBorrower(controller_);
+    assertThat(borrower).isSameAs(jim);
+  }
+
+
+
+  @Test
+  public void rejectLoan_OnePending_NoExistingLoans_ScanCountAccurate()
+  {
+    initializeController();
+    setBorrower(jim);
+    setCount();
+    ILoan firstPendingLoan = addToPendingLoans(catch22);
+    setState_ConfirmingLoans();
+
+    controller_.loansRejected();
+
+    int scanCount = getPrivateCount(controller_);
+    IMember borrower = getPrivateBorrower(controller_);
+    List<ILoan> loans = borrower.getLoans();
+    int numberOfLoans = loans.size();
+    assertThat(scanCount).isEqualTo(numberOfLoans);
+  }
+
+
+
+  @Test
+  public void rejectLoan_OnePending_NoExistingLoans_StateScanningBooks()
+  {
+    initializeController();
+    setBorrower(jim);
+    setCount();
+    ILoan firstPendingLoan = addToPendingLoans(catch22);
+    setState_ConfirmingLoans();
+
+    controller_.loansRejected();
+
+    EBorrowState state = getPrivateState(controller_);
+    assertThat(state).isEqualTo(EBorrowState.SCANNING_BOOKS);
+  }
+
+
+
+  @Test
+  public void rejectLoan_OnePending_readerCalledCorrectly()
+  {
+    initializeController();
+    setBorrower(jim);
+    setCount();
+    ILoan firstPendingLoan = addToPendingLoans(catch22);
+    setState_ConfirmingLoans();
+
+    controller_.loansRejected();
+
+    verify(reader_).setEnabled(false);
+  }
+
+
+
+  @Test
+  public void rejectLoan_OnePending_scannerCalledCorrectly()
+  {
+    initializeController();
+    setBorrower(jim);
+    setCount();
+    ILoan firstPendingLoan = addToPendingLoans(catch22);
+    setState_ConfirmingLoans();
+
+    controller_.loansRejected();
+
+    verify(scanner_).setEnabled(true);
+  }
+
+
+
+  @Test
+  public void rejectLoan_OnePending_setDisplayBorrowingBooksCalled()
+  {
+    initializeController();
+    setBorrower(jim);
+    setCount();
+    ILoan firstPendingLoan = addToPendingLoans(catch22);
+    setState_ConfirmingLoans();
+
+    controller_.loansRejected();
+
+    verify(display_).setDisplay(anyObject(), anyString());
+  }
+
+
+
+  // TODO
+  @Test
+  public void rejectLoan_OnePending_displayBorrowerDetailsCalled()
+  {
+
+  }
+
+
+
+  // TODO
+  @Test
+  public void rejectLoan_OnePending_displayLoanDetailsCalled()
+  {
+
+  }
+
+
+
+  // TODO
+  @Test
+  public void rejectLoan_OnePending_cancelButtonCalled()
+  {
+
+  }
 
 }
