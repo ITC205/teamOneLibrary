@@ -320,19 +320,19 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	public void loansRejected() {
 
     if(state != EBorrowState.CONFIRMING_LOANS) {
-      throw new RuntimeException("BorrowUC_CTL: loansConfirmed: cannot call " +
+      throw new RuntimeException("BorrowUC_CTL: loansRejected: cannot call " +
                                  "method when state is: " + state);
     }
 
     if(loanList.isEmpty()) {
-      throw new RuntimeException("BorrowUC_CTL: loansConfirmed: cannot call " +
+      throw new RuntimeException("BorrowUC_CTL: loansRejected: cannot call " +
                                  "method when there are no pending loans");
     }
 
     // TODO: check this stuff!
-    display.setDisplay((JPanel)ui, "Borrow UI");
     ui.setState(EBorrowState.SCANNING_BOOKS);
     setState(EBorrowState.SCANNING_BOOKS);
+    display.setDisplay((JPanel)ui, "Borrow UI");
 
     // TODO: check this displays member details properly
     int id = borrower.getId();
