@@ -91,6 +91,7 @@ public class BorrowUC_CTL implements ICardReaderListener,
 		previous = display.getDisplay();
 		display.setDisplay((JPanel) ui, "Borrow UI");
 		setState(EBorrowState.INITIALIZED);
+		ui.setState(EBorrowState.INITIALIZED);
 	}
 	
 	
@@ -112,20 +113,20 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	  }
 	  if (memberDAO.listMembers().size() < 1)
 	  {
-	    
+
 	  }
-	  
+
 	  // Check whether borrowerId exists in the list of members
-    if (memberDAO.getMemberByID(borrowerId) == null)
-    {
-      throw new RuntimeException("BorrowUC_CTL: cardSwiped: member does not exist");
-    }
-	   String loanDetails = "";
-	  IMember borrower = memberDAO.getMemberByID(borrowerId);
-	  
+	  if (memberDAO.getMemberByID(borrowerId) == null)
+	  {
+	    throw new RuntimeException("BorrowUC_CTL: cardSwiped: member does not exist");
+	  }
+	  String loanDetails = "";
+	  borrower = memberDAO.getMemberByID(borrowerId);
+
 	  // Retrieve the list of current loans for the current borrower
 	  loanList = borrower.getLoans();
-	  
+
 	  // Initialize scanCount to the number of loans already existing
 	  scanCount = loanList.size();
 
@@ -135,7 +136,7 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	    reader.setEnabled(false);
 	    // Allow scanning of books
 	    scanner.setEnabled(true);
-	    
+
 	    ui.displayMemberDetails(borrowerId, 
 	                            borrower.getFirstName() + " " + borrower.getLastName(), 
                               borrower.getContactPhone());
@@ -153,6 +154,7 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	      ui.displayOutstandingFineMessage(borrower.getTotalFines());
 	    }
 	    setState(EBorrowState.SCANNING_BOOKS);
+	    ui.setState(EBorrowState.SCANNING_BOOKS);
 	  }
 	  else
 	  {
@@ -185,6 +187,7 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	    }
 	    ui.displayErrorMessage("Borrowing Restricted");
 	    setState(EBorrowState.BORROWING_RESTRICTED);
+	    ui.setState(EBorrowState.BORROWING_RESTRICTED);
 	  }
 	}
 
