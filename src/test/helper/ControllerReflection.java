@@ -350,34 +350,5 @@ public class ControllerReflection
     }
   }
 
-
-
-
-
-  public static library.interfaces.hardware.IDisplay getPrivateDisplay(BorrowUC_CTL controller)
-  {
-    try {
-      Field display = BorrowUC_CTL.class.getDeclaredField("display");
-
-      // Enable direct modification of private field
-      if (!display.isAccessible()) {
-        display.setAccessible(true);
-      }
-      return (library.interfaces.hardware.IDisplay)display.get(controller);
-    }
-    catch (NoSuchFieldException exception) {
-      fail("NoSuchFieldException should not occur");
-    }
-    catch (IllegalAccessException exception) {
-      fail("IllegalAccessException should not occur");
-    }
-    catch (Exception exception) {
-      System.out.println(exception.getMessage());
-      fail("Exception should not occur");
-    }
-
-    return null;
-  }
-
 }
 
