@@ -56,6 +56,7 @@ public class TestInitialise extends TestCase
     createMocks();
     testController = new BorrowUC_CTL(mockReader, mockScanner, mockPrinter,
         mockDisplay, bookDAO, loanDAO, memberDAO);
+    setState(EBorrowState.CANCELLED);
     try
     {
       testController.initialise();
@@ -67,6 +68,18 @@ public class TestInitialise extends TestCase
     assertTrue(exception instanceof RuntimeException);
   }
 
+  
+  
+  public void testStateIsCreated()
+  {
+    createMocks();
+    testController = new BorrowUC_CTL(mockReader, mockScanner, mockPrinter,
+        mockDisplay, bookDAO, loanDAO, memberDAO);
+    testController.initialise();
+    verify(mockReader).setEnabled(true);
+    verify(mockScanner).setEnabled(false);
+    assertEquals(EBorrowState.INITIALIZED, getState());
+  }
 
 
 
