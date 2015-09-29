@@ -1,25 +1,25 @@
 package library.daos;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ArrayList;
-
-import library.interfaces.entities.IBook;
-import library.interfaces.entities.IMember;
-import library.interfaces.entities.ILoan;
+import java.util.Map;
 
 import library.interfaces.daos.ILoanDAO;
 import library.interfaces.daos.ILoanHelper;
-
+import library.interfaces.entities.IBook;
+import library.interfaces.entities.ILoan;
+import library.interfaces.entities.IMember;
 
 /**
  * Manages all Loans within the system, from creation of pending loans to
  * committing loans to 'persistence' and provides methods for finding
  * individual loans, identifying overdue loans and updating state of overdue
  * loans.
+ *
+ * @author nicholasbaldwin
  */
 public class LoanDAO
   implements ILoanDAO

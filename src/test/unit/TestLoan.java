@@ -1,8 +1,8 @@
 package test.unit;
 
 import java.text.ParseException;
-import java.util.Date;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.junit.Test;
 import static org.mockito.Mockito.*;

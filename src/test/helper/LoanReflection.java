@@ -7,8 +7,8 @@ import java.lang.reflect.Field;
 
 import static org.assertj.core.api.Assertions.fail;
 
-import library.interfaces.entities.ILoan;
 import library.interfaces.entities.ELoanState;
+import library.interfaces.entities.ILoan;
 
 import library.daos.LoanDAO;
 import library.entities.Loan;

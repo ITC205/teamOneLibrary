@@ -11,6 +11,7 @@ import static org.mockito.Mockito.*;
 import static org.assertj.core.api.Assertions.*;
 
 import static test.helper.ControllerReflection.*;
+import static test.helper.DateBuilder.*;
 import static test.helper.LoanReflection.*;
 
 import library.interfaces.EBorrowState;
@@ -56,7 +57,7 @@ import library.entities.Loan;
  *  - scanner_ is disabled
  *  - BorrowBookCTL state == COMPLETED
  *
- *  @author nicholasbaldwin
+ * @author nicholasbaldwin
  */
 public class TestConfirmLoansOperation
 {
@@ -140,14 +141,6 @@ public class TestConfirmLoansOperation
     return loan;
   }
 
-
-  // TODO: remove
-  public void setPendingLoans(List<ILoan> pendingLoans)
-  {
-    setPrivateLoanList(controller_, pendingLoans);
-  }
-
-
   //===========================================================================
   // Test setup of library
   //===========================================================================
@@ -174,11 +167,9 @@ public class TestConfirmLoansOperation
     setState_ConfirmingLoans();
 
     // assert pre-conditions met
-    assertThat(controller_.getClass()).isEqualTo(BorrowUC_CTL.class);
     assertThat(getPrivateBorrower(controller_)).isSameAs(jim);
     assertThat(getPrivateLoanList(controller_)).isNotEmpty();
-    assertThat(getPrivateState(controller_)).isEqualTo(library.interfaces
-                                                           .EBorrowState
+    assertThat(getPrivateState(controller_)).isEqualTo(EBorrowState
                                             .CONFIRMING_LOANS);
   }
 
@@ -283,14 +274,12 @@ public class TestConfirmLoansOperation
     assertThat(firstCommittedLoan.isCurrent()).isTrue();
     assertThat(catch22.getState()).isEqualTo(EBookState.ON_LOAN);
 
-    assertThat(jim.getLoans())
-        .containsExactly(firstCommittedLoan);
+    assertThat(jim.getLoans()).containsExactly(firstCommittedLoan);
 
     assertThat(loans_.findLoansByBorrower(jim))
-        .containsExactly(firstCommittedLoan);
+                     .containsExactly(firstCommittedLoan);
 
-    assertThat(loans_.listLoans())
-        .containsExactly(firstCommittedLoan);
+    assertThat(loans_.listLoans()).containsExactly(firstCommittedLoan);
   }
 
 
@@ -375,16 +364,11 @@ public class TestConfirmLoansOperation
                   .containsExactly(firstLoan, secondLoan, thirdLoan);
 
     assertThat(loans_.findLoansByBorrower(jim))
-                    .containsExactly(firstLoan, secondLoan, thirdLoan);
+                     .containsExactly(firstLoan, secondLoan, thirdLoan);
 
     assertThat(loans_.listLoans())
-                    .containsExactly(firstLoan, secondLoan, thirdLoan);
+                     .containsExactly(firstLoan, secondLoan, thirdLoan);
   }
-
-  //===========================================================================
-  // ?
-  //===========================================================================
-
 
   //===========================================================================
   // Loan helpers
@@ -410,31 +394,6 @@ public class TestConfirmLoansOperation
       bookList.add(book);
     }
     return bookList;
-  }
-
-
-
-  private Date ignoreTime(Date date)
-  {
-    Calendar calendar = Calendar.getInstance();
-
-    calendar.setTime(date);
-    calendar.set(java.util.Calendar.HOUR_OF_DAY, 0);
-    calendar.set(java.util.Calendar.MINUTE, 0);
-    calendar.set(java.util.Calendar.SECOND, 0);
-    calendar.set(java.util.Calendar.MILLISECOND, 0);
-
-    return calendar.getTime();
-  }
-
-
-
-  private Date calculateDueDate(Date date)
-  {
-    Calendar calendar = Calendar.getInstance();
-    calendar.setTime(date);
-    calendar.add(Calendar.DAY_OF_MONTH, ILoan.LOAN_PERIOD);
-    return calendar.getTime();
   }
 
 }

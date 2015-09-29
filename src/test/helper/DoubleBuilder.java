@@ -4,12 +4,14 @@ import static org.mockito.Mockito.mock;
 
 import library.interfaces.daos.ILoanHelper;
 import library.interfaces.entities.IBook;
-import library.interfaces.entities.IMember;
 import library.interfaces.entities.ILoan;
+import library.interfaces.entities.IMember;
 
 /**
  * Provides static helpers that simply provide an explicitly named interface to
  * create stubs and mocks using Mockito.
+ *
+ * @author nicholasbaldwin
  */
 public class DoubleBuilder
 {

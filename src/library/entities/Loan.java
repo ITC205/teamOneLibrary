@@ -1,17 +1,19 @@
 package library.entities;
 
-import java.util.Date;
-import java.util.Calendar;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
-import library.interfaces.entities.IBook;
-import library.interfaces.entities.IMember;
-import library.interfaces.entities.ILoan;
 import library.interfaces.entities.ELoanState;
+import library.interfaces.entities.IBook;
+import library.interfaces.entities.ILoan;
+import library.interfaces.entities.IMember;
 
 /**
  * Loan instance is used to associate a borrower (Member) with the Book being
  * borrowed, set the dates of the loan and manage the state of the loan itself.
+ *
+ * @author nicholasbaldwin
  */
 public class Loan
   implements ILoan

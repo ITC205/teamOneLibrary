@@ -6,13 +6,13 @@ import static org.mockito.Mockito.mock;
 import static org.assertj.core.api.Assertions.fail;
 
 import static test.helper.DateBuilder.*;
-import static test.helper.LoanReflection.*;
 import static test.helper.DoubleBuilder.*;
+import static test.helper.LoanReflection.*;
 
-import library.interfaces.entities.IBook;
-import library.interfaces.entities.IMember;
-import library.interfaces.entities.ILoan;
 import library.interfaces.entities.ELoanState;
+import library.interfaces.entities.IBook;
+import library.interfaces.entities.ILoan;
+import library.interfaces.entities.IMember;
 
 import library.entities.Loan;
 

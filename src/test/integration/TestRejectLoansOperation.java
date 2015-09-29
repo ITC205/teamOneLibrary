@@ -57,7 +57,7 @@ import library.daos.MemberHelper;
  *  - scanner is enabled Borrow
  *  - BookCTL state == SCANNING_BOOKS
  *
- *  @author nicholasbaldwin
+ * @author nicholasbaldwin
  */
 public class TestRejectLoansOperation
 {

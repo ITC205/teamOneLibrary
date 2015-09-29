@@ -13,13 +13,14 @@ import library.interfaces.IBorrowUI;
 import library.interfaces.entities.ILoan;
 import library.interfaces.entities.IMember;
 
-import library.entities.Loan;
-
 import library.BorrowUC_CTL;
+import library.entities.Loan;
 
 /**
  * Provides static helper methods that use reflection to access and set private
  * state and methods in BorrowUC_CTL class.
+ *
+ * @author nicholasbaldwin
  */
 public class ControllerReflection
 {
@@ -90,7 +91,6 @@ public class ControllerReflection
     }
   }
 
-
   //===========================================================================
   // borrower getter & setter
   //===========================================================================
@@ -155,8 +155,6 @@ public class ControllerReflection
       fail("Exception should not occur");
     }
   }
-
-
 
   //===========================================================================
   // count getter & setter
