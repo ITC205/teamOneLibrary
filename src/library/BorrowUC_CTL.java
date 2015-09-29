@@ -133,6 +133,8 @@ public class BorrowUC_CTL implements ICardReaderListener,
 
 	  if (borrower.getState() == EMemberState.BORROWING_ALLOWED)
 	  {
+	    setState(EBorrowState.SCANNING_BOOKS);
+	    ui.setState(EBorrowState.SCANNING_BOOKS);
 	    // Prevent swiping of another member card
 	    reader.setEnabled(false);
 	    // Allow scanning of books
@@ -154,11 +156,11 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	    {
 	      ui.displayOutstandingFineMessage(borrower.getTotalFines());
 	    }
-	    setState(EBorrowState.SCANNING_BOOKS);
-	    ui.setState(EBorrowState.SCANNING_BOOKS);
 	  }
 	  else
 	  {
+	    setState(EBorrowState.BORROWING_RESTRICTED);
+	    ui.setState(EBorrowState.BORROWING_RESTRICTED);
 	    // Prevent scanning of member card
 	    reader.setEnabled(false);
 	    // Prevent scanning of books
@@ -187,8 +189,6 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	      ui.displayOverDueMessage();
 	    }
 	    ui.displayErrorMessage("Borrowing Restricted");
-	    setState(EBorrowState.BORROWING_RESTRICTED);
-	    ui.setState(EBorrowState.BORROWING_RESTRICTED);
 	  }
 	}
 
