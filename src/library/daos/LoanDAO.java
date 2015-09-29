@@ -14,7 +14,6 @@ import library.interfaces.entities.ILoan;
 import library.interfaces.daos.ILoanDAO;
 import library.interfaces.daos.ILoanHelper;
 
-import library.entities.Loan;
 
 /**
  * Manages all Loans within the system, from creation of pending loans to
@@ -58,7 +57,7 @@ public class LoanDAO
   // Primary methods
   //===========================================================================
 
-  /*
+  /**
    * Uses LoanHelper to create a new Loan with default id of zero, sets
    * borrow date on current system time and sets due date using the standard
    * loan duration (from borrow date).
@@ -81,7 +80,7 @@ public class LoanDAO
 
 
 
-  /*
+  /**
    * Assigns the Loan a unique id and stores the Loan.
    * @param loan ILoan The Loan to be committed.
    */
@@ -95,13 +94,13 @@ public class LoanDAO
 
 
 
-  /*
- * Returns the loan in the committed loan collection identified by id, or
- * null if loan not found.
- * @param id int The id of the Loan to return.
- * @return ILoan The loan in the committed loan collection with the given id,
- * or null if a loan with that id does not exist.
- */
+  /**
+   * Returns the loan in the committed loan collection identified by id, or
+   * null if loan not found.
+   * @param id int The id of the Loan to return.
+   * @return ILoan The loan in the committed loan collection with the given id,
+   * or null if a loan with that id does not exist.
+   */
   @Override
   public ILoan getLoanByID(int id)
   {
@@ -115,7 +114,7 @@ public class LoanDAO
 
 
 
-  /*
+  /**
    * Returns a list of all loans in the committed loan collection.
    * @return List<ILoan> The list of all Loans in the committed loan collection.
    */
@@ -127,7 +126,7 @@ public class LoanDAO
 
 
 
-  /*
+  /**
    * Returns a list of all loans in the committed loan collection associated
    * with the given borrower.
    * List<ILoan>
@@ -147,7 +146,7 @@ public class LoanDAO
 
 
 
-  /*
+  /**
    * Returns a list of all loans in the committed loan collection associated
    * with books with the given title.
    * @param title String The title of the book(s).
@@ -168,7 +167,7 @@ public class LoanDAO
 
 
 
-  /*
+  /**
    * Iterates through the committed loan collection updating the overdue
    * status of current loans according to date.
    * @param date Date The current date, used to check if each current loan is
@@ -186,7 +185,7 @@ public class LoanDAO
 
 
 
-  /*
+  /**
    * Returns a list of all loans in the committed loan collection which are
    * currently overdue (according to state).
    * @return List<ILoan> All loans in the committed loan collection which are
@@ -210,7 +209,7 @@ public class LoanDAO
 
   private Date ignoreTime(Date date)
   {
-    java.util.Calendar calendar = java.util.Calendar.getInstance();
+    java.util.Calendar calendar = Calendar.getInstance();
 
     calendar.setTime(date);
     calendar.set(java.util.Calendar.HOUR_OF_DAY, 0);
@@ -226,7 +225,7 @@ public class LoanDAO
   private Date calculateDueDate(Date borrowDate)
   {
     calendar_.setTime(borrowDate);
-    calendar_.add(java.util.Calendar.DATE, ILoan.LOAN_PERIOD);
+    calendar_.add(Calendar.DATE, ILoan.LOAN_PERIOD);
     return calendar_.getTime();
   }
 

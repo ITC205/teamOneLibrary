@@ -25,7 +25,7 @@ public class LoanHelper
   // Constructors
   //===========================================================================
 
-  /*
+  /**
    * Creates new LoanHelper.
    */
   public LoanHelper()
@@ -36,7 +36,7 @@ public class LoanHelper
   // Primary methods
   //===========================================================================
 
-  /*
+  /**
    * Creates a new Loan instance, with a default ID.
    * @param book IBook The Book associated with Loan.
    * @param borrower IMember The Member associated with Loan.

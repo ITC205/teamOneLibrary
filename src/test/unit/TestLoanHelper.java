@@ -2,25 +2,26 @@ package test.unit;
 
 import java.util.Date;
 
-import library.interfaces.entities.IBook;
-import library.interfaces.entities.IMember;
-import library.interfaces.entities.ILoan;
-import library.interfaces.entities.ELoanState;
+import org.junit.Test;
+import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.*;
 
-import library.entities.Loan;
+import static test.helper.DateBuilder.*;
+import static test.helper.DoubleBuilder.*;
+import static test.helper.LoanReflection.*;
+
+import library.interfaces.entities.ELoanState;
+import library.interfaces.entities.IBook;
+import library.interfaces.entities.ILoan;
+import library.interfaces.entities.IMember;
 
 import library.daos.LoanHelper;
-
-import org.junit.Test;
-
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
-import static test.unit.LoanBuilder.*;
-import static test.unit.LoanReflection.*;
+import library.entities.Loan;
 
 /**
  * Unit tests for Loan Helper.
+ *
+ * @author nicholasbaldwin
  */
 public class TestLoanHelper
 {
@@ -29,34 +30,34 @@ public class TestLoanHelper
   // & LoanReflection (to create LoanHelper and check private Loan properties)
   //===========================================================================
 
-  @Test
+  @org.junit.Test
   public void makeLoan()
   {
-    LoanHelper helper = new LoanHelper();
+    library.daos.LoanHelper helper = new library.daos.LoanHelper();
 
     IBook book = stubBook();
     IMember borrower = stubMember();
     Date borrowDate = dateBuilder(20, 11, 2015);
     Date dueDate = dateBuilder(31, 11, 2015);
 
-    ILoan loan = helper.makeLoan(book, borrower, borrowDate, dueDate);
+    library.interfaces.entities.ILoan loan = helper.makeLoan(book, borrower, borrowDate, dueDate);
 
-    assertThat(loan).isInstanceOf(ILoan.class);
+    assertThat(loan).isInstanceOf(library.interfaces.entities.ILoan.class);
   }
 
 
 
-  @Test
+  @org.junit.Test
   public void makeLoanSetsExpectedProperties()
   {
-    LoanHelper helper = new LoanHelper();
+    library.daos.LoanHelper helper = new library.daos.LoanHelper();
 
     IBook book = stubBook();
     IMember borrower = stubMember();
     Date borrowDate = dateBuilder(20, 11, 2015);
     Date dueDate = dateBuilder(31, 11, 2015);
 
-    ILoan loan = helper.makeLoan(book, borrower, borrowDate, dueDate);
+    library.interfaces.entities.ILoan loan = helper.makeLoan(book, borrower, borrowDate, dueDate);
     Date loanBorrowDate = getPrivateBorrowDate((Loan)loan);
     Date loanDueDate = getPrivateDueDate((Loan)loan);
 
@@ -68,10 +69,10 @@ public class TestLoanHelper
 
 
 
-  @Test
+  @org.junit.Test
   public void makeLoanWithNullBorrowerThrows()
   {
-    LoanHelper helper = new LoanHelper();
+    library.daos.LoanHelper helper = new library.daos.LoanHelper();
 
     IBook book = stubBook();
     IMember borrower = null;
@@ -80,7 +81,7 @@ public class TestLoanHelper
 
     // When create a loan
     try {
-      ILoan loan = helper.makeLoan(book, borrower, borrowDate, dueDate);
+      library.interfaces.entities.ILoan loan = helper.makeLoan(book, borrower, borrowDate, dueDate);
     }
 
     // Then exception should be thrown
@@ -91,10 +92,10 @@ public class TestLoanHelper
 
 
 
-  @Test
+  @org.junit.Test
   public void makeLoanWithDueDateBeforeBorrowDateThrows()
   {
-    LoanHelper helper = new LoanHelper();
+    library.daos.LoanHelper helper = new library.daos.LoanHelper();
 
     IBook book = stubBook();
     IMember borrower = stubMember();
@@ -102,7 +103,7 @@ public class TestLoanHelper
     Date dueDate = dateBuilder(19, 11, 2015);
 
     try {
-      ILoan loan = helper.makeLoan(book, borrower, borrowDate, dueDate);
+      library.interfaces.entities.ILoan loan = helper.makeLoan(book, borrower, borrowDate, dueDate);
     }
 
     catch (Exception exception) {
@@ -112,17 +113,17 @@ public class TestLoanHelper
 
 
 
-  @Test
+  @org.junit.Test
   public void makeLoanSetsStatePending()
   {
-    LoanHelper helper = new LoanHelper();
+    library.daos.LoanHelper helper = new library.daos.LoanHelper();
 
     IBook book = stubBook();
     IMember borrower = stubMember();
     Date borrowDate = dateBuilder(20, 11, 2015);
     Date dueDate = dateBuilder(31, 11, 2015);
 
-    ILoan loan = helper.makeLoan(book, borrower, borrowDate, dueDate);
+    library.interfaces.entities.ILoan loan = helper.makeLoan(book, borrower, borrowDate, dueDate);
     ELoanState currentState = getPrivateState((Loan)loan);
 
     assertThat(currentState).isEqualTo(ELoanState.PENDING);
@@ -130,36 +131,36 @@ public class TestLoanHelper
 
 
 
-  @Test
+  @org.junit.Test
   public void makeLoanSetsIdZero()
   {
-    LoanHelper helper = new LoanHelper();
+    library.daos.LoanHelper helper = new library.daos.LoanHelper();
 
     IBook book = stubBook();
     IMember borrower = stubMember();
     Date borrowDate = dateBuilder(20, 11, 2015);
     Date dueDate = dateBuilder(31, 11, 2015);
 
-    ILoan loan = helper.makeLoan(book, borrower, borrowDate, dueDate);
+    library.interfaces.entities.ILoan loan = helper.makeLoan(book, borrower, borrowDate, dueDate);
 
     assertThat(loan.getID()).isEqualTo(0);
   }
 
 
 
-  @Test
+  @org.junit.Test
   public void makeLoanFactoryCreatesUniqueLoansWhenPropertiesSame()
   {
-    LoanHelper helper = new LoanHelper();
+    library.daos.LoanHelper helper = new library.daos.LoanHelper();
 
     IBook book = stubBook();
     IMember borrower = stubMember();
     Date borrowDate = dateBuilder(20, 11, 2015);
     Date dueDate = dateBuilder(31, 11, 2015);
 
-    ILoan firstLoan = helper.makeLoan(book, borrower, borrowDate, dueDate);
-    ILoan secondLoan = helper.makeLoan(book, borrower, borrowDate, dueDate);
-    ILoan thirdLoan = helper.makeLoan(book, borrower, borrowDate, dueDate);
+    library.interfaces.entities.ILoan firstLoan = helper.makeLoan(book, borrower, borrowDate, dueDate);
+    library.interfaces.entities.ILoan secondLoan = helper.makeLoan(book, borrower, borrowDate, dueDate);
+    library.interfaces.entities.ILoan thirdLoan = helper.makeLoan(book, borrower, borrowDate, dueDate);
 
     // Then loans are all unique instances (even if properties are the same)
     assertThat(firstLoan).isNotSameAs(secondLoan);
@@ -168,10 +169,10 @@ public class TestLoanHelper
 
 
 
-  @Test
+  @org.junit.Test
   public void makeLoanFactoryCanCreateLoansWithDifferentProperties()
   {
-    LoanHelper helper = new LoanHelper();
+    library.daos.LoanHelper helper = new library.daos.LoanHelper();
 
     IBook firstBook = stubBook();
     when(firstBook.getAuthor()).thenReturn("Charles Dickens");
