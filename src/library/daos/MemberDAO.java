@@ -86,12 +86,12 @@ public class MemberDAO
   @Override
   public IMember getMemberByID(int id) 
   {
-    IMember member = memberMap_.get(id);
-    if (memberMap_.get(id) != null)
+    try
     {
+      IMember member = memberMap_.get(id);
       return member;
     }
-    else
+    catch (NullPointerException ex)
     {
       return null;
     }

@@ -195,7 +195,6 @@ public class TestMember extends TestCase
   // when the loan limit is reached
   public void testHasReachedLoanLimit()
   {
-    validMember.addLoan(mockLoan);
     assertFalse(validMember.hasReachedLoanLimit());
     for (int n = 1; n <= 5; n++)
     {
