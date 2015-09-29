@@ -89,12 +89,145 @@ public class ControllerReflection
     }
   }
 
+
+  //===========================================================================
+  // borrower getter & setter
+  //===========================================================================
+
+  /**
+   * Uses Reflection API to directly access BorrowUC_CTL's private borrower.
+   * @param controller BorrowUC_CTL The main controller.
+   * @return IMember The borrower associated with the pending loans.
+   */
+  public static IMember getPrivateBorrower(BorrowUC_CTL controller)
+  {
+    try {
+      Field member = BorrowUC_CTL.class.getDeclaredField("borrower");
+
+      // Enable direct modification of private field
+      if (!member.isAccessible()) {
+        member.setAccessible(true);
+      }
+      return (IMember)member.get(controller);
+    }
+
+    catch (NoSuchFieldException exception) {
+      fail("NoSuchFieldException should not occur");
+    }
+    catch (IllegalAccessException exception) {
+      fail("IllegalAccessException should not occur");
+    }
+    catch (Exception exception) {
+      fail("Exception should not occur");
+    }
+
+    return null;
+  }
+
+
+
+  /**
+   * Uses Reflection API to directly set BorrowUC_CTL's private borrower.
+   * @param controller BorrowUC_CTL The main controller.
+   * @param borrower IMember The borrower to be set.
+   */
+  public static void setPrivateBorrower(BorrowUC_CTL controller,
+                                        IMember borrower)
+  {
+    try {
+      Field member = BorrowUC_CTL.class.getDeclaredField("borrower");
+
+      // Enable direct modification of private field
+      if (!member.isAccessible()) {
+        member.setAccessible(true);
+      }
+      member.set(controller, borrower);
+    }
+
+    catch (NoSuchFieldException exception) {
+      fail("NoSuchFieldException should not occur");
+    }
+    catch (IllegalAccessException exception) {
+      fail("IllegalAccessException should not occur");
+    }
+    catch (Exception exception) {
+      fail("Exception should not occur");
+    }
+  }
+
+
+
+  //===========================================================================
+  // count getter & setter
+  //===========================================================================
+
+  /**
+   * Uses Reflection API to directly access BorrowUC_CTL's private count.
+   * @param controller BorrowUC_CTL The main controller.
+   * @return int The number of loans associated with the current borrower.
+   */
+  public static int getPrivateCount(BorrowUC_CTL controller)
+  {
+    try {
+      Field count = BorrowUC_CTL.class.getDeclaredField("scanCount");
+
+      // Enable direct modification of private field
+      if (!count.isAccessible()) {
+        count.setAccessible(true);
+      }
+      return (int)count.get(controller);
+    }
+
+    catch (NoSuchFieldException exception) {
+      fail("NoSuchFieldException should not occur");
+    }
+    catch (IllegalAccessException exception) {
+      fail("IllegalAccessException should not occur");
+    }
+    catch (Exception exception) {
+      fail("Exception should not occur");
+    }
+
+    return 0;
+  }
+
+
+
+  /**
+   * Uses Reflection API to directly set BorrowUC_CTL's private borrower.
+   * @param controller BorrowUC_CTL The main controller.
+   * @param numberLoans int The numberOfLoans associated with the borrower.
+   */
+  public static void setPrivateCount(BorrowUC_CTL controller,
+                                     int numberLoans)
+  {
+    try {
+      Field count = BorrowUC_CTL.class.getDeclaredField("scanCount");
+
+      // Enable direct modification of private field
+      if (!count.isAccessible()) {
+        count.setAccessible(true);
+      }
+      count.set(controller, numberLoans);
+    }
+
+    catch (NoSuchFieldException exception) {
+      fail("NoSuchFieldException should not occur");
+    }
+    catch (IllegalAccessException exception) {
+      fail("IllegalAccessException should not occur");
+    }
+    catch (Exception exception) {
+      fail("Exception should not occur");
+    }
+  }
+
   //===========================================================================
   // loanList getter & setter
   //===========================================================================
 
   /**
-   * Uses Reflection API to directly set BorrowUC_CTL's private loanList.
+   * Uses Reflection API to directly access BorrowUC_CTL's private loanList.
    * @param controller BorrowUC_CTL The main controller.
    * @return List<ILoan> The list of pending loans.
    */

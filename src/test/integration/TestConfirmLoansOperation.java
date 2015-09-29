@@ -81,23 +81,22 @@ public class TestConfirmLoansOperation
   IBook catch22 = spy(books_.addBook("Joseph Heller", "CATCH-22", "101.1 [2]"));
   IBook emma = spy(books_.addBook("Jane Austen", "Emma", "102.5"));
   IBook scoop = spy(books_.addBook("Evelyn Waugh", "Scoop", "103.21"));
-  IBook dune = books_.addBook("Frank Herbert", "Dune", "104 [21]");
-  IBook janeEyre = books_.addBook("Charlotte Brontë", "Jane Eyre", "105.2");
-  IBook animalFarm = books_.addBook("George Orwell", "Animal Farm", "106 [1]");
-  IBook ulysses = books_.addBook("James Joyce", "Ulysses", "107.345");
-  IBook onTheRoad = books_.addBook("Jack Kerouac", "On the Road", "108.1");
-  IBook dracula = books_.addBook("Bram Stoker", "Dracula", "109.1 [21]");
-  IBook middlemarch = books_.addBook("George Eliot", "Middlemarch", "110");
-  IBook hobbit = books_.addBook("J.R.R. Tolkien", "The Hobbit", "111.23");
-  IBook atonement = spy(books_.addBook("Ian McEwan", "Atonement", "112.2 [22]"));
-  IBook iClaudius = books_.addBook("Robert Graves", "I, Claudius", "113 [2]");
+  IBook dune = spy(books_.addBook("Frank Herbert", "Dune", "104 [21]"));
+  IBook janeEyre = spy(books_.addBook("Charlotte Brontë", "Jane Eyre", "105"));
+  IBook animalFarm = spy(books_.addBook("George Orwell", "Animal Farm", "106"));
+  IBook ulysses = spy(books_.addBook("James Joyce", "Ulysses", "107.345"));
+  IBook onTheRoad = spy(books_.addBook("Jack Kerouac", "On the Road", "108.1"));
+  IBook dracula = spy(books_.addBook("Bram Stoker", "Dracula", "109.1 [21]"));
+  IBook middlemarch = spy(books_.addBook("George Eliot", "Middlemarch", "110"));
+  IBook hobbit = spy(books_.addBook("J.R.R. Tolkien", "The Hobbit", "111.23"));
+  IBook atonement = spy(books_.addBook("Ian McEwan", "Atonement", "112 [22]"));
+  IBook iClaudius = spy(books_.addBook("Robert Graves", "I, Claudius", "113"));
 
-  IMember jim = spy(members_.addMember("Jim", "Johnson", "999123", "jim@gmail" +
-                                                                      ".com"));
-  IMember sam = members_.addMember("Sam", "Malone", "888124", "sam@yahoo.com");
-  IMember jill = members_.addMember("Jill", "Hill", "777125", "jill@gmail.com");
-  IMember bob = members_.addMember("Bob", "Dylan", "666126", "bob@dylan.com");
-  IMember eric = members_.addMember("Eric", "Idle", "555127", "eric@life.com");
+  IMember jim = spy(members_.addMember("Jim", "Johns", "9123", "j@gmail.com"));
+  IMember sam = spy(members_.addMember("Sam", "Malone", "8124", "sam@hoo.com"));
+  IMember jill = spy(members_.addMember("Jill", "Hill", "7125", "j@mail.com"));
+  IMember bob = spy(members_.addMember("Bob", "Dylan", "6126", "b@dylan.com"));
+  IMember eric = spy(members_.addMember("Eric", "Idle", "5127", "ei@life.com"));
 
   public void initializeController()
   {
@@ -107,11 +106,34 @@ public class TestConfirmLoansOperation
     setPrivateLoanList(controller_, new ArrayList<>());
   }
 
+  public void setBorrower(IMember borrower)
+  {
+    setPrivateBorrower(controller_, borrower);
+  }
+
+  public void setCount()
+  {
+    IMember borrower = getPrivateBorrower(controller_);
+    List<ILoan> loans = borrower.getLoans();
+    int numberLoans = loans.size();
+    setPrivateCount(controller_, numberLoans);
+  }
+
   public void setState_ConfirmingLoans()
   {
     setPrivateState(controller_, EBorrowState.CONFIRMING_LOANS);
-    // other stuff to set up displays etc
   }
+
+  public ILoan addToPendingLoans(IBook book)
+  {
+    IMember borrower = getPrivateBorrower(controller_);
+    List<ILoan> pendingLoans = getPrivateLoanList(controller_);
+    ILoan  loan = loans_.createLoan(borrower, book);
+    pendingLoans.add(loan);
+    return loan;
+  }
+
+
 
   public void setPendingLoans(List<ILoan> pendingLoans)
   {
@@ -139,29 +161,29 @@ public class TestConfirmLoansOperation
   public void preConditionsCanBeMet()
   {
     initializeController();
-    List<ILoan> pendingLoans = new ArrayList<>();
-    ILoan firstPendingLoan = loans_.createLoan(jim, catch22);
-    pendingLoans.add(firstPendingLoan);
-    setPendingLoans(pendingLoans);
+    setBorrower(jim);
+    setCount();
+    ILoan firstPendingLoan = addToPendingLoans(catch22);
     setState_ConfirmingLoans();
 
     // assert pre-conditions met
     assertThat(controller_.getClass()).isEqualTo(BorrowUC_CTL.class);
+    assertThat(getPrivateBorrower(controller_)).isSameAs(jim);
+    assertThat(getPrivateLoanList(controller_)).isNotEmpty();
     assertThat(getPrivateState(controller_)).isEqualTo(EBorrowState
                                             .CONFIRMING_LOANS);
-    assertThat(getPrivateLoanList(controller_)).isNotEmpty();
   }
+
+
 
   @Test
   public void loansConfirmed_throws_whenStateNotConfirmingLoans()
   {
     initializeController();
+    setBorrower(jim);
+    setCount();
+    ILoan firstPendingLoan = addToPendingLoans(catch22);
     // no call to setState_ConfirmingLoans()
-
-    ILoan firstLoan = loans_.createLoan(jim, catch22);
-    List<ILoan> pendingLoans = new ArrayList<>();
-    pendingLoans.add(firstLoan);
-    setPrivateLoanList(controller_, pendingLoans);
 
     try {
       controller_.loansConfirmed();
@@ -174,13 +196,15 @@ public class TestConfirmLoansOperation
   }
 
 
+
   @Test
   public void loansConfirmed_throws_whenNoPendingLoans()
   {
     initializeController();
+    setBorrower(jim);
+    setCount();
+    // no pending loans added to list
     setState_ConfirmingLoans();
-    List<ILoan> pendingLoans = new ArrayList<>();
-    setPendingLoans(pendingLoans);
 
     try {
       controller_.loansConfirmed();
@@ -192,7 +216,6 @@ public class TestConfirmLoansOperation
     }
   }
 
-
   //===========================================================================
   // ?
   //===========================================================================
@@ -201,12 +224,12 @@ public class TestConfirmLoansOperation
   public void confirmLoan_OnePending_NoLoans_PendingBecomesCommitted()
   {
     initializeController();
+    setBorrower(jim);
+    setCount();
+    ILoan firstPendingLoan = addToPendingLoans(catch22);
     setState_ConfirmingLoans();
-    ILoan firstPendingLoan = loans_.createLoan(jim, catch22);
-    List<ILoan> pendingLoans = new ArrayList<>();
-    pendingLoans.add(firstPendingLoan);
-    setPrivateLoanList(controller_, pendingLoans);
-
+    List<ILoan> pendingLoans = getPrivateLoanList(controller_);
+    assertThat(pendingLoans).containsExactly(firstPendingLoan);
     assertThat(loans_.listLoans().isEmpty());
     assertThat(firstPendingLoan.getID()).isEqualTo(0);
 
@@ -224,18 +247,18 @@ public class TestConfirmLoansOperation
   public void confirmLoan_OnePending_NoLoans_DetailsCorrect()
   {
     initializeController();
-    setState_ConfirmingLoans();
     Date today = ignoreTime(new Date());
     Date due = calculateDueDate(today);
     Date borrowDate;
     Date dueDate;
-    ILoan firstLoan = loans_.createLoan(jim, catch22);
-    List<ILoan> pendingLoans = new ArrayList<>();
-    pendingLoans.add(firstLoan);
-    setPrivateLoanList(controller_, pendingLoans);
+    setBorrower(jim);
+    setCount();
+    ILoan firstPendingLoan = addToPendingLoans(catch22);
+    setState_ConfirmingLoans();
+
     assertThat(loans_.listLoans()).isEmpty();
-    assertThat(firstLoan.getID()).isEqualTo(0);
-    assertThat(firstLoan.isCurrent()).isFalse();
+    assertThat(firstPendingLoan.getID()).isEqualTo(0);
+    assertThat(firstPendingLoan.isCurrent()).isFalse();
     assertThat(catch22.getState()).isEqualTo(EBookState.AVAILABLE);
 
     controller_.loansConfirmed();
@@ -245,11 +268,11 @@ public class TestConfirmLoansOperation
 
     assertThat(firstCommittedLoan.getBorrower()).isSameAs(jim);
     assertThat(firstCommittedLoan.getBook()).isSameAs(catch22);
-    borrowDate = getPrivateBorrowDate((Loan)firstLoan);
+    borrowDate = getPrivateBorrowDate((Loan)firstCommittedLoan);
     assertThat(borrowDate).isEqualTo(today);
-    dueDate = getPrivateDueDate((Loan)firstLoan);
+    dueDate = getPrivateDueDate((Loan)firstCommittedLoan);
     assertThat(dueDate).isEqualTo(calculateDueDate(today));
-    assertThat(firstLoan.isCurrent()).isTrue();
+    assertThat(firstCommittedLoan.isCurrent()).isTrue();
     assertThat(catch22.getState()).isEqualTo(EBookState.ON_LOAN);
 
     assertThat(jim.getLoans())
