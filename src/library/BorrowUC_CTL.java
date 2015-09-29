@@ -75,15 +75,22 @@ public class BorrowUC_CTL implements ICardReaderListener,
 
 
 
+  // initialise by Rebecca Callow
 	public void initialise()
 	{
+	  // State must be EBorrowState.CREATED before this method can be called
 	  if (state != EBorrowState.CREATED)
 	  {
 	     throw new RuntimeException("BorrowUC_CTL: initialise: cannot call " +
 	          "method when state is: " + state);
 	  }
+	  // Enable member card reader
+	  reader.setEnabled(true);
+	  // Disable book scanner
+	  scanner.setEnabled(false);
 		previous = display.getDisplay();
-		display.setDisplay((JPanel) ui, "Borrow UI");		
+		display.setDisplay((JPanel) ui, "Borrow UI");
+		setState(EBorrowState.INITIALIZED);
 	}
 	
 	
@@ -93,7 +100,8 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	}
 	
 
-
+  
+	// cardSwiped by Rebecca Callow
 	@Override
 	public void cardSwiped(int borrowerId) 
 	{
@@ -102,11 +110,9 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	    throw new RuntimeException("BorrowUC_CTL: cardSwiped: cannot call " +
 	        "method when state is: " + state);
 	  }
-	  // memberDAO must exist
-	  if (memberDAO == null)
+	  if (memberDAO.listMembers().size() < 1)
 	  {
-	    throw new RuntimeException("BorrowUC_CTL: cardSwiped: cannot call " +
-	                               "method when memberDAO is null");
+	    
 	  }
 	  
 	  // Check whether borrowerId exists in the list of members
