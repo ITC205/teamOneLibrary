@@ -27,7 +27,7 @@ import library.interfaces.hardware.ICardReader;
 import library.interfaces.hardware.IDisplay;
 import library.interfaces.hardware.IPrinter;
 import library.interfaces.hardware.IScanner;
-import test.unit.LoanBuilder;
+import test.helper.LoanBuilder;
 
 /**
  * TestCompletScansOperation class

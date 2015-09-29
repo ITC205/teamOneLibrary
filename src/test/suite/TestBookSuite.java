@@ -1,4 +1,4 @@
-package test.collaboration;
+package test.suite;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -28,7 +28,7 @@ public class TestBookSuite extends TestCase
     suite.addTestSuite(TestBook.class);
     suite.addTestSuite(TestBookHelper.class);
     suite.addTestSuite(TestBookDAO.class);
-    suite.addTestSuite(TestBookFamily.class);
+    suite.addTestSuite(test.collaboration.TestBookFamily.class);
     
     return suite;
   }

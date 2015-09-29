@@ -255,14 +255,9 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	public void cancelled() {
 		close();
 	}
-<<<<<<< HEAD
 
-  @Override
-  public void scansCompleted() {
-    throw new RuntimeException("Not implemented yet");
-  }
-=======
-	
+
+
 	// scansCompleted by Josh Kent
 	@Override
 	public void scansCompleted() {
@@ -292,7 +287,8 @@ public class BorrowUC_CTL implements ICardReaderListener,
     // Display confirming loan details
     ui.displayConfirmingLoan(loanDetails);
 	}
->>>>>>> origin/development
+
+
 
 	@Override
 	public void loansConfirmed() {
