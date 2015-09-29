@@ -92,38 +92,46 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	    throw new RuntimeException("BorrowUC_CTL: cardSwiped: cannot call " +
 	        "method when state is: " + state);
 	  }
+	  // memberDAO must exist
 	  if (memberDAO == null)
 	  {
 	    throw new RuntimeException("BorrowUC_CTL: cardSwiped: cannot call " +
 	                               "method when memberDAO is null");
 	  }
 	  
+	  // Check whether borrowerId exists in the list of members
     if (memberDAO.getMemberByID(borrowerId) == null)
     {
       throw new RuntimeException("BorrowUC_CTL: cardSwiped: member does not exist");
     }
 	   String loanDetails = "";
 	  IMember borrower = memberDAO.getMemberByID(borrowerId);
+	  
+	  // Retrieve the list of current loans for the current borrower
 	  loanList = borrower.getLoans();
+	  
+	  // Initialize scanCount to the number of loans already existing
 	  scanCount = loanList.size();
 
 	  if (borrower.getState() == EMemberState.BORROWING_ALLOWED)
 	  {
+	    // Prevent swiping of another member card
 	    reader.setEnabled(false);
+	    // Allow scanning of books
 	    scanner.setEnabled(true);
 	    
 	    ui.displayMemberDetails(borrowerId, 
 	                            borrower.getFirstName() + " " + borrower.getLastName(), 
                               borrower.getContactPhone());
+	    
+	    // Display the details of any outstanding loans
 	    if (loanList.size() > 0)
 	    {
-	      for (int n = 0; n < loanList.size(); n++)
-	      {
-	        loanDetails.concat(loanList.get(n).toString() + "\n");
-	      }
-	      ui.displayExistingLoan(loanDetails);
+	      String listOfLoans = buildLoanListDisplay(loanList);
+	      ui.displayExistingLoan(listOfLoans);
 	    }
 
+	    // Display any outstanding fines
 	    if (borrower.getTotalFines() > 0)
 	    {
 	      ui.displayOutstandingFineMessage(borrower.getTotalFines());
@@ -132,10 +140,14 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	  }
 	  else
 	  {
+	    // Prevent scanning of member card
 	    reader.setEnabled(false);
+	    // Prevent scanning of books
 	    scanner.setEnabled(false);
 
 	    ui.displayMemberDetails(borrower.getId(), borrower.getFirstName(), borrower.getContactPhone());
+	    
+	    // Display any outstanding loans
 	    if (loanList.size() > 0)
 	    {
 	      for (int n = 0; n < loanList.size(); n++)
@@ -144,10 +156,13 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	      }
 	      ui.displayExistingLoan(loanDetails);
 	    }
+	    
+	    // Display any outstanding fines
 	    if (borrower.getTotalFines() > 0)
 	    {
 	      ui.displayOutstandingFineMessage(borrower.getTotalFines());
 	    }
+	    
 	    if (borrower.hasOverDueLoans())
 	    {
 	      ui.displayOverDueMessage();

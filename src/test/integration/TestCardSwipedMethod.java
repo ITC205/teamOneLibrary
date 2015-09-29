@@ -21,6 +21,7 @@ import library.interfaces.IBorrowUI;
 import library.interfaces.daos.IBookDAO;
 import library.interfaces.daos.ILoanDAO;
 import library.interfaces.daos.IMemberDAO;
+import library.interfaces.entities.ELoanState;
 import library.interfaces.entities.ILoan;
 import library.interfaces.hardware.ICardReader;
 import library.interfaces.hardware.IDisplay;
@@ -59,6 +60,7 @@ public class TestCardSwipedMethod extends TestCase
 
   
   
+  // Add new members to memberDAO
   protected void addMembers()
   {
     memberDAO.addMember("fname1", "lastname1", "111111", "email1@email.com");
@@ -68,6 +70,7 @@ public class TestCardSwipedMethod extends TestCase
   
   
   
+  // Add new books to bookDAO
   protected void createBooks()
   {
     bookDAO.addBook("author1", "title1", "callno1");
@@ -80,6 +83,7 @@ public class TestCardSwipedMethod extends TestCase
   
   
   
+  // Create and add loans to loanDAO
   protected void addLoans()
   {
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -105,7 +109,6 @@ public class TestCardSwipedMethod extends TestCase
 
       
     } catch (ParseException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
 
@@ -113,12 +116,12 @@ public class TestCardSwipedMethod extends TestCase
   
   
   
+  // Add too many loans to a member
   protected void addLoansOverLimit()
   {
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-    Date dateBorrowed;
     try {
-      dateBorrowed = dateFormat.parse("01/10/15");
+      Date dateBorrowed = dateFormat.parse("01/10/15");
       Date dateDue = dateFormat.parse("15/10/15");
       
       ILoan loan1 = new Loan(bookDAO.getBookByID(1), memberDAO.getMemberByID(2), dateBorrowed, dateDue);
@@ -142,16 +145,13 @@ public class TestCardSwipedMethod extends TestCase
       loanDAO.commitLoan(loan6);
       
     } catch (ParseException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
-
-
-
   }
   
   
   
+  // Test that controller state must be EBorrowState.INITIALIzED
   public void testStateNotInitialized()
   {
     try
@@ -169,12 +169,14 @@ public class TestCardSwipedMethod extends TestCase
   
   
   
+  // Check that RuntimeException is thrown if MemberDAO is null
   public void testMemberDaoIsNull()
   {
     try
     {
-    setState(EBorrowState.INITIALIZED);
-    testController.cardSwiped(1);
+      memberDAO = null;
+      setState(EBorrowState.INITIALIZED);
+      testController.cardSwiped(1);
     }
     catch (Throwable ex)
     {
@@ -182,16 +184,18 @@ public class TestCardSwipedMethod extends TestCase
     }
     assertTrue(exception instanceof RuntimeException);
   }
-  
-  
-  
+
+
+
+  // Check that RuntimeException is thrown if member does not exist in list
   public void testMemberDoesNotExist()
   {
     try
     {
-    createMocks();
-    setState(EBorrowState.INITIALIZED);
-    testController.cardSwiped(10);
+      createMocks();
+      setState(EBorrowState.INITIALIZED);
+      // MemberID 10 does not exist
+      testController.cardSwiped(10);
     }
     catch (Throwable ex)
     {
@@ -199,9 +203,10 @@ public class TestCardSwipedMethod extends TestCase
     }
     assertTrue(exception instanceof RuntimeException);   
   }
+
   
   
-  
+  // Check that an unrestricted member can scan books
   public void testAllowedMemberNoLoans()
   {
     createMocks();
@@ -213,12 +218,15 @@ public class TestCardSwipedMethod extends TestCase
     setMockBorrowUI(mockBorrowUI);
     setState(EBorrowState.INITIALIZED);
     testController.cardSwiped(1);
+    // Verify that member details are displayed
     verify(mockBorrowUI).displayMemberDetails(1, "fname1 lastname1", "111111");
+    // Check that controller state is set to SCANNING_BOOKS
     assertEquals(EBorrowState.SCANNING_BOOKS, getState());
   }
   
   
   
+  // Check that an unrestricted member with current loans can scan books
   public void testAllowedMemberWithLoans()
   {
     createMocks();
@@ -229,16 +237,22 @@ public class TestCardSwipedMethod extends TestCase
         mockDisplay, bookDAO, loanDAO, memberDAO);
     setMockBorrowUI(mockBorrowUI);
     setState(EBorrowState.INITIALIZED);
+    // MemberID 2 has not reached the loan limit
     testController.cardSwiped(2);
+    // Verify that member details are displayed
+    verify(mockBorrowUI).displayMemberDetails(2, "fname2 lastname2", "222222");
+    // Check that controller state is set to SCANNING_BOOKS
     assertEquals(EBorrowState.SCANNING_BOOKS, getState());
   }
 
   
   
+  // Test that an unrestricted member with current fines can scan books
   public void testAllowedMemberWithFines()
   {
     createMocks();
     addMembers();
+    // A fine of 2.0f is below the fine limit
     memberDAO.getMemberByID(1).addFine(2.0f);
     createBooks();
     addLoans();
@@ -247,26 +261,35 @@ public class TestCardSwipedMethod extends TestCase
     setMockBorrowUI(mockBorrowUI);
     setState(EBorrowState.INITIALIZED);
     testController.cardSwiped(1);
+    // Verify that current outstanding fines are displayed
+    verify(mockBorrowUI).displayOutstandingFineMessage(2.0f);
+    // Check that controller state is set to SCANNING_BOOKS
     assertEquals(EBorrowState.SCANNING_BOOKS, getState());
   }
   
   
   
+  // Test that a restricted member with no loans cannot scan books
   public void testDisallowedMemberNoLoans()
   {
     createMocks();
     addMembers();
+    // 50.0f is greater than the fine limit. Member should be BORROWING_RESTRICTED
     memberDAO.getMemberByID(3).addFine(50.0f);
     testController = new BorrowUC_CTL(mockReader, mockScanner, mockPrinter,
         mockDisplay, bookDAO, loanDAO, memberDAO);
     setMockBorrowUI(mockBorrowUI);
     setState(EBorrowState.INITIALIZED);
     testController.cardSwiped(3);
+    // Verify that current outstanding fines are displayed
+    verify(mockBorrowUI).displayOutstandingFineMessage(50.0f);
+    // Check that controller state is set to BORROWING_RESTRICTED
     assertEquals(EBorrowState.BORROWING_RESTRICTED, getState());
   }
   
   
   
+  // Test that a restricted member with loans cannot scan books
   public void testDisallowedMemberWithLoans()
   {
     createMocks();
@@ -279,27 +302,19 @@ public class TestCardSwipedMethod extends TestCase
         mockDisplay, bookDAO, loanDAO, memberDAO);
     setState(EBorrowState.INITIALIZED);
     testController.cardSwiped(2);
+    // Check that controller state is set to BORROWING_RESTRICTED
     assertEquals(EBorrowState.BORROWING_RESTRICTED, getState());
     }
     catch (Throwable ex)
     {
       exception = ex;
     }
+    // An exception is thrown because members cannot borrow more than 5 books
     assertTrue(exception instanceof IllegalArgumentException);
   }
   
   
-  
-  public void testDisallowedMemberWithOverDueLoans()
-  {
     
-  }
-  
-  
-  
-  
-  
-  
   private void setState(EBorrowState newState) 
   {
       // Use reflection to access BorrowUC_CTL.state
@@ -313,16 +328,12 @@ public class TestCardSwipedMethod extends TestCase
       state.set(testController, newState);
       }
       catch (NoSuchFieldException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       } catch (SecurityException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       } catch (IllegalArgumentException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       } catch (IllegalAccessException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       }
   }
@@ -339,16 +350,12 @@ public class TestCardSwipedMethod extends TestCase
       controllerState = (EBorrowState) state.get(testController);
       return controllerState;
     } catch (NoSuchFieldException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     } catch (SecurityException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     } catch (IllegalArgumentException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     } catch (IllegalAccessException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
     return controllerState;
@@ -368,23 +375,20 @@ public class TestCardSwipedMethod extends TestCase
       } 
       catch (NoSuchFieldException e) 
       {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       } 
       catch (SecurityException e)
       {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       }
       catch (IllegalArgumentException e) 
       {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       } 
       catch (IllegalAccessException e) 
       {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       }
   }
+  
 }
