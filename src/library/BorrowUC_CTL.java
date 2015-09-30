@@ -92,6 +92,7 @@ public class BorrowUC_CTL implements ICardReaderListener,
 		previous = display.getDisplay();
 		display.setDisplay((JPanel) ui, "Borrow UI");
 		setState(EBorrowState.INITIALIZED);
+		ui.setState(EBorrowState.INITIALIZED);
 	}
 	
 	
@@ -113,30 +114,32 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	  }
 	  if (memberDAO.listMembers().size() < 1)
 	  {
-	    
+
 	  }
-	  
+
 	  // Check whether borrowerId exists in the list of members
-    if (memberDAO.getMemberByID(borrowerId) == null)
-    {
-      throw new RuntimeException("BorrowUC_CTL: cardSwiped: member does not exist");
-    }
-	   String loanDetails = "";
-	  IMember borrower = memberDAO.getMemberByID(borrowerId);
-	  
+	  if (memberDAO.getMemberByID(borrowerId) == null)
+	  {
+	    throw new RuntimeException("BorrowUC_CTL: cardSwiped: member does not exist");
+	  }
+	  String loanDetails = "";
+	  borrower = memberDAO.getMemberByID(borrowerId);
+
 	  // Retrieve the list of current loans for the current borrower
 	  loanList = borrower.getLoans();
-	  
+
 	  // Initialize scanCount to the number of loans already existing
 	  scanCount = loanList.size();
 
 	  if (borrower.getState() == EMemberState.BORROWING_ALLOWED)
 	  {
+	    setState(EBorrowState.SCANNING_BOOKS);
+	    ui.setState(EBorrowState.SCANNING_BOOKS);
 	    // Prevent swiping of another member card
 	    reader.setEnabled(false);
 	    // Allow scanning of books
 	    scanner.setEnabled(true);
-	    
+
 	    ui.displayMemberDetails(borrowerId, 
 	                            borrower.getFirstName() + " " + borrower.getLastName(), 
                               borrower.getContactPhone());
@@ -153,10 +156,11 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	    {
 	      ui.displayOutstandingFineMessage(borrower.getTotalFines());
 	    }
-	    setState(EBorrowState.SCANNING_BOOKS);
 	  }
 	  else
 	  {
+	    setState(EBorrowState.BORROWING_RESTRICTED);
+	    ui.setState(EBorrowState.BORROWING_RESTRICTED);
 	    // Prevent scanning of member card
 	    reader.setEnabled(false);
 	    // Prevent scanning of books
@@ -185,7 +189,6 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	      ui.displayOverDueMessage();
 	    }
 	    ui.displayErrorMessage("Borrowing Restricted");
-	    setState(EBorrowState.BORROWING_RESTRICTED);
 	  }
 	}
 
@@ -250,7 +253,6 @@ public class BorrowUC_CTL implements ICardReaderListener,
 		  // Switch to CONFIRMING_LOANS state
 			ui.setState(EBorrowState.CONFIRMING_LOANS);
 			setState(EBorrowState.CONFIRMING_LOANS); 
-//			state = EBorrowState.CONFIRMING_LOANS; // Substitute for above
 			
 			// Display confirming loan details
 			ui.displayConfirmingLoan(loanDetails);
@@ -266,9 +268,14 @@ public class BorrowUC_CTL implements ICardReaderListener,
 		this.state = state;
 	}
 
+	// cancelled by Josh Kent
 	@Override
 	public void cancelled() {
-		close();
+	  // Disable hardware
+	  reader.setEnabled(false);
+	  scanner.setEnabled(false);
+	  // Set display to Main Menu
+		display.setDisplay(previous, "Main Menu");
 	}
 
 
@@ -284,8 +291,11 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	  
 	  // Check loan list contains some loans
 	  if(loanList.isEmpty()) {
-	    throw new RuntimeException("BorrowUC_CTL: scansCompleted: loan list is "
-	                               + "empty");
+	    // This can occur if a user clicks Confirm immediately after they have 
+	    // just rejected a loan list. Perhaps a better way to handle it is to stop
+	    //  method execution at this point with a return statement, rather than 
+	    // throw an exception
+	    return;
 	  }
 	  
 	  // Change state
