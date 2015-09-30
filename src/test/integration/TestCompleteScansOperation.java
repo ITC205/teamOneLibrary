@@ -286,15 +286,9 @@ public class TestCompleteScansOperation extends TestCase
     List<ILoan> loanList = getLoanList();
     assertTrue(loanList.isEmpty());
     
-    // Call method under test
-    try {
-      testController.scansCompleted();
-      fail("Should have thrown RuntimeException");
-    }
-    catch (RuntimeException re) {
-      assertTrue(true);
-    }
-    
+    // Call method under test (should just return with no changes)
+    testController.scansCompleted();
+
     // Confirm state unchanged
     assertControllerStateEquals(EBorrowState.SCANNING_BOOKS);
     
