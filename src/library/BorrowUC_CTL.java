@@ -93,6 +93,8 @@ public class BorrowUC_CTL implements ICardReaderListener,
     display.setDisplay((JPanel) ui, "Borrow UI");
     setState(EBorrowState.INITIALIZED);
     ui.setState(EBorrowState.INITIALIZED);
+    bookList = new ArrayList<IBook>();
+    loanList = new ArrayList<ILoan>();
   }
   
   
@@ -120,22 +122,16 @@ public class BorrowUC_CTL implements ICardReaderListener,
     // Check whether borrowerId exists in the list of members
     if (memberDAO.getMemberByID(borrowerId) == null)
     {
-      throw new RuntimeException("BorrowUC_CTL: cardSwiped: member does not exist");
+      ui.displayErrorMessage("Member: " + borrowerId +" not found");
+      return;
     }
-    String loanDetails = "";
     borrower = memberDAO.getMemberByID(borrowerId);
-
-    loanList = new ArrayList<ILoan>();
-    bookList = new ArrayList<IBook>();
     
     // Retrieve the list of current loans for the current borrower
-    for (ILoan loan: borrower.getLoans())
-    {
-      loanList.add(loan);
-    }
-
+    List<ILoan> existingLoans = borrower.getLoans();
+    
     // Initialize scanCount to the number of loans already existing
-    scanCount = loanList.size();
+    scanCount = existingLoans.size();
 
     if (borrower.getState() == EMemberState.BORROWING_ALLOWED)
     {
@@ -151,17 +147,19 @@ public class BorrowUC_CTL implements ICardReaderListener,
                               borrower.getContactPhone());
       
       // Display the details of any outstanding loans
-      if (loanList.size() > 0)
+      if (existingLoans.size() > 0)
       {
-        String listOfLoans = buildLoanListDisplay(loanList);
+        String listOfLoans = buildLoanListDisplay(existingLoans);
         ui.displayExistingLoan(listOfLoans);
       }
 
       // Display any outstanding fines
-      if (borrower.getTotalFines() > 0)
+      if (borrower.hasFinesPayable())
       {
         ui.displayOutstandingFineMessage(borrower.getTotalFines());
       }
+      ui.displayScannedBookDetails("");
+      ui.displayPendingLoan("");
     }
     else
     {
@@ -175,17 +173,15 @@ public class BorrowUC_CTL implements ICardReaderListener,
       ui.displayMemberDetails(borrower.getId(), borrower.getFirstName(), borrower.getContactPhone());
       
       // Display any outstanding loans
-      if (loanList.size() > 0)
+      // Display the details of any outstanding loans
+      if (existingLoans.size() > 0)
       {
-        for (int n = 0; n < loanList.size(); n++)
-        {
-          loanDetails.concat(loanList.get(n).toString() + "\n");
-        }
-        ui.displayExistingLoan(loanDetails);
+        String listOfLoans = buildLoanListDisplay(existingLoans);
+        ui.displayExistingLoan(listOfLoans);
       }
       
       // Display any outstanding fines
-      if (borrower.getTotalFines() > 0)
+      if (borrower.hasFinesPayable())
       {
         ui.displayOutstandingFineMessage(borrower.getTotalFines());
       }
@@ -193,6 +189,10 @@ public class BorrowUC_CTL implements ICardReaderListener,
       if (borrower.hasOverDueLoans())
       {
         ui.displayOverDueMessage();
+      }
+      if(borrower.hasReachedFineLimit()) 
+      {
+        ui.displayOverFineLimitMessage(borrower.getTotalFines());
       }
       ui.displayErrorMessage("Borrowing Restricted");
     }
