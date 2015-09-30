@@ -152,7 +152,7 @@ public class Loan
 
   private void throwIfStateNotPending()
   {
-    if (!(state_ == ELoanState.PENDING)){
+    if (state_ != ELoanState.PENDING) {
       throw new RuntimeException("Committing a Loan that is not " +
                                  "Pending is invalid.");
     }
