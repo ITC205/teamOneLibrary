@@ -253,7 +253,6 @@ public class BorrowUC_CTL implements ICardReaderListener,
 		  // Switch to CONFIRMING_LOANS state
 			ui.setState(EBorrowState.CONFIRMING_LOANS);
 			setState(EBorrowState.CONFIRMING_LOANS); 
-//			state = EBorrowState.CONFIRMING_LOANS; // Substitute for above
 			
 			// Display confirming loan details
 			ui.displayConfirmingLoan(loanDetails);
@@ -269,9 +268,14 @@ public class BorrowUC_CTL implements ICardReaderListener,
 		this.state = state;
 	}
 
+	// cancelled by Josh Kent
 	@Override
 	public void cancelled() {
-		close();
+	  // Disable hardware
+	  reader.setEnabled(false);
+	  scanner.setEnabled(false);
+	  // Set display to Main Menu
+		display.setDisplay(previous, "Main Menu");
 	}
 
 
@@ -287,8 +291,11 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	  
 	  // Check loan list contains some loans
 	  if(loanList.isEmpty()) {
-	    throw new RuntimeException("BorrowUC_CTL: scansCompleted: loan list is "
-	                               + "empty");
+	    // This can occur if a user clicks Confirm immediately after they have 
+	    // just rejected a loan list. Perhaps a better way to handle it is to stop
+	    //  method execution at this point with a return statement, rather than 
+	    // throw an exception
+	    return;
 	  }
 	  
 	  // Change state
