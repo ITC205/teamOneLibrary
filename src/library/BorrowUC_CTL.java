@@ -25,6 +25,7 @@ import library.interfaces.hardware.IScanner;
 import library.interfaces.hardware.IScannerListener;
 
 public class BorrowUC_CTL implements ICardReaderListener, 
+
 									 IScannerListener, 
 									 IBorrowUIListener {
 	
@@ -47,7 +48,7 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	private JPanel previous;
 
 
-	
+
   //===========================================================================
   // Constructor - modified
   //===========================================================================
@@ -75,25 +76,26 @@ public class BorrowUC_CTL implements ICardReaderListener,
 
 
 
-
-  // initialise by Rebecca Callow
-	public void initialise()
-	{
-	  // State must be EBorrowState.CREATED before this method can be called
-	  if (state != EBorrowState.CREATED)
-	  {
-	     throw new RuntimeException("BorrowUC_CTL: initialise: cannot call " +
-	          "method when state is: " + state);
-	  }
-	  // Enable member card reader
-	  reader.setEnabled(true);
-	  // Disable book scanner
-	  scanner.setEnabled(false);
-		previous = display.getDisplay();
-		display.setDisplay((JPanel) ui, "Borrow UI");
-		setState(EBorrowState.INITIALIZED);
-		ui.setState(EBorrowState.INITIALIZED);
-	}
+// initialise by Rebecca Callow
+public void initialise()
+{
+  // State must be EBorrowState.CREATED before this method can be called
+  if (state != EBorrowState.CREATED)
+  {
+     throw new RuntimeException("BorrowUC_CTL: initialise: cannot call " +
+          "method when state is: " + state);
+  }
+  // Enable member card reader
+  reader.setEnabled(true);
+  // Disable book scanner
+  scanner.setEnabled(false);
+  previous = display.getDisplay();
+  display.setDisplay((JPanel) ui, "Borrow UI");
+  setState(EBorrowState.INITIALIZED);
+  ui.setState(EBorrowState.INITIALIZED);
+  bookList = new ArrayList<IBook>();
+  loanList = new ArrayList<ILoan>();
+}
 	
 	
 	
@@ -103,94 +105,98 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	
 
   
-	// cardSwiped by Rebecca Callow
-	@Override
-	public void cardSwiped(int borrowerId) 
-	{
-	  if (state != EBorrowState.INITIALIZED)
-	  {
-	    throw new RuntimeException("BorrowUC_CTL: cardSwiped: cannot call " +
-	        "method when state is: " + state);
-	  }
-	  if (memberDAO.listMembers().size() < 1)
-	  {
+  // cardSwiped by Rebecca Callow
+  @Override
+  public void cardSwiped(int borrowerId) 
+  {
+    if (state != EBorrowState.INITIALIZED)
+    {
+      throw new RuntimeException("BorrowUC_CTL: cardSwiped: cannot call " +
+          "method when state is: " + state);
+    }
+    if (memberDAO.listMembers().size() < 1)
+    {
 
-	  }
+    }
 
-	  // Check whether borrowerId exists in the list of members
-	  if (memberDAO.getMemberByID(borrowerId) == null)
-	  {
-	    throw new RuntimeException("BorrowUC_CTL: cardSwiped: member does not exist");
-	  }
-	  String loanDetails = "";
-	  borrower = memberDAO.getMemberByID(borrowerId);
+    // Check whether borrowerId exists in the list of members
+    if (memberDAO.getMemberByID(borrowerId) == null)
+    {
+      ui.displayErrorMessage("Member: " + borrowerId +" not found");
+      return;
+    }
+    borrower = memberDAO.getMemberByID(borrowerId);
+    
+    // Retrieve the list of current loans for the current borrower
+    List<ILoan> existingLoans = borrower.getLoans();
+    
+    // Initialize scanCount to the number of loans already existing
+    scanCount = existingLoans.size();
 
-	  // Retrieve the list of current loans for the current borrower
-	  loanList = borrower.getLoans();
+    if (borrower.getState() == EMemberState.BORROWING_ALLOWED)
+    {
+      setState(EBorrowState.SCANNING_BOOKS);
+      ui.setState(EBorrowState.SCANNING_BOOKS);
+      // Prevent swiping of another member card
+      reader.setEnabled(false);
+      // Allow scanning of books
+      scanner.setEnabled(true);
 
-	  // Initialize scanCount to the number of loans already existing
-	  scanCount = loanList.size();
-
-	  if (borrower.getState() == EMemberState.BORROWING_ALLOWED)
-	  {
-	    setState(EBorrowState.SCANNING_BOOKS);
-	    ui.setState(EBorrowState.SCANNING_BOOKS);
-	    // Prevent swiping of another member card
-	    reader.setEnabled(false);
-	    // Allow scanning of books
-	    scanner.setEnabled(true);
-
-	    ui.displayMemberDetails(borrowerId, 
-	                            borrower.getFirstName() + " " + borrower.getLastName(), 
+      ui.displayMemberDetails(borrowerId, 
+                              borrower.getFirstName() + " " + borrower.getLastName(), 
                               borrower.getContactPhone());
-	    
-	    // Display the details of any outstanding loans
-	    if (loanList.size() > 0)
-	    {
-	      String listOfLoans = buildLoanListDisplay(loanList);
-	      ui.displayExistingLoan(listOfLoans);
-	    }
+      
+      // Display the details of any outstanding loans
+      if (existingLoans.size() > 0)
+      {
+        String listOfLoans = buildLoanListDisplay(existingLoans);
+        ui.displayExistingLoan(listOfLoans);
+      }
 
-	    // Display any outstanding fines
-	    if (borrower.getTotalFines() > 0)
-	    {
-	      ui.displayOutstandingFineMessage(borrower.getTotalFines());
-	    }
-	  }
-	  else
-	  {
-	    setState(EBorrowState.BORROWING_RESTRICTED);
-	    ui.setState(EBorrowState.BORROWING_RESTRICTED);
-	    // Prevent scanning of member card
-	    reader.setEnabled(false);
-	    // Prevent scanning of books
-	    scanner.setEnabled(false);
+      // Display any outstanding fines
+      if (borrower.hasFinesPayable())
+      {
+        ui.displayOutstandingFineMessage(borrower.getTotalFines());
+      }
+      ui.displayScannedBookDetails("");
+      ui.displayPendingLoan("");
+    }
+    else
+    {
+      setState(EBorrowState.BORROWING_RESTRICTED);
+      ui.setState(EBorrowState.BORROWING_RESTRICTED);
+      // Prevent scanning of member card
+      reader.setEnabled(false);
+      // Prevent scanning of books
+      scanner.setEnabled(false);
 
-	    ui.displayMemberDetails(borrower.getId(), borrower.getFirstName(), borrower.getContactPhone());
-	    
-	    // Display any outstanding loans
-	    if (loanList.size() > 0)
-	    {
-	      for (int n = 0; n < loanList.size(); n++)
-	      {
-	        loanDetails.concat(loanList.get(n).toString() + "\n");
-	      }
-	      ui.displayExistingLoan(loanDetails);
-	    }
-	    
-	    // Display any outstanding fines
-	    if (borrower.getTotalFines() > 0)
-	    {
-	      ui.displayOutstandingFineMessage(borrower.getTotalFines());
-	    }
-	    
-	    if (borrower.hasOverDueLoans())
-	    {
-	      ui.displayOverDueMessage();
-	    }
-	    ui.displayErrorMessage("Borrowing Restricted");
-	  }
-	}
+      ui.displayMemberDetails(borrower.getId(), borrower.getFirstName(), borrower.getContactPhone());
+      
+      // Display any outstanding loans
+      // Display the details of any outstanding loans
+      if (existingLoans.size() > 0)
+      {
+        String listOfLoans = buildLoanListDisplay(existingLoans);
+        ui.displayExistingLoan(listOfLoans);
+      }
+      
+      // Display any outstanding fines
+      if (borrower.hasFinesPayable())
+      {
+        ui.displayOutstandingFineMessage(borrower.getTotalFines());
+      }
+      
+      if (borrower.hasOverDueLoans())
+      {
+        ui.displayOverDueMessage();
+      }
+      if(borrower.hasReachedFineLimit()) 
+      {
+        ui.displayOverFineLimitMessage(borrower.getTotalFines());
+      }
+      ui.displayErrorMessage("Borrowing Restricted");
+    }
+  }
 
 	
 	
@@ -306,6 +312,7 @@ public class BorrowUC_CTL implements ICardReaderListener,
 		reader.setEnabled(false);
 		scanner.setEnabled(false);
 		
+
     // Get loanDetails using buildLoanListDisplay helper
     String loanDetails = buildLoanListDisplay(loanList);
     
