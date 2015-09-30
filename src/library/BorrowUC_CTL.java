@@ -93,6 +93,12 @@ public class BorrowUC_CTL implements ICardReaderListener,
 		display.setDisplay((JPanel) ui, "Borrow UI");
 		setState(EBorrowState.INITIALIZED);
 		ui.setState(EBorrowState.INITIALIZED);
+		
+		//XXX**********************************************************************
+		// Initialize lists
+		bookList = new ArrayList<IBook>();
+		loanList = new ArrayList<ILoan>();
+		//*************************************************************************
 	}
 	
 	
@@ -120,18 +126,39 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	  // Check whether borrowerId exists in the list of members
 	  if (memberDAO.getMemberByID(borrowerId) == null)
 	  {
-	    throw new RuntimeException("BorrowUC_CTL: cardSwiped: member does not exist");
+	    //XXX********************************************************************
+	    // Removed exception throw
+	    // throw new RuntimeException("BorrowUC_CTL: cardSwiped: member does not exist");
+	    
+	    // Added Error message call - to match behaviour of runnable JAR
+	    ui.displayErrorMessage("Member: " + borrowerId +" not found");
+	    return;
+	    //***********************************************************************
 	  }
-	  String loanDetails = "";
+	  
+	  //XXX**********************************************************************
+	  // Possibly not needed? Using private buildLoanListDisplay method instead?
+//	  String loanDetails = "";
+	  //*************************************************************************
+	  
 	  borrower = memberDAO.getMemberByID(borrowerId);
 
+	  //XXX***********************************************************************
 	  // Retrieve the list of current loans for the current borrower
-	  loanList = borrower.getLoans();
+	  List<ILoan> existingLoans = borrower.getLoans();
 
 	  // Initialize scanCount to the number of loans already existing
-	  scanCount = loanList.size();
+	  scanCount = existingLoans.size();
+	  
+	  boolean overDue = borrower.hasOverDueLoans();
+	  boolean atLoanLimit = borrower.hasReachedLoanLimit();
+	  boolean hasFines = borrower.hasFinesPayable();
+	  boolean overFineLimit = borrower.hasReachedFineLimit();
+	  //*************************************************************************
 
-	  if (borrower.getState() == EMemberState.BORROWING_ALLOWED)
+	  //XXX**********************************************************************
+	  if (!(overDue || atLoanLimit || overFineLimit))
+	  // ************************************************************************
 	  {
 	    setState(EBorrowState.SCANNING_BOOKS);
 	    ui.setState(EBorrowState.SCANNING_BOOKS);
@@ -144,18 +171,30 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	                            borrower.getFirstName() + " " + borrower.getLastName(), 
                               borrower.getContactPhone());
 	    
+	    //XXX*********************************************************************
 	    // Display the details of any outstanding loans
-	    if (loanList.size() > 0)
+	    if (existingLoans.size() > 0)
 	    {
-	      String listOfLoans = buildLoanListDisplay(loanList);
+	      String listOfLoans = buildLoanListDisplay(existingLoans);
 	      ui.displayExistingLoan(listOfLoans);
 	    }
-
+	    //***********************************************************************
+	    
 	    // Display any outstanding fines
-	    if (borrower.getTotalFines() > 0)
+	    //XXX********************************************************************
+	    if (hasFines)
+	    //***********************************************************************
 	    {
 	      ui.displayOutstandingFineMessage(borrower.getTotalFines());
 	    }
+	    
+	    //XXX********************************************************************
+	    // Clear out any scanned book or loan details
+	    // Should be blank anyway, but the spec makes these calls
+	    ui.displayScannedBookDetails("");
+	    ui.displayPendingLoan("");
+	    //***********************************************************************
+	    
 	  }
 	  else
 	  {
@@ -168,26 +207,46 @@ public class BorrowUC_CTL implements ICardReaderListener,
 
 	    ui.displayMemberDetails(borrower.getId(), borrower.getFirstName(), borrower.getContactPhone());
 	    
+	    //XXX***********************************************************************
 	    // Display any outstanding loans
-	    if (loanList.size() > 0)
+	    if (existingLoans.size() > 0)
 	    {
-	      for (int n = 0; n < loanList.size(); n++)
-	      {
-	        loanDetails.concat(loanList.get(n).toString() + "\n");
-	      }
-	      ui.displayExistingLoan(loanDetails);
+//	      for (int n = 0; n < existingLoans.size(); n++)
+//	      {
+
+//	        loanDetails.concat(existingLoans.get(n).toString() + "\n");
+	        
+//	      }
+	      String listOfLoans = buildLoanListDisplay(existingLoans);
+	      ui.displayExistingLoan(listOfLoans);
 	    }
+	    //***********************************************************************
 	    
 	    // Display any outstanding fines
-	    if (borrower.getTotalFines() > 0)
+	    //XXX********************************************************************
+	    if (hasFines)
+	    //***********************************************************************
 	    {
 	      ui.displayOutstandingFineMessage(borrower.getTotalFines());
 	    }
 	    
-	    if (borrower.hasOverDueLoans())
+	    //XXX********************************************************************
+	    if (overDue)
+	    //***********************************************************************
 	    {
 	      ui.displayOverDueMessage();
 	    }
+	    
+	    //XXX********************************************************************
+	    if(atLoanLimit) {
+	      ui.displayAtLoanLimitMessage();
+	    }
+	    
+	    if(overFineLimit) {
+	      ui.displayOverFineLimitMessage(borrower.getTotalFines());
+	    }
+	    //***********************************************************************
+	    
 	    ui.displayErrorMessage("Borrowing Restricted");
 	  }
 	}
@@ -253,7 +312,6 @@ public class BorrowUC_CTL implements ICardReaderListener,
 		  // Switch to CONFIRMING_LOANS state
 			ui.setState(EBorrowState.CONFIRMING_LOANS);
 			setState(EBorrowState.CONFIRMING_LOANS); 
-//			state = EBorrowState.CONFIRMING_LOANS; // Substitute for above
 			
 			// Display confirming loan details
 			ui.displayConfirmingLoan(loanDetails);
@@ -269,9 +327,14 @@ public class BorrowUC_CTL implements ICardReaderListener,
 		this.state = state;
 	}
 
+	// cancelled by Josh Kent
 	@Override
 	public void cancelled() {
-		close();
+	  //XXX**********************************************************************
+	  reader.setEnabled(false);
+	  scanner.setEnabled(false);
+    display.setDisplay(previous, "Main Menu");
+	  //*************************************************************************
 	}
 
 
@@ -287,8 +350,12 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	  
 	  // Check loan list contains some loans
 	  if(loanList.isEmpty()) {
-	    throw new RuntimeException("BorrowUC_CTL: scansCompleted: loan list is "
-	                               + "empty");
+      //XXX*********************************************************************
+      // This can occur if a user clicks Confirm immediately after they have just
+      // rejected a loan list. Perhaps better way to handle is stop method execution 
+      // at this point with return statement
+	    return;
+	    //***********************************************************************
 	  }
 	  
 	  // Change state
@@ -307,7 +374,7 @@ public class BorrowUC_CTL implements ICardReaderListener,
 	}
 
 
-
+	// loansConfirmed by Nick Baldwin
 	@Override
 	public void loansConfirmed() {
 
@@ -334,6 +401,7 @@ public class BorrowUC_CTL implements ICardReaderListener,
     display.setDisplay(previous, "Main Menu");
 	}
 
+	// loansRejected by Nick Baldwin
 	@Override
 	public void loansRejected() {
 
@@ -348,7 +416,12 @@ public class BorrowUC_CTL implements ICardReaderListener,
     }
 
     // TODO: check this stuff!
-    display.setDisplay((JPanel)ui, "Borrow UI");
+    
+    //XXX**********************************************************************
+    // Removed this line
+    //    display.setDisplay((JPanel)ui, "Borrow UI");
+    // ************************************************************************
+    
     ui.setState(EBorrowState.SCANNING_BOOKS);
     setState(EBorrowState.SCANNING_BOOKS);
 
@@ -366,6 +439,16 @@ public class BorrowUC_CTL implements ICardReaderListener,
     scanCount = existingLoans.size();
     // TODO: cancel button enabled
     // ?
+    
+    //XXX**********************************************************************
+    // Clear pending loan list display
+    ui.displayPendingLoan("");
+    // Clear current book display
+    ui.displayScannedBookDetails("");
+    // Clear list of books already scanned
+    bookList.clear();
+    //*************************************************************************
+    
     reader.setEnabled(false);
     scanner.setEnabled(true);
 	}

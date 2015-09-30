@@ -68,8 +68,9 @@ public class Main
     loanDAO = new LoanDAO(loanHelper);
     memberDAO = new MemberDAO(memberHelper);
 
-
-		//setupTestData();
+    //XXX**********************************************************************
+		setupTestData();
+		//*************************************************************************
   }
 
 
