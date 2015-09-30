@@ -343,6 +343,12 @@ public void initialise()
 
     String loanDetails = buildLoanListDisplay(loanList);
     printer.print(loanDetails);
+
+    // clear lists of scanned books and loans and borrower
+    bookList.clear();
+    loanList.clear();
+    borrower = null;
+
     scanner.setEnabled(false);
     reader.setEnabled(false);
     display.setDisplay(previous, "Main Menu");
@@ -364,7 +370,6 @@ public void initialise()
     // TODO: check this stuff!
     ui.setState(EBorrowState.SCANNING_BOOKS);
     setState(EBorrowState.SCANNING_BOOKS);
-    display.setDisplay((JPanel)ui, "Borrow UI");
 
     // TODO: check this displays member details properly
     int id = borrower.getId();
@@ -380,6 +385,15 @@ public void initialise()
     scanCount = existingLoans.size();
     // TODO: cancel button enabled
     // ?
+
+    // clear display
+    ui.displayPendingLoan("");
+    ui.displayScannedBookDetails("");
+    ui.displayExistingLoan("");
+    // clear lists of scanned books and loans (but not borrower)
+    bookList.clear();
+    loanList.clear();
+
     reader.setEnabled(false);
     scanner.setEnabled(true);
 	}
