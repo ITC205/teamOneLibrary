@@ -11,8 +11,11 @@ import static org.mockito.Mockito.*;
 import static org.assertj.core.api.Assertions.*;
 
 import static test.helper.ControllerReflection.*;
+import static test.helper.DateBuilder.*;
 import static test.helper.LoanReflection.*;
 
+import library.interfaces.EBorrowState;
+import library.interfaces.IBorrowUI;
 import library.interfaces.daos.IBookDAO;
 import library.interfaces.daos.IBookHelper;
 import library.interfaces.daos.ILoanDAO;
@@ -28,6 +31,7 @@ import library.interfaces.hardware.IDisplay;
 import library.interfaces.hardware.IPrinter;
 import library.interfaces.hardware.IScanner;
 
+import library.BorrowUC_CTL;
 import library.daos.BookDAO;
 import library.daos.BookHelper;
 import library.daos.LoanDAO;
@@ -35,9 +39,6 @@ import library.daos.LoanHelper;
 import library.daos.MemberDAO;
 import library.daos.MemberHelper;
 import library.entities.Loan;
-
-import library.BorrowUC_CTL;
-import library.interfaces.EBorrowState;
 
 /**
  * Test Confirm Loans operation.
@@ -55,6 +56,8 @@ import library.interfaces.EBorrowState;
  *  - cardReader is disabled
  *  - scanner_ is disabled
  *  - BorrowBookCTL state == COMPLETED
+ *
+ * @author nicholasbaldwin
  */
 public class TestConfirmLoansOperation
 {
@@ -62,7 +65,8 @@ public class TestConfirmLoansOperation
   // Fixtures
   //===========================================================================
 
-  BorrowUC_CTL controller_;
+  library.BorrowUC_CTL controller_;
+  IBorrowUI ui_;
 
   ICardReader reader_ = mock(ICardReader.class);
   IScanner scanner_ = mock(IScanner.class);
@@ -101,9 +105,13 @@ public class TestConfirmLoansOperation
   public void initializeController()
   {
     loans_ = spy(new LoanDAO(loanHelper_));
-    controller_ = new library.BorrowUC_CTL(reader_, scanner_, printer_, display_,
-                                           books_, loans_, members_);
+    controller_ = spy(new BorrowUC_CTL(reader_, scanner_, printer_, display_,
+                                       books_, loans_, members_));
+
     setPrivateLoanList(controller_, new ArrayList<>());
+
+    ui_ = spy(new library.BorrowUC_UI(controller_));
+    setPrivateUI(controller_, ui_);
   }
 
   public void setBorrower(IMember borrower)
@@ -121,7 +129,7 @@ public class TestConfirmLoansOperation
 
   public void setState_ConfirmingLoans()
   {
-    setPrivateState(controller_, EBorrowState.CONFIRMING_LOANS);
+    setPrivateState(controller_, library.interfaces.EBorrowState.CONFIRMING_LOANS);
   }
 
   public ILoan addToPendingLoans(IBook book)
@@ -132,14 +140,6 @@ public class TestConfirmLoansOperation
     pendingLoans.add(loan);
     return loan;
   }
-
-
-
-  public void setPendingLoans(List<ILoan> pendingLoans)
-  {
-    setPrivateLoanList(controller_, pendingLoans);
-  }
-
 
   //===========================================================================
   // Test setup of library
@@ -167,7 +167,6 @@ public class TestConfirmLoansOperation
     setState_ConfirmingLoans();
 
     // assert pre-conditions met
-    assertThat(controller_.getClass()).isEqualTo(BorrowUC_CTL.class);
     assertThat(getPrivateBorrower(controller_)).isSameAs(jim);
     assertThat(getPrivateLoanList(controller_)).isNotEmpty();
     assertThat(getPrivateState(controller_)).isEqualTo(EBorrowState
@@ -275,14 +274,12 @@ public class TestConfirmLoansOperation
     assertThat(firstCommittedLoan.isCurrent()).isTrue();
     assertThat(catch22.getState()).isEqualTo(EBookState.ON_LOAN);
 
-    assertThat(jim.getLoans())
-        .containsExactly(firstCommittedLoan);
+    assertThat(jim.getLoans()).containsExactly(firstCommittedLoan);
 
     assertThat(loans_.findLoansByBorrower(jim))
-        .containsExactly(firstCommittedLoan);
+                     .containsExactly(firstCommittedLoan);
 
-    assertThat(loans_.listLoans())
-        .containsExactly(firstCommittedLoan);
+    assertThat(loans_.listLoans()).containsExactly(firstCommittedLoan);
   }
 
 
@@ -367,16 +364,11 @@ public class TestConfirmLoansOperation
                   .containsExactly(firstLoan, secondLoan, thirdLoan);
 
     assertThat(loans_.findLoansByBorrower(jim))
-                    .containsExactly(firstLoan, secondLoan, thirdLoan);
+                     .containsExactly(firstLoan, secondLoan, thirdLoan);
 
     assertThat(loans_.listLoans())
-                    .containsExactly(firstLoan, secondLoan, thirdLoan);
+                     .containsExactly(firstLoan, secondLoan, thirdLoan);
   }
-
-  //===========================================================================
-  // ?
-  //===========================================================================
-
 
   //===========================================================================
   // Loan helpers
@@ -402,31 +394,6 @@ public class TestConfirmLoansOperation
       bookList.add(book);
     }
     return bookList;
-  }
-
-
-
-  private Date ignoreTime(Date date)
-  {
-    Calendar calendar = Calendar.getInstance();
-
-    calendar.setTime(date);
-    calendar.set(java.util.Calendar.HOUR_OF_DAY, 0);
-    calendar.set(java.util.Calendar.MINUTE, 0);
-    calendar.set(java.util.Calendar.SECOND, 0);
-    calendar.set(java.util.Calendar.MILLISECOND, 0);
-
-    return calendar.getTime();
-  }
-
-
-
-  private Date calculateDueDate(Date date)
-  {
-    Calendar calendar = Calendar.getInstance();
-    calendar.setTime(date);
-    calendar.add(Calendar.DAY_OF_MONTH, ILoan.LOAN_PERIOD);
-    return calendar.getTime();
   }
 
 }

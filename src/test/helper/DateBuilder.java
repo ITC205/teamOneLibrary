@@ -1,8 +1,11 @@
 package test.helper;
 
-import java.util.Date;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
+
+import library.interfaces.entities.ILoan;
 
 /**
  * Provides static helper methods for building dates via a simpler interface
@@ -49,6 +52,40 @@ public class DateBuilder
     calendar.set(year, month, day, hour, min, sec);
     Date date = calendar.getTime();
     return date;
+  }
+
+
+
+  public static String formattedDate(Date date)
+  {
+    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+    String dateString = dateFormat.format(date);
+    return dateString;
+  }
+
+
+
+  public static Date ignoreTime(Date date)
+  {
+    Calendar calendar = Calendar.getInstance();
+
+    calendar.setTime(date);
+    calendar.set(java.util.Calendar.HOUR_OF_DAY, 0);
+    calendar.set(java.util.Calendar.MINUTE, 0);
+    calendar.set(java.util.Calendar.SECOND, 0);
+    calendar.set(java.util.Calendar.MILLISECOND, 0);
+
+    return calendar.getTime();
+  }
+
+
+
+  public static Date calculateDueDate(Date date)
+  {
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTime(date);
+    calendar.add(Calendar.DAY_OF_MONTH, ILoan.LOAN_PERIOD);
+    return calendar.getTime();
   }
 
 }

@@ -343,6 +343,12 @@ public void initialise()
 
     String loanDetails = buildLoanListDisplay(loanList);
     printer.print(loanDetails);
+
+    // clear lists of scanned books and loans and borrower
+    bookList.clear();
+    loanList.clear();
+    borrower = null;
+
     scanner.setEnabled(false);
     reader.setEnabled(false);
     display.setDisplay(previous, "Main Menu");
@@ -352,17 +358,16 @@ public void initialise()
 	public void loansRejected() {
 
     if(state != EBorrowState.CONFIRMING_LOANS) {
-      throw new RuntimeException("BorrowUC_CTL: loansConfirmed: cannot call " +
+      throw new RuntimeException("BorrowUC_CTL: loansRejected: cannot call " +
                                  "method when state is: " + state);
     }
 
     if(loanList.isEmpty()) {
-      throw new RuntimeException("BorrowUC_CTL: loansConfirmed: cannot call " +
+      throw new RuntimeException("BorrowUC_CTL: loansRejected: cannot call " +
                                  "method when there are no pending loans");
     }
 
     // TODO: check this stuff!
-    display.setDisplay((JPanel)ui, "Borrow UI");
     ui.setState(EBorrowState.SCANNING_BOOKS);
     setState(EBorrowState.SCANNING_BOOKS);
 
@@ -380,6 +385,15 @@ public void initialise()
     scanCount = existingLoans.size();
     // TODO: cancel button enabled
     // ?
+
+    // clear display
+    ui.displayPendingLoan("");
+    ui.displayScannedBookDetails("");
+    ui.displayExistingLoan("");
+    // clear lists of scanned books and loans (but not borrower)
+    bookList.clear();
+    loanList.clear();
+
     reader.setEnabled(false);
     scanner.setEnabled(true);
 	}
