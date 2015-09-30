@@ -69,7 +69,7 @@ public class Main
     memberDAO = new MemberDAO(memberHelper);
 
 
-		setupTestData();
+		//setupTestData();
   }
 
 
