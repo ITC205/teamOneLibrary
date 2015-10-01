@@ -2,15 +2,17 @@ package library.daos;
 
 import java.util.Date;
 
+import library.interfaces.daos.ILoanHelper;
 import library.interfaces.entities.IBook;
 import library.interfaces.entities.ILoan;
 import library.interfaces.entities.IMember;
-import library.interfaces.daos.ILoanHelper;
 
 import library.entities.Loan;
 
 /**
  * Creates a new Loan instance.
+ *
+ * @author nicholasbaldwin
  */
 public class LoanHelper
   implements ILoanHelper
@@ -25,7 +27,7 @@ public class LoanHelper
   // Constructors
   //===========================================================================
 
-  /*
+  /**
    * Creates new LoanHelper.
    */
   public LoanHelper()
@@ -36,7 +38,7 @@ public class LoanHelper
   // Primary methods
   //===========================================================================
 
-  /*
+  /**
    * Creates a new Loan instance, with a default ID.
    * @param book IBook The Book associated with Loan.
    * @param borrower IMember The Member associated with Loan.

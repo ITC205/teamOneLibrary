@@ -1,29 +1,25 @@
 package test.collaboration;
 
 import java.util.Date;
-
 import java.util.List;
 
+import org.junit.Test;
+import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.*;
+
+import library.interfaces.daos.ILoanHelper;
 import library.interfaces.entities.IBook;
 import library.interfaces.entities.IMember;
 import library.interfaces.entities.ILoan;
 import library.interfaces.entities.EBookState;
 
-import library.interfaces.daos.ILoanHelper;
-import library.interfaces.daos.ILoanDAO;
-
-import library.entities.Loan;
-
 import library.daos.LoanDAO;
 import library.daos.LoanHelper;
+import library.entities.Loan;
 
-import org.junit.Test;
-
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
-import static test.unit.LoanBuilder.*;
-import static test.unit.LoanReflection.*;
+import static test.helper.DateBuilder.*;
+import static test.helper.DoubleBuilder.*;
+import static test.helper.LoanReflection.*;
 
 /**
  * Tests collaborations of Loan family - Loan, LoanHelper & LoanDAO.
@@ -103,8 +99,8 @@ public class TestLoanFamily
   @Test
   public void createEmptyLibrary()
   {
-    ILoanHelper loanHelper = new LoanHelper();
-    LoanDAO dao = new LoanDAO(loanHelper);
+    library.interfaces.daos.ILoanHelper loanHelper = new library.daos.LoanHelper();
+    library.daos.LoanDAO dao = new library.daos.LoanDAO(loanHelper);
 
     List<ILoan> emptyLoanList = dao.listLoans();
 
@@ -116,8 +112,8 @@ public class TestLoanFamily
   @Test
   public void createLoanDoesNotAddPendingLoanToLibrary()
   {
-    ILoanHelper loanHelper = new LoanHelper();
-    LoanDAO dao = new LoanDAO(loanHelper);
+    library.interfaces.daos.ILoanHelper loanHelper = new library.daos.LoanHelper();
+    library.daos.LoanDAO dao = new library.daos.LoanDAO(loanHelper);
 
     ILoan loan = dao.createLoan(jim_, catch22_);
 
@@ -131,7 +127,7 @@ public class TestLoanFamily
   @Test
   public void commitLoanMakesLoanCurrentAndSetsIDAndAddsToLibrary()
   {
-    ILoanHelper loanHelper = new LoanHelper();
+    library.interfaces.daos.ILoanHelper loanHelper = new LoanHelper();
     LoanDAO dao = new LoanDAO(loanHelper);
 
     ILoan loan = dao.createLoan(jim_, catch22_);
