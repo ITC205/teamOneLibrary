@@ -16,6 +16,7 @@ import library.entities.Book;
 import library.entities.Member;
 import library.interfaces.IBorrowUI;
 import library.interfaces.EBorrowState;
+import library.interfaces.entities.EBookState;
 import library.interfaces.entities.IMember;
 import library.interfaces.entities.IBook;
 import library.interfaces.entities.ILoan;
@@ -110,6 +111,13 @@ public class TestScenarioOneRebecca extends TestCase
     controller.bookScanned(4);
     controller.bookScanned(5);
     
+    assertEquals(EBookState.AVAILABLE, bookDAO.getBookByID(1).getState());
+    assertEquals(EBookState.AVAILABLE, bookDAO.getBookByID(2).getState());
+    assertEquals(EBookState.AVAILABLE, bookDAO.getBookByID(3).getState());
+    assertEquals(EBookState.AVAILABLE, bookDAO.getBookByID(4).getState());
+    assertEquals(EBookState.AVAILABLE, bookDAO.getBookByID(5).getState());
+    assertEquals(EBookState.AVAILABLE, bookDAO.getBookByID(6).getState());
+    
     assertEquals(EBorrowState.CONFIRMING_LOANS, getState());
     
     controller.loansRejected();
@@ -128,6 +136,13 @@ public class TestScenarioOneRebecca extends TestCase
     controller.loansConfirmed();
     
     assertEquals(EBorrowState.COMPLETED, getState());
+    
+    assertEquals(EBookState.ON_LOAN, bookDAO.getBookByID(1).getState());
+    assertEquals(EBookState.ON_LOAN, bookDAO.getBookByID(6).getState());
+    assertEquals(EBookState.AVAILABLE, bookDAO.getBookByID(2).getState());
+    assertEquals(EBookState.AVAILABLE, bookDAO.getBookByID(3).getState());
+    assertEquals(EBookState.AVAILABLE, bookDAO.getBookByID(4).getState());
+    assertEquals(EBookState.AVAILABLE, bookDAO.getBookByID(5).getState());
   }
   
   
