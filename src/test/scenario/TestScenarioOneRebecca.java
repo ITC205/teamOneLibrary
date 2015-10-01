@@ -37,7 +37,6 @@ import static org.mockito.Mockito.*;
 //  Has no loans
 //  Has no fines
 //Scans 5 books
-//Clicks Completed
 //Clicks Reject
 //Scans 2 books
 //Clicks Completed
@@ -94,25 +93,33 @@ public class TestScenarioOneRebecca extends TestCase
   
   
   // Verify that Constructor and Initialise methods set the controller state as required
-  public void testStateCreated()
+  public void testScenarioOne()
   {
     createMocks();
     setupObjects();
     assertEquals(EBorrowState.CREATED, getState());
     controller.initialise();
     assertEquals(EBorrowState.INITIALIZED, getState());
-  }
-  
-  
-  
-  public void testCardSwiped()
-  {
-    createMocks();
-    setupObjects();
-    controller.initialise();
+
     controller.cardSwiped(1);
     assertEquals(EBorrowState.SCANNING_BOOKS, getState());
-
+    
+    controller.bookScanned(1);
+    controller.bookScanned(2);
+    controller.bookScanned(3);
+    controller.bookScanned(4);
+    controller.bookScanned(5);
+    
+    assertEquals(EBorrowState.CONFIRMING_LOANS, getState());
+    
+    controller.loansRejected();
+    
+    assertEquals(EBorrowState.SCANNING_BOOKS, getState());
+    
+    controller.bookScanned(1);
+    controller.bookScanned(6);
+    
+    assertEquals(EBorrowState.SCANNING_BOOKS, getState());
   }
   
   
