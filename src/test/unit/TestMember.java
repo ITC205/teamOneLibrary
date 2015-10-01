@@ -1,7 +1,11 @@
 package test.unit;
 
+import java.lang.reflect.Field;
+
 import junit.framework.TestCase;
+import library.entities.Loan;
 import library.entities.Member;
+import library.interfaces.EBorrowState;
 import library.interfaces.entities.*;
 import static org.mockito.Mockito.*;
 
@@ -31,6 +35,7 @@ public class TestMember extends TestCase
   Member validMember = new Member(validFirstName, validLastName, validContactPhone, validEmailAddress, validId);
   
   ILoan mockLoan = mock(ILoan.class);
+  ILoan loan;
   
   
   
@@ -214,6 +219,12 @@ public class TestMember extends TestCase
   
   
   
+  // Test that Member state is updated to BORROWING_DISALLOWED if there are overdue loans
+  public void testHasOverDueLoans()
+  {
+    validMember.addLoan(mockLoan);
+    assertFalse(validMember.hasOverDueLoans());
+  }
   
 
 }

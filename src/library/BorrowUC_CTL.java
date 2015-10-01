@@ -194,6 +194,10 @@ public class BorrowUC_CTL implements ICardReaderListener,
       {
         ui.displayOverFineLimitMessage(borrower.getTotalFines());
       }
+      if(borrower.hasReachedLoanLimit()) 
+      {
+        ui.displayAtLoanLimitMessage();
+      }
       ui.displayErrorMessage("Borrowing Restricted");
     }
   }

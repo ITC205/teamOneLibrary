@@ -262,6 +262,16 @@ public class Member
   
   
   
+  public void checkLoanDueDates()
+  {
+    if (hasOverDueLoans())
+    {
+      updateState(EMemberState.BORROWING_DISALLOWED);
+    }
+  }
+  
+  
+  
   // ==========================================================================
   // Methods: Getters and Setters
   // ==========================================================================
