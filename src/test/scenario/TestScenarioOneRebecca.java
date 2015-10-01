@@ -120,6 +120,14 @@ public class TestScenarioOneRebecca extends TestCase
     controller.bookScanned(6);
     
     assertEquals(EBorrowState.SCANNING_BOOKS, getState());
+    
+    controller.scansCompleted();
+    
+    assertEquals(EBorrowState.CONFIRMING_LOANS, getState());
+    
+    controller.loansConfirmed();
+    
+    assertEquals(EBorrowState.COMPLETED, getState());
   }
   
   
