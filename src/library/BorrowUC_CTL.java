@@ -279,6 +279,11 @@ public void initialise()
 	  // Disable hardware
 	  reader.setEnabled(false);
 	  scanner.setEnabled(false);
+	  
+	  // Switch to CANCELLED state
+	  setState(EBorrowState.CANCELLED);
+	  ui.setState(EBorrowState.CANCELLED);
+	  
 	  // Set display to Main Menu
 		display.setDisplay(previous, "Main Menu");
 	}
