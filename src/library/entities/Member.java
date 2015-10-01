@@ -106,6 +106,10 @@ public class Member
   {
     if (loanList_.size() >= IMember.LOAN_LIMIT)
     {
+      if (borrowingAllowed())
+      {
+        updateState(EMemberState.BORROWING_DISALLOWED);
+      }
       return true;
     }
     else
@@ -171,6 +175,14 @@ public class Member
     if ((amount >= 0) && (amount <= totalFines_))
     {
       totalFines_ -= amount;
+      if (hasReachedFineLimit() || hasOverDueLoans() || hasReachedLoanLimit())
+      {
+        updateState(EMemberState.BORROWING_DISALLOWED);
+      }
+      else
+      {
+        updateState(EMemberState.BORROWING_ALLOWED);
+      }
     }
     else
     {
@@ -238,6 +250,10 @@ public class Member
     if ((loan != null) && (loanList_.contains(loan)))
     {
       loanList_.remove(loan);
+      if (!(hasReachedFineLimit() || hasOverDueLoans() || hasReachedLoanLimit()))
+      {
+        updateState(EMemberState.BORROWING_ALLOWED);
+      }
     }
     else
     {
