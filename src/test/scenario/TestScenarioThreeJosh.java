@@ -1,6 +1,9 @@
 package test.scenario;
 
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -42,11 +45,15 @@ import test.helper.IBorrowUIStub;
  * 
  * Member initially scans non-existing ID, then scans valid ID
  *     
- * Scans 3 books, one of which doesn't exist (invalid ID), one is unavailable 
- * (DISPOSED), and one is valid
+ * Scans 3 books:
+ *     first book one of which doesn't exist (invalid ID)
+ *     second book is unavailable (DISPOSED)
+ *     last book is valid
  *
  * Clicks complete.
  * Clicks Confirm.
+ * 
+ * Only one loan should have been created.
  *
  * The test is not set up to verify every method call to every interacting object.
  * It focuses on calls triggering 'hardware' changes, state transitions and key 
@@ -184,6 +191,140 @@ public class TestScenarioThreeJosh extends TestCase
  
  
  public void testScenario() {
+   // Every time a method should have enabled/disabled a reader or scanner
+   // it will be counted
+   int readerEnabledCount = 0;
+   int readerDisabledCount = 0;
+   int scannerDisabledCount = 0;
+   int scannerEnabledCount = 0;
+   
+   // Controller should initially be CREATED
+   assertControllerStateEquals(EBorrowState.CREATED);
+   
+   // Verify hardware calls
+   verify(mockedReader).addListener(ctl);
+   verify(mockedScanner).addListener(ctl);
+   
+   //Confirm scanCount = 0
+   assertScanCountEquals(0);
+   
+   
+   // Click Borrow ===========================================================
+   ctl.initialise();
+   
+   // Controller should now be INITIALIZED
+   assertControllerStateEquals(EBorrowState.INITIALIZED);
+   
+   // Reader should be enabled, scanner should be disabled here
+   readerEnabledCount++;
+   scannerDisabledCount++;
+   
+   // Grab references to bookList and loanList (created during initialise())
+   ctlBookList = getBookList();
+   ctlLoanList = getLoanList();
+   // Confirm empty lists
+   assertTrue(ctlLoanList.isEmpty());
+   assertTrue(ctlBookList.isEmpty());
+   
+   
+   // Swipe invalid member card ===============================================
+   ctl.cardSwiped(3);
+   
+   // Confirm no state change
+   assertControllerStateEquals(EBorrowState.INITIALIZED);
+   
+   // Confirm scanCount unaffected
+   assertScanCountEquals(0);
+   
+   
+   // Swipe valid card ========================================================
+   ctl.cardSwiped(1);
+   
+   // Controller should now be SCANNING_BOOKS
+   assertControllerStateEquals(EBorrowState.SCANNING_BOOKS);
+   
+   // Reader should be disabled, scanner should be enabled here
+   readerDisabledCount++;
+   scannerEnabledCount++;
+   
+   
+   // Scan first book (invalid id) =============================================
+   ctl.bookScanned(89);
+   
+   // Confirm bookList online contains no books
+   assertTrue(ctlBookList.isEmpty());
+   
+   // Confirm scanCount unchanged
+   assertScanCountEquals(0);
+   
+   // Confirm loanList unchanged
+   assertTrue(ctlLoanList.isEmpty());
+   
+   
+   // Scan second book (book not available) ====================================
+   ctl.bookScanned(1);
+   
+   // Confirm bookList online contains no books
+   assertTrue(ctlBookList.isEmpty());
+   
+   // Confirm scanCount unchanged
+   assertScanCountEquals(0);
+   
+   // Confirm loanList unchanged
+   assertTrue(ctlLoanList.isEmpty());
+   
+   
+   // Scan third book (valid) =================================================
+   ctl.bookScanned(2);
+   
+   // Confirm book has been added to bookList
+   assertTrue(ctlBookList.contains(scannedBookTwo));
+   
+   // Confirm scanCount incremented
+   assertScanCountEquals(1);
+   
+   // Confirm a pending loan has been added to loanList
+   assertEquals(1, ctlLoanList.size());
+   
+   
+   // Complete book scanning =================================================
+   ctl.scansCompleted();
+   
+   // Controller should now be CONFIRMING_LOANS
+   assertControllerStateEquals(EBorrowState.CONFIRMING_LOANS);
+   
+   // Scanner and reader should be disabled here
+   readerDisabledCount++;
+   scannerDisabledCount++;
+   
+   
+   // Confirm loans ==========================================================
+   ctl.loansConfirmed();
+   
+   // Confirm state transition
+   assertControllerStateEquals(EBorrowState.COMPLETED);
+   
+   // Confirm loan slip printed
+   verify(mockedPrinter).print(anyString());
+   
+   // Confirm loans committed
+   List<ILoan> memberLoans = member.getLoans();
+   assertEquals(1, memberLoans.size());
+   
+   // Confirm bookList and loanList cleared
+   assertTrue(ctlBookList.isEmpty());
+   assertTrue(ctlLoanList.isEmpty());
+   
+   // Scanner and reader should be disabled here
+   readerDisabledCount++;
+   scannerDisabledCount++;
+   
+   // Use expected counts to verify number of calls to scanner and reader 
+   // setEnabled(true) and setEnabled(false)
+   verify(mockedReader, times(readerDisabledCount)).setEnabled(false);
+   verify(mockedScanner, times(scannerDisabledCount)).setEnabled(false);
+   verify(mockedReader, times(readerEnabledCount)).setEnabled(true);
+   verify(mockedScanner, times(scannerEnabledCount)).setEnabled(true);
    
  }
  

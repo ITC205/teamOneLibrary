@@ -303,6 +303,9 @@ public class TestScenarioTwoJosh extends TestCase
     readerDisabledCount++;
     scannerDisabledCount++;
     
+    // Verify no calls to printer
+    verify(mockedPrinter, never()).print(anyString());
+    
     // Use expected counts to verify number of calls to scanner and reader 
     // setEnabled(true) and setEnabled(false)
     verify(mockedReader, times(readerDisabledCount)).setEnabled(false);
