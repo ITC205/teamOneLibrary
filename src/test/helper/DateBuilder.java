@@ -56,6 +56,24 @@ public class DateBuilder
 
 
 
+  /**
+   * Create Date using simple interface (via Calendar) where time portion is
+   * set to zero.
+   * @param date Date The reference date.
+   * @param offsetDays int The number of days to be added or subtracted to the
+   *                   reference date.
+   * @return Date Date with offsetDays added or subtracted to reference date.
+   */
+  public static Date dateBuilder(Date date, int offsetDays)
+  {
+    Calendar calendar = new GregorianCalendar();
+    calendar.setTime(date);
+    calendar.add(Calendar.DAY_OF_MONTH, offsetDays);
+    return calendar.getTime();
+  }
+
+
+
   public static String formattedDate(Date date)
   {
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");

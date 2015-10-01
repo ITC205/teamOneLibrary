@@ -85,14 +85,17 @@ public class Member
   public boolean hasOverDueLoans() 
   {
     boolean hasOverDueLoans = false;
-    Date currentDate = new Date();
     
     for(ILoan loan: loanList_)
     {
-      if (loan.checkOverDue(currentDate))
+      if (loan.isOverDue())
       {
         hasOverDueLoans = true;
       }
+    }
+    if (hasOverDueLoans)
+    {
+      updateState(EMemberState.BORROWING_DISALLOWED);
     }
     return hasOverDueLoans;
   }
@@ -255,7 +258,7 @@ public class Member
   {
     if (memberState_ == EMemberState.BORROWING_ALLOWED)
     {
-       return true;
+      return true;
     }
     else return false;
   }

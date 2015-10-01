@@ -114,6 +114,14 @@ public class LoanBuilder
 
 
 
+  public LoanBuilder withBorrowDate(Date date)
+  {
+    borrowDate_ = date;
+    return this;
+  }
+
+
+
   public LoanBuilder withDueDate(int day, int month, int year)
   {
     dueDate_ = dateBuilder(day, month, year);
@@ -126,6 +134,14 @@ public class LoanBuilder
                                  int hour, int min, int sec)
   {
     dueDate_ = dateBuilder(day, month, year, hour, min, sec);
+    return this;
+  }
+
+
+
+  public LoanBuilder withDueDate(Date date)
+  {
+    borrowDate_ = date;
     return this;
   }
 

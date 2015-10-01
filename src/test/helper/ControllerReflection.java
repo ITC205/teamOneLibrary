@@ -10,6 +10,7 @@ import static org.assertj.core.api.Assertions.fail;
 
 import library.interfaces.EBorrowState;
 import library.interfaces.IBorrowUI;
+import library.interfaces.entities.IBook;
 import library.interfaces.entities.ILoan;
 import library.interfaces.entities.IMember;
 
@@ -273,6 +274,71 @@ public class ControllerReflection
         loanList.setAccessible(true);
       }
       loanList.set(controller, pendingLoans);
+    }
+
+    catch (NoSuchFieldException exception) {
+      fail("NoSuchFieldException should not occur");
+    }
+    catch (IllegalAccessException exception) {
+      fail("IllegalAccessException should not occur");
+    }
+    catch (Exception exception) {
+      fail("Exception should not occur");
+    }
+  }
+
+  //===========================================================================
+  // bookList getter & setter
+  //===========================================================================
+
+  /**
+   * Uses Reflection API to directly access BorrowUC_CTL's private bookList.
+   * @param controller BorrowUC_CTL The main controller.
+   * @return List<IBook> The list of books that have been scanned.
+   */
+  public static List<IBook> getPrivateBookList(BorrowUC_CTL controller)
+  {
+    try {
+      Field bookList = BorrowUC_CTL.class.getDeclaredField("bookList");
+
+      // Enable direct modification of private field
+      if (!bookList.isAccessible()) {
+        bookList.setAccessible(true);
+      }
+      return (List<IBook>)bookList.get(controller);
+    }
+
+    catch (NoSuchFieldException exception) {
+      fail("NoSuchFieldException should not occur");
+    }
+    catch (IllegalAccessException exception) {
+      fail("IllegalAccessException should not occur");
+    }
+    catch (Exception exception) {
+      fail("Exception should not occur");
+    }
+
+    return null;
+  }
+
+
+
+  /**
+   * Uses Reflection API to directly set BorrowUC_CTL's private bookList.
+   * @param controller BorrowUC_CTL The main controller.
+   * @param scannedBooks List<IBook> The list of books to be set.
+   */
+  public static void setPrivateBookList(BorrowUC_CTL controller,
+                                        List<IBook> scannedBooks)
+  {
+    try {
+      Field bookList = BorrowUC_CTL.class.getDeclaredField("bookList");
+
+      // Enable direct modification of private field
+      if (!bookList.isAccessible()) {
+        bookList.setAccessible(true);
+      }
+      bookList.set(controller, scannedBooks);
     }
 
     catch (NoSuchFieldException exception) {

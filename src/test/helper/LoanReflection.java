@@ -123,6 +123,35 @@ public class LoanReflection
 
 
 
+  /**
+   * Uses Reflection API to directly set the Loan's private borrow date.
+   * @param loan Loan The loan under test.
+   * @param date Date The date that will be set as the borrow date of the Loan.
+   */
+  public static void setPrivateBorrowDate(Loan loan, Date date)
+  {
+    try {
+      Class<?> loanClass = loan.getClass();
+      Field borrowDate = loanClass.getDeclaredField("borrowDate_");
+
+      // Enable direct modification of private field
+      if (!borrowDate.isAccessible()) {
+        borrowDate.setAccessible(true);
+      }
+      borrowDate.set(loan, date);
+    }
+
+    catch (NoSuchFieldException exception) {
+      fail("NoSuchFieldException should not occur");
+    }
+    catch (IllegalAccessException exception) {
+      fail("IllegalAccessException should not occur");
+    }
+    catch (Exception exception) {
+      fail("Exception should not occur");
+    }
+  }
+
   //===========================================================================
   // Due date getter & setter
   //===========================================================================
