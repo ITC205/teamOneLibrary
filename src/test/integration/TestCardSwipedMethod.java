@@ -21,7 +21,6 @@ import library.interfaces.IBorrowUI;
 import library.interfaces.daos.IBookDAO;
 import library.interfaces.daos.ILoanDAO;
 import library.interfaces.daos.IMemberDAO;
-import library.interfaces.entities.ELoanState;
 import library.interfaces.entities.ILoan;
 import library.interfaces.hardware.ICardReader;
 import library.interfaces.hardware.IDisplay;

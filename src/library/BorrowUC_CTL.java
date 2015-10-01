@@ -113,10 +113,6 @@ public void initialise()
       throw new RuntimeException("BorrowUC_CTL: cardSwiped: cannot call " +
           "method when state is: " + state);
     }
-    if (memberDAO.listMembers().size() < 1)
-    {
-
-    }
 
     // Check whether borrowerId exists in the list of members
     if (memberDAO.getMemberByID(borrowerId) == null)
@@ -132,7 +128,7 @@ public void initialise()
     // Initialize scanCount to the number of loans already existing
     scanCount = existingLoans.size();
 
-    if (borrower.getState() == EMemberState.BORROWING_ALLOWED)
+    if (!(borrower.hasOverDueLoans() || borrower.hasReachedLoanLimit() || borrower.hasReachedFineLimit()))
     {
       setState(EBorrowState.SCANNING_BOOKS);
       ui.setState(EBorrowState.SCANNING_BOOKS);

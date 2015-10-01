@@ -85,14 +85,17 @@ public class Member
   public boolean hasOverDueLoans() 
   {
     boolean hasOverDueLoans = false;
-    Date currentDate = new Date();
     
     for(ILoan loan: loanList_)
     {
-      if (loan.checkOverDue(currentDate))
+      if (loan.isOverDue())
       {
         hasOverDueLoans = true;
       }
+    }
+    if (hasOverDueLoans)
+    {
+      updateState(EMemberState.BORROWING_DISALLOWED);
     }
     return hasOverDueLoans;
   }
@@ -253,20 +256,15 @@ public class Member
   
   private boolean borrowingAllowed()
   {
-    if (memberState_ == EMemberState.BORROWING_ALLOWED)
+    if (!hasReachedFineLimit() || !hasOverDueLoans() || !hasReachedLoanLimit())
     {
-       return true;
+      updateState(EMemberState.BORROWING_ALLOWED);
+      return true;
     }
-    else return false;
-  }
-  
-  
-  
-  public void checkLoanDueDates()
-  {
-    if (hasOverDueLoans())
+    else
     {
       updateState(EMemberState.BORROWING_DISALLOWED);
+      return false;
     }
   }
   
