@@ -23,9 +23,9 @@ public class TestMasterSuiteJosh extends TestCase
   public static Test suite() {
     TestSuite suite = new TestSuite();
     
-    suite.addTestSuite(TestBookSuite.class);
-    suite.addTestSuite(TestOperationSuiteJosh.class);
-    suite.addTestSuite(TestScenarioSuiteJosh.class);
+    suite.addTest(TestBookSuite.suite());
+    suite.addTest(TestOperationSuiteJosh.suite());
+    suite.addTest(TestScenarioSuiteJosh.suite());
     
     return suite;
   }
