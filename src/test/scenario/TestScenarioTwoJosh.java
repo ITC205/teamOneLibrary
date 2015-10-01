@@ -2,6 +2,12 @@ package test.scenario;
 
 import junit.framework.TestCase;
 import library.BorrowUC_CTL;
+import library.daos.BookDAO;
+import library.daos.BookHelper;
+import library.daos.LoanDAO;
+import library.daos.LoanHelper;
+import library.daos.MemberDAO;
+import library.daos.MemberHelper;
 import library.interfaces.EBorrowState;
 import library.interfaces.IBorrowUI;
 import library.interfaces.daos.IBookDAO;
@@ -17,6 +23,7 @@ import library.interfaces.hardware.ICardReader;
 import library.interfaces.hardware.IDisplay;
 import library.interfaces.hardware.IPrinter;
 import library.interfaces.hardware.IScanner;
+import test.helper.IBorrowUIStub;
 
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
@@ -77,8 +84,7 @@ public class TestScenarioTwoJosh extends TestCase
   
   private IBook scannedBookOne;
   private IBook scannedBookTwo;
-  private IBook scannedBookThree;
-  
+
   private IMember member;
   
   
@@ -103,7 +109,34 @@ public class TestScenarioTwoJosh extends TestCase
   
   @Override
   protected void setUp() {
-    //TODO
+    // Mock all UI
+    mockedReader = mock(ICardReader.class);
+    mockedScanner = mock(IScanner.class);
+    mockedPrinter = mock(IPrinter.class);
+    mockedDisplay = mock(IDisplay.class);
+    stubbedUI = new IBorrowUIStub();
+
+    // Create real objects
+    bookHelper = new BookHelper();
+    loanHelper = new LoanHelper();
+    memberHelper = new MemberHelper();
+
+    bookDAO = new BookDAO(bookHelper);
+    loanDAO = new LoanDAO(loanHelper);
+    memberDAO = new MemberDAO(memberHelper);
+    
+    // Add books to be scanned
+    scannedBookOne = bookDAO.addBook("Harper Lee", "To Kill A Mockingbird", "LEE 123");
+    scannedBookTwo = bookDAO.addBook("Dan Brown", "Digital Fortress", "BRO 410");
+    
+    // Add member for this scenario
+    member = memberDAO.addMember("Josh", "Kent", "62626262", "josh@kent.com");
+    
+    ctl = new BorrowUC_CTL(mockedReader, mockedScanner, mockedPrinter, 
+            mockedDisplay, bookDAO, loanDAO, memberDAO);
+    
+    // Directly set mock UI
+    setMockedUI(stubbedUI);
   }
   
   
@@ -132,7 +165,6 @@ public class TestScenarioTwoJosh extends TestCase
     
     scannedBookOne = null;
     scannedBookTwo = null;
-    scannedBookThree = null;
     
     member = null;
   }
@@ -146,7 +178,143 @@ public class TestScenarioTwoJosh extends TestCase
   
   
   public void testScenario() {
-    //TODO
+    // Every time a method should have enabled/disabled a reader or scanner
+    // it will be counted
+    int readerEnabledCount = 0;
+    int readerDisabledCount = 0;
+    int scannerDisabledCount = 0;
+    int scannerEnabledCount = 0;
+    
+    // Controller should initially be CREATED
+    assertControllerStateEquals(EBorrowState.CREATED);
+    
+    // Verify hardware calls
+    verify(mockedReader).addListener(ctl);
+    verify(mockedScanner).addListener(ctl);
+    
+    //Confirm scanCount = 0
+    assertScanCountEquals(0);
+    
+    
+    // Click Borrow ===========================================================
+    ctl.initialise();
+    
+    // Controller should now be INITIALIZED
+    assertControllerStateEquals(EBorrowState.INITIALIZED);
+    
+    // Reader should be enabled, scanner should be disabled here
+    readerEnabledCount++;
+    scannerDisabledCount++;
+    
+    // Grab references to bookList and loanList (created during initialise())
+    ctlBookList = getBookList();
+    ctlLoanList = getLoanList();
+    // Confirm empty lists
+    assertTrue(ctlLoanList.isEmpty());
+    assertTrue(ctlBookList.isEmpty());
+    
+    
+    // Swipe member card ======================================================
+    ctl.cardSwiped(1);
+    
+    // Controller should now be SCANNING_BOOKS
+    assertControllerStateEquals(EBorrowState.SCANNING_BOOKS);
+    
+    // Reader should be disabled, scanner should be enabled here
+    readerDisabledCount++;
+    scannerEnabledCount++;
+    
+    
+    // Scan first book ========================================================
+    ctl.bookScanned(1);
+    
+    // Confirm book has been added to bookList
+    assertTrue(ctlBookList.contains(scannedBookOne));
+    
+    // Confirm scanCount incremented
+    assertScanCountEquals(1);
+    
+    // Confirm a pending loan has been added to loanList
+    assertEquals(1, ctlLoanList.size());
+    
+    
+    // Scan first book (again) =================================================
+    ctl.bookScanned(1);
+    
+    // Confirm first book is still in bookList
+    assertTrue(ctlBookList.contains(scannedBookOne));
+
+    // Confirm bookList online contains one book
+    assertEquals(1, ctlBookList.size());
+    
+    // Confirm scanCount unchanged
+    assertScanCountEquals(1);
+    
+    // Confirm loanList unchanged
+    assertEquals(1, ctlLoanList.size());
+    
+    
+    // Scan second book ========================================================
+    ctl.bookScanned(2);
+    
+    // Confirm book has been added to bookList (without affecting other books)
+    assertTrue(ctlBookList.contains(scannedBookOne));
+    assertTrue(ctlBookList.contains(scannedBookTwo));
+    
+    // Confirm scanCount incremented
+    assertScanCountEquals(2);
+    
+    // Confirm a pending loan has been added to loanList
+    assertEquals(2, ctlLoanList.size());
+    
+    
+    // Complete book scanning =================================================
+    ctl.scansCompleted();
+    
+    // Controller should now be CONFIRMING_LOANS
+    assertControllerStateEquals(EBorrowState.CONFIRMING_LOANS);
+    
+    // Scanner and reader should be disabled here
+    readerDisabledCount++;
+    scannerDisabledCount++;
+    
+    
+    // Reject loans ===========================================================
+    ctl.loansRejected();
+    
+    // Controller should revert to SCANNING_BOOKS
+    assertControllerStateEquals(EBorrowState.SCANNING_BOOKS);
+    
+    // scanCount should be reset to borrowers existing loan count (0 in this case)
+    assertScanCountEquals(0);
+    
+    // loanList and bookList should be reset
+    assertTrue(ctlLoanList.isEmpty());
+    assertTrue(ctlBookList.isEmpty());
+    
+    // Card reader disabled and scanner enabled
+    readerDisabledCount++;
+    scannerEnabledCount++;
+    
+    
+    // Cancel borrowing =======================================================
+    ctl.cancelled();
+    
+    // Scanner and card reader both disabled
+    readerDisabledCount++;
+    scannerDisabledCount++;
+    
+    // Use expected counts to verify number of calls to scanner and reader 
+    // setEnabled(true) and setEnabled(false)
+    verify(mockedReader, times(readerDisabledCount)).setEnabled(false);
+    verify(mockedScanner, times(scannerDisabledCount)).setEnabled(false);
+    verify(mockedReader, times(readerEnabledCount)).setEnabled(true);
+    verify(mockedScanner, times(scannerEnabledCount)).setEnabled(true);
+    
+    // No loans should have been associated with the member, as the borrowing 
+    // was cancelled. The member did not have any existing loans.
+    List<ILoan> memberLoanList = member.getLoans();
+    assertTrue(memberLoanList.isEmpty());
     
   }
   

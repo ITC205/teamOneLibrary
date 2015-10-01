@@ -209,11 +209,14 @@ public class TestScenarioOneJosh extends TestCase
     verify(mockedReader).addListener(ctl);
     verify(mockedScanner).addListener(ctl);
     
+    //Confirm scanCount = 0
+    assertScanCountEquals(0);
+    
     
     // Click Borrow ===========================================================
     ctl.initialise();
     
-    // Controller and UI should now be INITIALIZED
+    // Controller should now be INITIALIZED
     assertControllerStateEquals(EBorrowState.INITIALIZED);
     
     // Reader should be enabled, scanner should be disabled here
@@ -234,7 +237,7 @@ public class TestScenarioOneJosh extends TestCase
     // Member has two existing loans, so scanCount should be 2
     assertScanCountEquals(2);
     
-    // Controller and UI should now be SCANNING_BOOKS
+    // Controller should now be SCANNING_BOOKS
     assertControllerStateEquals(EBorrowState.SCANNING_BOOKS);
     
     // Reader should be disabled, scanner should be enabled here
@@ -258,7 +261,8 @@ public class TestScenarioOneJosh extends TestCase
     // Scan second book =======================================================
     ctl.bookScanned(2);
     
-    // Confirm book has been added to bookList
+    // Confirm book has been added to bookList (without affecting other books)
+    assertTrue(ctlBookList.contains(scannedBookOne));
     assertTrue(ctlBookList.contains(scannedBookTwo));
     
     // Confirm scanCount incremented
@@ -271,7 +275,9 @@ public class TestScenarioOneJosh extends TestCase
     // Scan third book ========================================================
     ctl.bookScanned(3);
     
-    // Confirm book has been added to bookList
+    // Confirm book has been added to bookList (without affecting other books)
+    assertTrue(ctlBookList.contains(scannedBookOne));
+    assertTrue(ctlBookList.contains(scannedBookTwo));
     assertTrue(ctlBookList.contains(scannedBookThree));
     
     // Confirm scanCount incremented
