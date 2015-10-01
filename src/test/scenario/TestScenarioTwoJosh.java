@@ -25,7 +25,6 @@ import library.interfaces.hardware.IPrinter;
 import library.interfaces.hardware.IScanner;
 import test.helper.IBorrowUIStub;
 
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
 import java.lang.reflect.Field;
