@@ -299,6 +299,9 @@ public class TestScenarioTwoJosh extends TestCase
     // Cancel borrowing =======================================================
     ctl.cancelled();
     
+    // Controller state should be CANCELLED
+    assertControllerStateEquals(EBorrowState.CANCELLED);
+    
     // Scanner and card reader both disabled
     readerDisabledCount++;
     scannerDisabledCount++;
