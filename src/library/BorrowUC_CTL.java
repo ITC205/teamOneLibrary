@@ -193,6 +193,10 @@ public void initialise()
       {
         ui.displayOverFineLimitMessage(borrower.getTotalFines());
       }
+      if(borrower.hasReachedLoanLimit()) 
+      {
+        ui.displayAtLoanLimitMessage();
+      }
       ui.displayErrorMessage("Borrowing Restricted");
     }
   }
