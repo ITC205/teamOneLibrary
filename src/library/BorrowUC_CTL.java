@@ -335,22 +335,28 @@ public void initialise()
                                  "method when there are no pending loans");
     }
 
+    // set state
     setState(EBorrowState.COMPLETED);
 
+    // commit all pending loans
     for (ILoan loan : loanList) {
       loanDAO.commitLoan(loan);
     }
 
+    // print loans details
     String loanDetails = buildLoanListDisplay(loanList);
     printer.print(loanDetails);
 
-    // clear lists of scanned books and loans and borrower
+    // clear lists of scanned books & loans and borrower
     bookList.clear();
     loanList.clear();
     borrower = null;
 
+    // set hardware ready for next borrower
     scanner.setEnabled(false);
     reader.setEnabled(false);
+
+    // set ui back to main menu
     display.setDisplay(previous, "Main Menu");
 	}
 
@@ -367,33 +373,29 @@ public void initialise()
                                  "method when there are no pending loans");
     }
 
-    // TODO: check this stuff!
-    ui.setState(EBorrowState.SCANNING_BOOKS);
+    // set state and ui back to scanning books
     setState(EBorrowState.SCANNING_BOOKS);
+    ui.setState(EBorrowState.SCANNING_BOOKS);
 
-    // TODO: check this displays member details properly
+    // display borrower details
     int id = borrower.getId();
     String name = borrower.getFirstName() + " " + borrower.getLastName();
     String phone = borrower.getContactPhone();
     ui.displayMemberDetails(id, name, phone);
 
-    List<ILoan> existingLoans = borrower.getLoans();
-    String loanDetails = buildLoanListDisplay(existingLoans);
-    ui.displayExistingLoan(loanDetails);
-
-    loanList.clear();
-    scanCount = existingLoans.size();
-    // TODO: cancel button enabled
-    // ?
-
     // clear display
     ui.displayPendingLoan("");
     ui.displayScannedBookDetails("");
-    ui.displayExistingLoan("");
+
+    // ensure scanCount is correct
+    List<ILoan> existingLoans = borrower.getLoans();
+    scanCount = existingLoans.size();
+
     // clear lists of scanned books and loans (but not borrower)
     bookList.clear();
     loanList.clear();
 
+    // set hardware ready for next borrower
     reader.setEnabled(false);
     scanner.setEnabled(true);
 	}
