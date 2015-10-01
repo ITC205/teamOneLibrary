@@ -113,10 +113,6 @@ public void initialise()
       throw new RuntimeException("BorrowUC_CTL: cardSwiped: cannot call " +
           "method when state is: " + state);
     }
-    if (memberDAO.listMembers().size() < 1)
-    {
-
-    }
 
     // Check whether borrowerId exists in the list of members
     if (memberDAO.getMemberByID(borrowerId) == null)
