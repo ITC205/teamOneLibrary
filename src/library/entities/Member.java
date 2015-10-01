@@ -256,16 +256,11 @@ public class Member
   
   private boolean borrowingAllowed()
   {
-    if (!hasReachedFineLimit() || !hasOverDueLoans() || !hasReachedLoanLimit())
+    if (memberState_ == EMemberState.BORROWING_ALLOWED)
     {
-      updateState(EMemberState.BORROWING_ALLOWED);
       return true;
     }
-    else
-    {
-      updateState(EMemberState.BORROWING_DISALLOWED);
-      return false;
-    }
+    else return false;
   }
   
   
