@@ -12,38 +12,35 @@ import library.daos.BookDAO;
 import library.daos.BookHelper;
 import library.daos.LoanDAO;
 import library.daos.LoanHelper;
-import library.entities.Book;
-import library.entities.Member;
 import library.interfaces.IBorrowUI;
 import library.interfaces.EBorrowState;
-import library.interfaces.entities.EBookState;
 import library.interfaces.entities.EMemberState;
-import library.interfaces.entities.IMember;
-import library.interfaces.entities.IBook;
-import library.interfaces.entities.ILoan;
 import library.interfaces.daos.IMemberDAO;
-import library.interfaces.daos.IMemberHelper;
 import library.interfaces.daos.IBookDAO;
-import library.interfaces.daos.IBookHelper;
 import library.interfaces.daos.ILoanDAO;
-import library.interfaces.daos.ILoanHelper;
 import library.interfaces.hardware.ICardReader;
 import library.interfaces.hardware.IDisplay;
 import library.interfaces.hardware.IPrinter;
 import library.interfaces.hardware.IScanner;
 import test.helper.IBorrowUIStub;
-import static org.mockito.Mockito.*;
 
-//Scenario 2:
-//Member:
-//  Has no loans
-//  Has reached fine limit
-//Swipes card
-//Clicks Cancel
+// Scenario 2:
+// Member:
+//    Has no loans
+//    Has reached fine limit
+
+// 1) Swipes card
+// 2) Clicks Cancel
 
 
 public class TestScenarioTwoRebecca extends TestCase
 {
+  
+  // ==========================================================================
+  // Variables
+  // ==========================================================================
+  
+  
   
   private ICardReader mockReader;
   private IScanner mockScanner;
@@ -52,11 +49,15 @@ public class TestScenarioTwoRebecca extends TestCase
   private IMemberDAO memberDAO;
   private IBookDAO bookDAO;
   private ILoanDAO loanDAO;
-  private IMemberHelper memberHelper;
-  private IMember member;
-  
   private IBorrowUI ui;
   private BorrowUC_CTL controller;
+  
+  
+  
+  // ==========================================================================
+  // Methods: Preparation for tests
+  // ==========================================================================
+  
 
 
   protected void createMocks()
@@ -85,6 +86,12 @@ public class TestScenarioTwoRebecca extends TestCase
   
   
   
+  // ==========================================================================
+  // Methods: Testing
+  // ==========================================================================
+  
+  
+  
   // Verify that Constructor and Initialise methods set the controller state as required
   public void testScenarioOne()
   {
@@ -109,6 +116,12 @@ public class TestScenarioTwoRebecca extends TestCase
   
   
   
+  // ==========================================================================
+  // Methods: Accessors for private fields
+  // ==========================================================================
+  
+  
+  
   private EBorrowState getState()
   {
     EBorrowState controllerState = null;
@@ -128,5 +141,28 @@ public class TestScenarioTwoRebecca extends TestCase
       e.printStackTrace();
     }
     return controllerState;
+  }
+  
+  
+  
+  private int getScanCount() 
+  {
+    int controllerScanCount = 0;
+    try {
+      Class<?> borrowUC_CTLClass = controller.getClass();
+      Field scanCount = borrowUC_CTLClass.getDeclaredField("scanCount");
+      scanCount.setAccessible(true);
+      controllerScanCount = (int) scanCount.get(controller);
+      return controllerScanCount;
+    } catch (NoSuchFieldException e) {
+      e.printStackTrace();
+    } catch (SecurityException e) {
+      e.printStackTrace();
+    } catch (IllegalArgumentException e) {
+      e.printStackTrace();
+    } catch (IllegalAccessException e) {
+      e.printStackTrace();
+    }
+    return controllerScanCount;
   }
 }

@@ -1,6 +1,7 @@
 package test.scenario;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
 import java.lang.reflect.Field;
 
@@ -12,41 +13,40 @@ import library.daos.BookDAO;
 import library.daos.BookHelper;
 import library.daos.LoanDAO;
 import library.daos.LoanHelper;
-import library.entities.Book;
-import library.entities.Member;
 import library.interfaces.IBorrowUI;
 import library.interfaces.EBorrowState;
 import library.interfaces.entities.EBookState;
 import library.interfaces.entities.EMemberState;
-import library.interfaces.entities.IMember;
-import library.interfaces.entities.IBook;
-import library.interfaces.entities.ILoan;
 import library.interfaces.daos.IMemberDAO;
-import library.interfaces.daos.IMemberHelper;
 import library.interfaces.daos.IBookDAO;
-import library.interfaces.daos.IBookHelper;
 import library.interfaces.daos.ILoanDAO;
-import library.interfaces.daos.ILoanHelper;
 import library.interfaces.hardware.ICardReader;
 import library.interfaces.hardware.IDisplay;
 import library.interfaces.hardware.IPrinter;
 import library.interfaces.hardware.IScanner;
 import test.helper.IBorrowUIStub;
-import static org.mockito.Mockito.*;
 
-//Scenario 1:
-//Member:
-//  Has no loans
-//  Has no fines
-//Scans 5 books
-//Clicks Reject
-//Scans 2 books
-//Clicks Completed
-//Clicks Confirm
+
+// Scenario 1:
+// Member:
+//    Has no loans
+//    Has no fines
+
+// 1) Scans 5 books
+// 2) Clicks Reject
+// 3) Scans 2 books
+// 4) Clicks Completed
+// 5) Clicks Confirm
 
 
 public class TestScenarioOneRebecca extends TestCase
 {
+  
+  // ==========================================================================
+  // Variables
+  // ==========================================================================
+  
+  
   
   private ICardReader mockReader;
   private IScanner mockScanner;
@@ -55,13 +55,18 @@ public class TestScenarioOneRebecca extends TestCase
   private IMemberDAO memberDAO;
   private IBookDAO bookDAO;
   private ILoanDAO loanDAO;
-  private IMemberHelper memberHelper;
-  private IMember member;
   
   private IBorrowUI ui;
   private BorrowUC_CTL controller;
 
 
+  
+  // ==========================================================================
+  // Methods: Preparation for tests
+  // ==========================================================================
+  
+  
+  
   protected void createMocks()
   {
     mockReader = mock(ICardReader.class);
@@ -92,6 +97,12 @@ public class TestScenarioOneRebecca extends TestCase
     bookDAO.addBook("George Martin", "A Game of Thrones", "MAR001");
     bookDAO.addBook("Charlotte Bronte", "Jane Eyre", "BRO001");
   }
+  
+  
+  
+  // ==========================================================================
+  // Methods: Testing
+  // ==========================================================================
   
   
   
@@ -172,6 +183,12 @@ public class TestScenarioOneRebecca extends TestCase
     
     assertEquals(EMemberState.BORROWING_ALLOWED, memberDAO.getMemberByID(1).getState());
   }
+  
+  
+  
+  // ==========================================================================
+  // Methods: Accessors for private fields
+  // ==========================================================================
   
   
   
