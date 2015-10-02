@@ -137,7 +137,8 @@ public void initialise()
       scanner.setEnabled(true);
 
       ui.displayMemberDetails(borrowerId, 
-                              borrower.getFirstName() + " " + borrower.getLastName(), 
+                              borrower.getFirstName() + " " +
+                              borrower.getLastName(),
                               borrower.getContactPhone());
       
       // Display the details of any outstanding loans
@@ -164,15 +165,11 @@ public void initialise()
       // Prevent scanning of books
       scanner.setEnabled(false);
 
-<<<<<<< HEAD
-      ui.displayMemberDetails(borrower.getId(), borrower.getFirstName(), borrower.getContactPhone());
-
-=======
-      ui.displayMemberDetails(borrowerId, 
-                              borrower.getFirstName() + " " + borrower.getLastName(), 
+      ui.displayMemberDetails(borrowerId,
+                              borrower.getFirstName() + " " +
+                              borrower.getLastName(),
                               borrower.getContactPhone());
-      
->>>>>>> development
+
       // Display any outstanding loans
       // Display the details of any outstanding loans
       if (existingLoans.size() > 0)
@@ -305,8 +302,8 @@ public void initialise()
 	public void scansCompleted() {
 	  // Check for valid state
 	  if(state != EBorrowState.SCANNING_BOOKS) {
-	     throw new RuntimeException("BorrowUC_CTL: scansCompleted: method call not"
-	                               + " allowed from " + state);
+	     throw new RuntimeException("BorrowUC_CTL: scansCompleted: method call " +
+	                                "not allowed from " + state);
 	  }
 	  
 	  // Check loan list contains some loans
@@ -375,6 +372,8 @@ public void initialise()
     display.setDisplay(previous, "Main Menu");
 	}
 
+
+
   @Override
   public void loansRejected() {
 
@@ -406,22 +405,24 @@ public void initialise()
     List<ILoan> existingLoans = borrower.getLoans();
     scanCount = existingLoans.size();
 
-    // clear lists of scanned books and loans (but not borrower)
+    // clear lists of scanned books and loans (but not borrower or scanCount)
     bookList.clear();
     loanList.clear();
 
     // set hardware ready for next borrower
     reader.setEnabled(false);
     scanner.setEnabled(true);
-	}
+  }
 
-	private String buildLoanListDisplay(List<ILoan> loans) {
-		StringBuilder bld = new StringBuilder();
-		for (ILoan ln : loans) {
-			if (bld.length() > 0) bld.append("\n\n");
-			bld.append(ln.toString());
-		}
-		return bld.toString();		
-	}
+
+
+  private String buildLoanListDisplay(List<ILoan> loans) {
+    StringBuilder bld = new StringBuilder();
+    for (ILoan ln : loans) {
+      if (bld.length() > 0) bld.append("\n\n");
+      bld.append(ln.toString());
+    }
+    return bld.toString();
+  }
 
 }
