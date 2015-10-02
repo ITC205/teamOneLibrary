@@ -127,8 +127,7 @@ public void initialise()
     // Initialize scanCount to the number of loans already existing
     scanCount = existingLoans.size();
 
- //   if (!(borrower.hasOverDueLoans() || borrower.hasReachedLoanLimit() || borrower.hasReachedFineLimit()))
-      if (!borrower.isRestricted())
+    if (!borrower.isRestricted())
     {
       setState(EBorrowState.SCANNING_BOOKS);
       ui.setState(EBorrowState.SCANNING_BOOKS);
@@ -165,8 +164,15 @@ public void initialise()
       // Prevent scanning of books
       scanner.setEnabled(false);
 
+<<<<<<< HEAD
       ui.displayMemberDetails(borrower.getId(), borrower.getFirstName(), borrower.getContactPhone());
 
+=======
+      ui.displayMemberDetails(borrowerId, 
+                              borrower.getFirstName() + " " + borrower.getLastName(), 
+                              borrower.getContactPhone());
+      
+>>>>>>> development
       // Display any outstanding loans
       // Display the details of any outstanding loans
       if (existingLoans.size() > 0)
@@ -275,6 +281,11 @@ public void initialise()
 	// cancelled by Josh Kent
 	@Override
 	public void cancelled() {
+	  // Clear all borrow details for this session
+	  bookList.clear();
+	  loanList.clear();
+	  borrower = null;	  
+	  
 	  // Disable hardware
 	  reader.setEnabled(false);
 	  scanner.setEnabled(false);
