@@ -281,8 +281,7 @@ public void initialise()
 	  // Clear all borrow details for this session
 	  bookList.clear();
 	  loanList.clear();
-	  borrower = null;
-	  scanCount = 0;
+	  borrower = null;	  
 	  
 	  // Disable hardware
 	  reader.setEnabled(false);
