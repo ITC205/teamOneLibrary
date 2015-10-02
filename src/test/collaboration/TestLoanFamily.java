@@ -23,6 +23,10 @@ import static test.helper.LoanReflection.*;
 
 /**
  * Tests collaborations of Loan family - Loan, LoanHelper & LoanDAO.
+ * Uses DoubleBuilder for creation of stubs & mocks, DateBuilder for all things
+ * date related and LoanReflection for checking private fields.
+ *
+ * @author nicholasbaldwin
  */
 public class TestLoanFamily
 {
@@ -99,8 +103,8 @@ public class TestLoanFamily
   @Test
   public void createEmptyLibrary()
   {
-    library.interfaces.daos.ILoanHelper loanHelper = new library.daos.LoanHelper();
-    library.daos.LoanDAO dao = new library.daos.LoanDAO(loanHelper);
+    ILoanHelper loanHelper = new LoanHelper();
+    LoanDAO dao = new LoanDAO(loanHelper);
 
     List<ILoan> emptyLoanList = dao.listLoans();
 
@@ -112,8 +116,8 @@ public class TestLoanFamily
   @Test
   public void createLoanDoesNotAddPendingLoanToLibrary()
   {
-    library.interfaces.daos.ILoanHelper loanHelper = new library.daos.LoanHelper();
-    library.daos.LoanDAO dao = new library.daos.LoanDAO(loanHelper);
+    ILoanHelper loanHelper = new LoanHelper();
+    LoanDAO dao = new LoanDAO(loanHelper);
 
     ILoan loan = dao.createLoan(jim_, catch22_);
 
@@ -127,7 +131,7 @@ public class TestLoanFamily
   @Test
   public void commitLoanMakesLoanCurrentAndSetsIDAndAddsToLibrary()
   {
-    library.interfaces.daos.ILoanHelper loanHelper = new LoanHelper();
+    ILoanHelper loanHelper = new LoanHelper();
     LoanDAO dao = new LoanDAO(loanHelper);
 
     ILoan loan = dao.createLoan(jim_, catch22_);
@@ -404,6 +408,29 @@ public class TestLoanFamily
     dao.updateOverDueStatus(today);
 
     assertThat(loan.isOverDue()).isTrue();
+  }
+
+
+
+  @Test
+  public void updateOverDueStatusCallsLoanHasBecomeOverDueOnCurrentLoan()
+  {
+    ILoanHelper loanHelper = new LoanHelper();
+    LoanDAO dao = new LoanDAO(loanHelper);
+    Date dueDate = dateBuilder(24, 10, 2015);
+    Date today = dateBuilder(25, 10, 2015);
+
+    ILoan loan = dao.createLoan(jim_, catch22_);
+    dao.commitLoan(loan);
+    setPrivateDueDate((Loan)loan, dueDate);
+    assertThat(loan.isOverDue()).isFalse();
+    assertThat(dao.findOverDueLoans()).isEmpty();
+
+    dao.updateOverDueStatus(today);
+
+    assertThat(loan.isOverDue()).isTrue();
+
+    verify(jim_).loanHasBecomeOverdue(loan);
   }
 
 }
