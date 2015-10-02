@@ -83,7 +83,7 @@ public class RestrictedOverDueLoans
   IBookDAO books_ = spy(new BookDAO(bookHelper_));
 
   ILoanHelper loanHelper_ = new LoanHelper();
-  ILoanDAO loans_ = spy(new LoanDAO(loanHelper_));
+  ILoanDAO loans_;
 
   IMemberHelper memberHelper_ = new MemberHelper();
   IMemberDAO members_ = spy(new MemberDAO(memberHelper_));
@@ -112,6 +112,8 @@ public class RestrictedOverDueLoans
 
   public void setUpExistingLoans(IMember member) throws Exception
   {
+    loans_ = spy(new LoanDAO(loanHelper_));
+
     Date today = ignoreTime(new Date());
     Date yesterday = dateBuilder(today, -1);
     Date borrowed = dateBuilder(yesterday, -(ILoan.LOAN_PERIOD));
@@ -200,10 +202,8 @@ public class RestrictedOverDueLoans
 
     controller_.cardSwiped(jim.getId());
 
-    // BROKEN TEST ============================================================
     state = getPrivateState(controller_);
     assertThat(state).isEqualTo(EBorrowState.BORROWING_RESTRICTED);
-    // ========================================================================
     borrower = getPrivateBorrower(controller_);
     assertThat(borrower.toString()).isEqualTo(jim.toString());
     loanList = getPrivateLoanList(controller_);
@@ -213,10 +213,8 @@ public class RestrictedOverDueLoans
 
     controller_.cancelled();
 
-    // BROKEN TEST ============================================================
     state = getPrivateState(controller_);
     assertThat(state).isEqualTo(EBorrowState.CANCELLED);
-    // ========================================================================
     borrower = getPrivateBorrower(controller_);
     assertThat(borrower.toString()).isEqualTo(jim.toString());
     loanList = getPrivateLoanList(controller_);
@@ -224,5 +222,81 @@ public class RestrictedOverDueLoans
     bookList = getPrivateBookList(controller_);
     assertThat(bookList).isEmpty();
   }
+
+
+  @Test
+  public void borrowingRestricted_MemberHasOverDueLoans_CheckCalls()
+  {
+    //=========================================================================
+    // Set up data
+    //=========================================================================
+
+    existingLoans = jim.getLoans();
+    assertThat(existingLoans).isEmpty();
+
+    try {
+      setUpExistingLoans(jim);
+    }
+    catch (Exception exception) {
+      fail(exception.getMessage());
+    }
+
+    existingLoans = jim.getLoans();
+    assertThat(existingLoans).hasSize(2);
+
+    //=========================================================================
+    // Initialization
+    //=========================================================================
+
+    initializeController();
+
+    //=========================================================================
+    // Scenario
+    //=========================================================================
+
+    state = getPrivateState(controller_);
+    assertThat(state).isEqualTo(EBorrowState.CREATED);
+    borrower = getPrivateBorrower(controller_);
+    assertThat(borrower).isNull();
+    loanList = getPrivateLoanList(controller_);
+    assertThat(loanList).isNull();
+    bookList = getPrivateBookList(controller_);
+    assertThat(bookList).isNull();
+
+    controller_.initialise();
+
+    state = getPrivateState(controller_);
+    assertThat(state).isEqualTo(EBorrowState.INITIALIZED);
+    borrower = getPrivateBorrower(controller_);
+    assertThat(borrower).isNull();
+    loanList = getPrivateLoanList(controller_);
+    assertThat(loanList).isEmpty();
+    bookList = getPrivateBookList(controller_);
+    assertThat(bookList).isEmpty();
+
+    controller_.cardSwiped(jim.getId());
+
+    state = getPrivateState(controller_);
+    assertThat(state).isEqualTo(EBorrowState.BORROWING_RESTRICTED);
+    borrower = getPrivateBorrower(controller_);
+    assertThat(borrower.toString()).isEqualTo(jim.toString());
+    loanList = getPrivateLoanList(controller_);
+    assertThat(loanList).isEmpty();
+    bookList = getPrivateBookList(controller_);
+    assertThat(bookList).isEmpty();
+
+    controller_.cancelled();
+
+    state = getPrivateState(controller_);
+    assertThat(state).isEqualTo(EBorrowState.CANCELLED);
+    borrower = getPrivateBorrower(controller_);
+    assertThat(borrower.toString()).isEqualTo(jim.toString());
+    loanList = getPrivateLoanList(controller_);
+    assertThat(loanList).isEmpty();
+    bookList = getPrivateBookList(controller_);
+    assertThat(bookList).isEmpty();
+  }
+
+
 
 }
