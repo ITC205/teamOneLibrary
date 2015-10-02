@@ -138,7 +138,12 @@ public class RestrictedOverDueLoans
     if (!firstLoan.isOverDue() || !firstLoan.isOverDue()) {
       throw new Exception("Loans for scenario should have due date set to yesterday");
       }
-  }
+
+    if (!member.isRestricted()) {
+      throw new Exception("Member should be restricted");
+    }
+    }
+
 
   public void initializeController()
   {
@@ -148,6 +153,63 @@ public class RestrictedOverDueLoans
     ui_ = spy(new library.BorrowUC_UI(controller_));
     setPrivateUI(controller_, ui_);
   }
+
+
+  @Test
+  public void borrowingRestricted_MemberHasOverDueLoans_CheckResults()
+  {
+    //=========================================================================
+    // Set up data
+    //=========================================================================
+
+    existingLoans = jim.getLoans();
+    assertThat(existingLoans).isEmpty();
+
+    try {
+      setUpExistingLoans(jim);
+    }
+    catch (Exception exception) {
+      fail(exception.getMessage());
+    }
+
+    existingLoans = jim.getLoans();
+    assertThat(existingLoans).hasSize(2);
+
+    //=========================================================================
+    // Initialization
+    //=========================================================================
+
+    initializeController();
+
+    assertThat(loans_.listLoans()).hasSize(2);
+    assertThat(loans_.getLoanByID(1)).isSameAs(jim.getLoans().get(0));
+    assertThat(loans_.getLoanByID(2)).isSameAs(jim.getLoans().get(1));
+    assertThat(jim.getLoans().get(1).isOverDue()).isTrue();
+    assertThat(jim.isRestricted()).isTrue();
+
+    //=========================================================================
+    // User interaction in scenario starts here
+    //=========================================================================
+
+    //-------------------------------------------------------------------------
+    // User clicks Borrow
+    controller_.initialise();
+
+    //-------------------------------------------------------------------------
+    // User swipes card
+    controller_.cardSwiped(jim.getId());
+
+    //-------------------------------------------------------------------------
+    // User clicks cancel
+    controller_.cancelled();
+
+    assertThat(loans_.listLoans()).hasSize(2);
+    assertThat(loans_.getLoanByID(1)).isSameAs(jim.getLoans().get(0));
+    assertThat(loans_.getLoanByID(2)).isSameAs(jim.getLoans().get(1));
+    assertThat(jim.getLoans().get(1).isOverDue()).isTrue();
+    assertThat(jim.isRestricted()).isTrue();
+  }
+
 
 
   @Test
@@ -176,10 +238,6 @@ public class RestrictedOverDueLoans
 
     initializeController();
 
-    //=========================================================================
-    // Scenario
-    //=========================================================================
-
     state = getPrivateState(controller_);
     assertThat(state).isEqualTo(EBorrowState.CREATED);
     borrower = getPrivateBorrower(controller_);
@@ -188,7 +246,15 @@ public class RestrictedOverDueLoans
     assertThat(loanList).isNull();
     bookList = getPrivateBookList(controller_);
     assertThat(bookList).isNull();
+    scanCount = getPrivateCount(controller_);
+    assertThat(scanCount).isEqualTo(0);
 
+    //=========================================================================
+    // User interaction in scenario starts here
+    //=========================================================================
+
+    //-------------------------------------------------------------------------
+    // User clicks Borrow
     controller_.initialise();
 
     state = getPrivateState(controller_);
@@ -199,7 +265,11 @@ public class RestrictedOverDueLoans
     assertThat(loanList).isEmpty();
     bookList = getPrivateBookList(controller_);
     assertThat(bookList).isEmpty();
+    scanCount = getPrivateCount(controller_);
+    assertThat(scanCount).isEqualTo(0);
 
+    //-------------------------------------------------------------------------
+    // User swipes card
     controller_.cardSwiped(jim.getId());
 
     state = getPrivateState(controller_);
@@ -210,17 +280,23 @@ public class RestrictedOverDueLoans
     assertThat(loanList).isEmpty();
     bookList = getPrivateBookList(controller_);
     assertThat(bookList).isEmpty();
+    scanCount = getPrivateCount(controller_);
+    assertThat(scanCount).isEqualTo(2);
 
+    //-------------------------------------------------------------------------
+    // User clicks cancel
     controller_.cancelled();
 
     state = getPrivateState(controller_);
     assertThat(state).isEqualTo(EBorrowState.CANCELLED);
     borrower = getPrivateBorrower(controller_);
-    assertThat(borrower.toString()).isEqualTo(jim.toString());
+    assertThat(borrower).isNull();
     loanList = getPrivateLoanList(controller_);
     assertThat(loanList).isEmpty();
     bookList = getPrivateBookList(controller_);
     assertThat(bookList).isEmpty();
+    scanCount = getPrivateCount(controller_);
+    assertThat(scanCount).isEqualTo(0);
   }
 
 
@@ -244,6 +320,8 @@ public class RestrictedOverDueLoans
     existingLoans = jim.getLoans();
     assertThat(existingLoans).hasSize(2);
 
+    verify(jim, atLeastOnce()).addLoan(any());
+
     //=========================================================================
     // Initialization
     //=========================================================================
@@ -251,51 +329,50 @@ public class RestrictedOverDueLoans
     initializeController();
 
     //=========================================================================
-    // Scenario
+    // User interaction in scenario starts here
     //=========================================================================
 
-    state = getPrivateState(controller_);
-    assertThat(state).isEqualTo(EBorrowState.CREATED);
-    borrower = getPrivateBorrower(controller_);
-    assertThat(borrower).isNull();
-    loanList = getPrivateLoanList(controller_);
-    assertThat(loanList).isNull();
-    bookList = getPrivateBookList(controller_);
-    assertThat(bookList).isNull();
-
+    //-------------------------------------------------------------------------
+    // User clicks Borrow
     controller_.initialise();
 
-    state = getPrivateState(controller_);
-    assertThat(state).isEqualTo(EBorrowState.INITIALIZED);
-    borrower = getPrivateBorrower(controller_);
-    assertThat(borrower).isNull();
-    loanList = getPrivateLoanList(controller_);
-    assertThat(loanList).isEmpty();
-    bookList = getPrivateBookList(controller_);
-    assertThat(bookList).isEmpty();
+    verify(reader_).setEnabled(true);
+    verify(scanner_).setEnabled(false);
+    verify(display_).getDisplay();
+    verify(display_).setDisplay(any(), anyString());
+    verify(ui_).setState(EBorrowState.INITIALIZED);
 
+    //-------------------------------------------------------------------------
+    // User swipes card
     controller_.cardSwiped(jim.getId());
 
-    state = getPrivateState(controller_);
-    assertThat(state).isEqualTo(EBorrowState.BORROWING_RESTRICTED);
-    borrower = getPrivateBorrower(controller_);
-    assertThat(borrower.toString()).isEqualTo(jim.toString());
-    loanList = getPrivateLoanList(controller_);
-    assertThat(loanList).isEmpty();
-    bookList = getPrivateBookList(controller_);
-    assertThat(bookList).isEmpty();
+    verify(members_, times(2)).getMemberByID(jim.getId()); // checks null first
+    verify(jim, times(2)).getLoans();
+    verify(jim).isRestricted();
+    verify(ui_).setState(EBorrowState.BORROWING_RESTRICTED);
+    verify(reader_).setEnabled(false);
+    verify(scanner_, times(2)).setEnabled(false);
+    verify(jim, times(2)).getId();
+    verify(jim, atLeastOnce()).getFirstName();
+    verify(jim, atLeastOnce()).getLastName();
+    verify(ui_).displayMemberDetails(anyInt(), anyString(), anyString());
+    verify(ui_).displayExistingLoan(any());
+    verify(jim).hasOverDueLoans();
+    verify(ui_).displayOverDueMessage();
+    verify(jim).hasReachedFineLimit();
+    verify(jim, atLeastOnce()).hasReachedLoanLimit();
+    verify(ui_).displayErrorMessage(any());
 
+    //-------------------------------------------------------------------------
+    // User clicks cancel
     controller_.cancelled();
 
-    state = getPrivateState(controller_);
-    assertThat(state).isEqualTo(EBorrowState.CANCELLED);
-    borrower = getPrivateBorrower(controller_);
-    assertThat(borrower.toString()).isEqualTo(jim.toString());
-    loanList = getPrivateLoanList(controller_);
-    assertThat(loanList).isEmpty();
-    bookList = getPrivateBookList(controller_);
-    assertThat(bookList).isEmpty();
+    verify(reader_, times(2)).setEnabled(false);
+    verify(scanner_, times(3)).setEnabled(false);
+    verify(ui_).setState(EBorrowState.CANCELLED);
+    verify(display_, times(2)).setDisplay(any(), anyString());
   }
+
 
 
 

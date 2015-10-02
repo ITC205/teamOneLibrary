@@ -22,6 +22,8 @@ import library.daos.LoanDAO;
 
 /**
  * Unit tests for LoanDAO.
+ * Uses DoubleBuilder for creation of stubs & mocks, DateBuilder for all things
+ * date related and LoanReflection for checking private fields.
  *
  * @author nicholasbaldwin
  */
@@ -31,12 +33,12 @@ public class TestLoanDAO
   // Test fixtures - uses LoanBuilder for stubs, mocks & dates
   //===========================================================================
 
-  private library.interfaces.entities.ILoan firstJimLoansCatch22_ = stubLoan();
-  private library.interfaces.entities.ILoan secondSamLoansEmma_ = stubLoan();
-  private library.interfaces.entities.ILoan thirdJillLoansCatch22_ = stubLoan();
-  private library.interfaces.entities.ILoan fourthJimLoansScoop_ = stubLoan();
-  private library.interfaces.entities.ILoan fifthJillLoansDune_ = stubLoan();
-  private library.interfaces.entities.ILoan sixthSamLoansEmma_ = stubLoan();
+  private ILoan firstJimLoansCatch22_ = mockLoan();
+  private ILoan secondSamLoansEmma_ = mockLoan();
+  private ILoan thirdJillLoansCatch22_ = mockLoan();
+  private ILoan fourthJimLoansScoop_ = mockLoan();
+  private ILoan fifthJillLoansDune_ = mockLoan();
+  private ILoan sixthSamLoansEmma_ = mockLoan();
 
   private IMember jim_ = stubMember();
   private IMember sam_ = stubMember();
@@ -57,7 +59,7 @@ public class TestLoanDAO
     when(firstJimLoansCatch22_.isOverDue()).thenReturn(false);
     when(catch22_.getTitle()).thenReturn("CATCH-22");
     when(catch22_.getAuthor()).thenReturn("Joseph Heller");
-    when(catch22_.getState()).thenReturn(library.interfaces.entities.EBookState.AVAILABLE);
+    when(catch22_.getState()).thenReturn(EBookState.AVAILABLE);
     // when just this loan
   }
 
@@ -70,7 +72,7 @@ public class TestLoanDAO
     when(secondSamLoansEmma_.isOverDue()).thenReturn(false);
     when(emma_.getTitle()).thenReturn("Emma");
     when(emma_.getAuthor()).thenReturn("Jane Austen");
-    when(emma_.getState()).thenReturn(library.interfaces.entities.EBookState.AVAILABLE);
+    when(emma_.getState()).thenReturn(EBookState.AVAILABLE);
   }
 
   public void setUpThirdLoan()
@@ -82,7 +84,7 @@ public class TestLoanDAO
     when(thirdJillLoansCatch22_.isOverDue()).thenReturn(true);
     when(catch22_.getTitle()).thenReturn("CATCH-22");
     when(catch22_.getAuthor()).thenReturn("Joseph Heller");
-    when(catch22_.getState()).thenReturn(library.interfaces.entities.EBookState.ON_LOAN);;
+    when(catch22_.getState()).thenReturn(EBookState.ON_LOAN);;
   }
 
   public void setUpFourthLoan()
@@ -94,7 +96,7 @@ public class TestLoanDAO
     when(fourthJimLoansScoop_.isOverDue()).thenReturn(true);
     when(scoop_.getTitle()).thenReturn("Scoop");
     when(scoop_.getAuthor()).thenReturn("Evelyn Waugh");
-    when(scoop_.getState()).thenReturn(library.interfaces.entities.EBookState.ON_LOAN);
+    when(scoop_.getState()).thenReturn(EBookState.ON_LOAN);
   }
 
   public void setUpFifthLoan()
@@ -107,7 +109,7 @@ public class TestLoanDAO
     when(fifthJillLoansDune_.isOverDue()).thenReturn(false);
     when(dune_.getTitle()).thenReturn("Dune");
     when(dune_.getAuthor()).thenReturn("Frank Herbert");
-    when(dune_.getState()).thenReturn(library.interfaces.entities.EBookState.ON_LOAN);
+    when(dune_.getState()).thenReturn(EBookState.ON_LOAN);
   }
 
   public void setUpSixthLoan()
@@ -120,17 +122,17 @@ public class TestLoanDAO
     when(sixthSamLoansEmma_.isOverDue()).thenReturn(false);
     when(dune_.getTitle()).thenReturn("Emma");
     when(dune_.getAuthor()).thenReturn("Jane Austen");
-    when(dune_.getState()).thenReturn(library.interfaces.entities.EBookState.ON_LOAN);
+    when(dune_.getState()).thenReturn(EBookState.ON_LOAN);
   }
 
   //===========================================================================
   // Test constructor - with LoanBuilder (for stubs)
   //===========================================================================
 
-  @org.junit.Test
+  @Test
   public void createLoanDao()
   {
-    library.interfaces.daos.ILoanHelper loanHelper = stubHelper();
+    ILoanHelper loanHelper = stubHelper();
     LoanDAO dao = new LoanDAO(loanHelper);
 
     assertThat(dao).isNotNull();
@@ -139,7 +141,7 @@ public class TestLoanDAO
 
 
 
-  @org.junit.Test
+  @Test
   public void createLoanDaoWithNullHelperThrows()
   {
     ILoanHelper loanHelper = null;
@@ -157,7 +159,7 @@ public class TestLoanDAO
   // for creating loan
   //===========================================================================
 
-  @org.junit.Test
+  @Test
   public void createLoanCallsLoanHelper()
   {
     Date today = ignoreTime(new Date());
@@ -165,14 +167,14 @@ public class TestLoanDAO
     ILoanHelper loanHelper = mockHelper();
     LoanDAO dao = new LoanDAO(loanHelper);
 
-    library.interfaces.entities.ILoan loan = dao.createLoan(jim_, catch22_);
+    ILoan loan = dao.createLoan(jim_, catch22_);
 
     verify(loanHelper).makeLoan(catch22_, jim_, today, due);
   }
 
 
 
-  @org.junit.Test
+  @Test
   public void createLoanReturnsILoanFromHelper()
   {
     Date today = ignoreTime(new Date());
@@ -182,14 +184,14 @@ public class TestLoanDAO
                    .thenReturn(firstJimLoansCatch22_);
     LoanDAO dao = new LoanDAO(loanHelper);
 
-    library.interfaces.entities.ILoan loan = dao.createLoan(jim_, catch22_);
+    ILoan loan = dao.createLoan(jim_, catch22_);
 
-    assertThat(loan).isInstanceOf(library.interfaces.entities.ILoan.class);
+    assertThat(loan).isInstanceOf(ILoan.class);
   }
 
 
 
-  @org.junit.Test
+  @Test
   public void createLoanGetsExpectedLoanFromHelper()
   {
     Date today = ignoreTime(new Date());
@@ -199,14 +201,14 @@ public class TestLoanDAO
                    .thenReturn(firstJimLoansCatch22_);
     LoanDAO dao = new LoanDAO(loanHelper);
 
-    library.interfaces.entities.ILoan loan = dao.createLoan(jim_, catch22_);
+    ILoan loan = dao.createLoan(jim_, catch22_);
 
     assertThat(loan).isSameAs(firstJimLoansCatch22_);
   }
 
 
 
-  @org.junit.Test
+  @Test
   public void createLoanWithNullBookThrows()
   {
     Date today = ignoreTime(new Date());
@@ -217,7 +219,7 @@ public class TestLoanDAO
     LoanDAO dao = new LoanDAO(loanHelper);
 
     try {
-      library.interfaces.entities.ILoan loan = dao.createLoan(jim_, null);
+      ILoan loan = dao.createLoan(jim_, null);
     }
     catch (Exception exception) {
       assertThat(exception).isInstanceOf(IllegalArgumentException.class);
@@ -226,7 +228,7 @@ public class TestLoanDAO
 
 
 
-  @org.junit.Test
+  @Test
   public void createLoanWithNullBorrowerThrows()
   {
     Date today = ignoreTime(new Date());
@@ -237,7 +239,7 @@ public class TestLoanDAO
     LoanDAO dao = new LoanDAO(loanHelper);
 
     try {
-      library.interfaces.entities.ILoan loan = dao.createLoan(null, catch22_);
+      ILoan loan = dao.createLoan(null, catch22_);
     }
     catch (Exception exception) {
       assertThat(exception).isInstanceOf(IllegalArgumentException.class);
@@ -249,7 +251,7 @@ public class TestLoanDAO
   // ensure that broken text fixtures do not cause tests to fail/pass
   //===========================================================================
 
-  @org.junit.Test
+  @Test
   public void setUpLoansHelperWorksCorrectly()
   {
     ILoanHelper loanHelper = stubHelper();
@@ -270,12 +272,12 @@ public class TestLoanDAO
   // (to create new LoanDAOs) & fixtures for loans
   //===========================================================================
 
-  @org.junit.Test
+  @Test
   public void commitLoanCallsLoanCommitCorrectly()
   {
     ILoanHelper loanHelper = stubHelper();
     LoanDAO dao = new LoanDAO(loanHelper);
-    library.interfaces.entities.ILoan loan = mockLoan();
+    ILoan loan = mockLoan();
 
     dao.commitLoan(loan);
 
@@ -284,12 +286,12 @@ public class TestLoanDAO
 
 
 
-  @org.junit.Test
+  @Test
   public void commitLoanCallsLoanCommitWithCorrectId()
   {
     ILoanHelper loanHelper = stubHelper();
     LoanDAO dao = new LoanDAO(loanHelper);
-    library.interfaces.entities.ILoan loan = mockLoan();
+    ILoan loan = mockLoan();
 
     // using reflection to set private nextID
     setPrivateNextId(dao, 999);
@@ -300,7 +302,7 @@ public class TestLoanDAO
 
 
 
-  @org.junit.Test
+  @Test
   public void commitLoanCallsLoanCommitWithCorrectIdInSequence()
   {
     ILoanHelper loanHelper = stubHelper();
@@ -320,12 +322,12 @@ public class TestLoanDAO
 
 
 
-  @org.junit.Test
+  @Test
   public void commitLoanAddsLoanToLoanMap()
   {
     ILoanHelper loanHelper = stubHelper();
     LoanDAO dao = new LoanDAO(loanHelper);
-    List<library.interfaces.entities.ILoan> allLoans = dao.listLoans();
+    List<ILoan> allLoans = dao.listLoans();
     assertThat(allLoans).isEmpty();
     setUpFirstLoan();
     dao.commitLoan(firstJimLoansCatch22_);
@@ -339,12 +341,12 @@ public class TestLoanDAO
 
 
 
-  @org.junit.Test
+  @Test
   public void commitLoansAddsMultipleLoansToLoanMap()
   {
     ILoanHelper loanHelper = stubHelper();
     LoanDAO dao = new LoanDAO(loanHelper);
-    List<library.interfaces.entities.ILoan> allLoans = dao.listLoans();
+    List<ILoan> allLoans = dao.listLoans();
     assertThat(allLoans).isEmpty();
     setUpFirstLoan();
     dao.commitLoan(firstJimLoansCatch22_);
@@ -367,28 +369,28 @@ public class TestLoanDAO
   // add Loans to loanMap)
   //===========================================================================
 
-  @org.junit.Test
+  @Test
   public void loanListIsEmptyInitially()
   {
     ILoanHelper loanHelper = stubHelper();
     LoanDAO dao = new LoanDAO(loanHelper);
 
-    List<library.interfaces.entities.ILoan> allLoans = dao.listLoans();
+    List<ILoan> allLoans = dao.listLoans();
 
     assert(allLoans).isEmpty();
   }
 
 
 
-  @org.junit.Test
+  @Test
   public void listLoansReturnsLoansManuallySetInLoanMap()
   {
     ILoanHelper loanHelper = stubHelper();
     LoanDAO dao = new LoanDAO(loanHelper);
-    library.interfaces.entities.ILoan[] loans = {firstJimLoansCatch22_, secondSamLoansEmma_};
+    ILoan[] loans = {firstJimLoansCatch22_, secondSamLoansEmma_};
 
     setPrivateLoanMap(dao, loans);
-    List<library.interfaces.entities.ILoan> allLoans = dao.listLoans();
+    List<ILoan> allLoans = dao.listLoans();
 
     assertThat(allLoans).isNotEmpty();
     assertThat(allLoans).hasSize(2);
@@ -398,12 +400,12 @@ public class TestLoanDAO
 
 
 
-  @org.junit.Test
+  @Test
   public void listLoansReturnsCommittedLoans()
   {
     ILoanHelper loanHelper = stubHelper();
     LoanDAO dao = new LoanDAO(loanHelper);
-    List<library.interfaces.entities.ILoan> allLoans = dao.listLoans();
+    List<ILoan> allLoans = dao.listLoans();
     assertThat(allLoans).isEmpty();
     setUpFirstLoan();
     dao.commitLoan(firstJimLoansCatch22_);
@@ -434,22 +436,22 @@ public class TestLoanDAO
   // (to create new LoanDAOs) & fixtures for loans
   //===========================================================================
 
-  @org.junit.Test
+  @Test
   public void getLoanByIdReturnsNullIfLoanMapEmpty()
   {
     ILoanHelper loanHelper = stubHelper();
     LoanDAO dao = new LoanDAO(loanHelper);
-    List<library.interfaces.entities.ILoan> allLoans = dao.listLoans();
+    List<ILoan> allLoans = dao.listLoans();
     assertThat(allLoans).isEmpty();
 
-    library.interfaces.entities.ILoan loan = dao.getLoanByID(1);
+    ILoan loan = dao.getLoanByID(1);
 
     assertThat(loan).isNull();
   }
 
 
 
-  @org.junit.Test
+  @Test
   public void getLoanByIdReturnsLoanIfLoanMapContainsOnlyThatLoan()
   {
     ILoanHelper loanHelper = stubHelper();
@@ -467,7 +469,7 @@ public class TestLoanDAO
 
 
 
-  @org.junit.Test
+  @Test
   public void getLoanByIdReturnsLoanIfLoanMapContainsMultipleLoans()
   {
     ILoanHelper loanHelper = stubHelper();
@@ -489,7 +491,7 @@ public class TestLoanDAO
 
 
 
-  @org.junit.Test
+  @Test
   public void getLoanByIdReturnsNullIfLoanMapDoesNotContainsLoanWithThatId()
   {
     ILoanHelper loanHelper = stubHelper();
@@ -513,7 +515,7 @@ public class TestLoanDAO
   // & fixtures for loans & books
   //===========================================================================
 
-  @org.junit.Test
+  @Test
   public void findLoansByBorrowerReturnsNullIfNoLoans()
   {
     ILoanHelper loanHelper = stubHelper();
@@ -528,7 +530,7 @@ public class TestLoanDAO
 
 
 
-  @org.junit.Test
+  @Test
   public void findLoansByBorrowerCallsLoanGetBorrower()
   {
     ILoanHelper loanHelper = stubHelper();
@@ -554,7 +556,7 @@ public class TestLoanDAO
 
 
 
-  @org.junit.Test
+  @Test
   public void findLoansByBorrowerReturnsEmptyIfNoLoansByBorrower()
   {
     ILoanHelper loanHelper = stubHelper();
@@ -579,7 +581,7 @@ public class TestLoanDAO
 
 
 
-  @org.junit.Test
+  @Test
   public void findLoansByBorrowerReturnsLoanIfSingleLoanByBorrower()
   {
     ILoanHelper loanHelper = stubHelper();
@@ -597,7 +599,7 @@ public class TestLoanDAO
 
 
 
-  @org.junit.Test
+  @Test
   public void findLoansByBorrowerReturnsLoanIfMultipleLoanByBorrower()
   {
     ILoanHelper loanHelper = stubHelper();
@@ -625,7 +627,7 @@ public class TestLoanDAO
   // & fixtures for loans & books
   //===========================================================================
 
-  @org.junit.Test
+  @Test
   public void findLoansByBookTitleNullWhenNoLoans()
   {
     ILoanHelper loanHelper = stubHelper();
@@ -640,7 +642,7 @@ public class TestLoanDAO
 
 
 
-  @org.junit.Test
+  @Test
   public void findLoansByBookTitleCallsLoanGetBookGetTitle()
   {
     ILoanHelper loanHelper = stubHelper();
@@ -666,7 +668,7 @@ public class TestLoanDAO
 
 
 
-  @org.junit.Test
+  @Test
   public void findLoansByBookTitleEmptyWhenTitleNotInLoans()
   {
     ILoanHelper loanHelper = stubHelper();
@@ -687,7 +689,7 @@ public class TestLoanDAO
 
 
 
-  @org.junit.Test
+  @Test
   public void findLoansByBookTitleReturnsLoanWhenTitleInOnlyLoan()
   {
     ILoanHelper loanHelper = stubHelper();
@@ -704,7 +706,7 @@ public class TestLoanDAO
 
 
 
-  @org.junit.Test
+  @Test
   public void findLoansByBookTitleReturnsLoansWhenTitleInMultipleLoans()
   {
     ILoanHelper loanHelper = stubHelper();
@@ -726,7 +728,7 @@ public class TestLoanDAO
 
 
 
-  @org.junit.Test
+  @Test
   public void findLoansByBookTitleIsCaseInsensitive()
   {
     ILoanHelper loanHelper = stubHelper();
@@ -743,7 +745,7 @@ public class TestLoanDAO
 
 
 
-  @org.junit.Test
+  @Test
   public void findLoansByBookTitleIsExactMatchOnly()
   {
     ILoanHelper loanHelper = stubHelper();
@@ -763,8 +765,7 @@ public class TestLoanDAO
   // & fixtures for loans & books
   //===========================================================================
 
-  // TODO: check these, once Jim responds
-  @org.junit.Test
+  @Test
   public void updateOverDueStatusDoesNotCallLoanCheckOverDueOnCompleteLoan()
   {
     ILoanHelper loanHelper = stubHelper();
@@ -780,7 +781,7 @@ public class TestLoanDAO
 
 
 
-  @org.junit.Test
+  @Test
   public void updateOverDueStatusOnMultipleLoansCallsOnlyOnCurrentLoans()
   {
     ILoanHelper loanHelper = stubHelper();
@@ -809,18 +810,12 @@ public class TestLoanDAO
     verify(sixthSamLoansEmma_).checkOverDue(today);
   }
 
-
-
-
-
-
-
   //===========================================================================
   // Test findOverDueLoans - with LoanBuilder (for stubs & mocks) & fixtures
   // for loans & books
   //===========================================================================
 
-  @org.junit.Test
+  @Test
   public void findOverDueLoansEmptyIfNoLoans()
   {
     ILoanHelper loanHelper = stubHelper();
@@ -833,7 +828,7 @@ public class TestLoanDAO
 
 
 
-  @org.junit.Test
+  @Test
   public void findOverDueLoansEmptyIfOneCompleteLoan()
   {
     ILoanHelper loanHelper = stubHelper();
@@ -848,7 +843,7 @@ public class TestLoanDAO
 
 
 
-  @org.junit.Test
+  @Test
   public void findOverDueLoansCallsLoanIsOverDue()
   {
     ILoanHelper loanHelper = stubHelper();
@@ -872,7 +867,7 @@ public class TestLoanDAO
 
 
 
-  @org.junit.Test
+  @Test
   public void findOverDueLoansEmptyIfLoansNotDue()
   {
     ILoanHelper loanHelper = stubHelper();
@@ -891,7 +886,7 @@ public class TestLoanDAO
 
 
 
-  @org.junit.Test
+  @Test
   public void findOverDueLoansReturnsOneLoanIfOneOverDueLoan()
   {
     ILoanHelper loanHelper = stubHelper();
@@ -910,7 +905,7 @@ public class TestLoanDAO
 
 
 
-  @org.junit.Test
+  @Test
   public void findOverDueLoansReturnsMultipleIfMultipleOverDueLoans()
   {
     ILoanHelper loanHelper = stubHelper();
@@ -930,36 +925,6 @@ public class TestLoanDAO
 
     assertThat(overDueLoans).containsExactly(thirdJillLoansCatch22_,
                                              fourthJimLoansScoop_);
-  }
-
-
-  //===========================================================================
-  // Test helpers
-  //===========================================================================
-
-  // TODO: extract helpers?
-
-  private Date ignoreTime(Date date)
-  {
-    java.util.Calendar calendar = java.util.Calendar.getInstance();
-
-    calendar.setTime(date);
-    calendar.set(java.util.Calendar.HOUR_OF_DAY, 0);
-    calendar.set(java.util.Calendar.MINUTE, 0);
-    calendar.set(java.util.Calendar.SECOND, 0);
-    calendar.set(java.util.Calendar.MILLISECOND, 0);
-
-    return calendar.getTime();
-  }
-
-
-  private Date calculateDueDate(Date borrowDate)
-  {
-    java.util.Calendar calendar = java.util.Calendar.getInstance();
-
-    calendar.setTime(borrowDate);
-    calendar.add(java.util.Calendar.DATE, ILoan.LOAN_PERIOD);
-    return calendar.getTime();
   }
 
 }
