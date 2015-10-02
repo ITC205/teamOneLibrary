@@ -175,7 +175,7 @@ public class Member
     if ((amount >= 0) && (amount <= totalFines_))
     {
       totalFines_ -= amount;
-      if (hasReachedFineLimit() || hasOverDueLoans() || hasReachedLoanLimit())
+      if (isRestricted())
       {
         updateState(EMemberState.BORROWING_DISALLOWED);
       }
@@ -247,17 +247,22 @@ public class Member
   @Override
   public void removeLoan(ILoan loan) throws IllegalArgumentException
   {
-    if ((loan != null) && (loanList_.contains(loan)))
+    if (loan != null) 
+    {
+      throw new IllegalArgumentException("Member: removeLoan: Loan cannot be null");
+    }
+        
+    if (loanList_.contains(loan))
     {
       loanList_.remove(loan);
-      if (!(hasReachedFineLimit() || hasOverDueLoans() || hasReachedLoanLimit()))
+      if (!isRestricted())
       {
         updateState(EMemberState.BORROWING_ALLOWED);
       }
     }
     else
     {
-      throw new IllegalArgumentException("Loan is null or is not in list");
+      throw new IllegalArgumentException("Member: removeLoan: Loan does not exist");
     }
   }
   
@@ -277,6 +282,40 @@ public class Member
       return true;
     }
     else return false;
+  }
+  
+  
+  
+  public boolean isRestricted()
+  {
+    if (hasReachedFineLimit() || hasOverDueLoans() || hasReachedLoanLimit())
+    {
+      return true;
+    }
+    else return false;
+  }
+  
+  
+  
+  public void loanHasBecomeOverdue(ILoan loan)
+  {
+    if (loanList_.contains(loan))
+    {
+      
+      if (loan.isOverDue())
+      {
+         updateState(EMemberState.BORROWING_DISALLOWED);
+      }
+      else 
+      {
+        throw new IllegalArgumentException("Member: loanHasBecomeOverdue: Loan state is not overdue");
+      }
+    }
+    else
+    {
+      throw new IllegalArgumentException("Member: loanHasBecomeOverdue: Loan does not exist");
+    }
+    
   }
   
   
