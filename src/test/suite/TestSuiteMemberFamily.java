@@ -1,4 +1,4 @@
-package test.unit;
+package test.suite;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -6,9 +6,9 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-   TestMember.class,
-   TestMemberDAO.class,
-   TestMemberHelper.class
+   test.unit.TestMember.class,
+   test.unit.TestMemberDAO.class,
+   test.unit.TestMemberHelper.class
 })
 
 public class TestSuiteMemberFamily {
