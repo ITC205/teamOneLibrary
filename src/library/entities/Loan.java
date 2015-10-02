@@ -231,6 +231,8 @@ public class Loan
       boolean isAfterDueDate = isAfterDueDate(currentDate);
       if (isAfterDueDate) {
         state_ = ELoanState.OVERDUE;
+        // new method to update borrower status
+        getBorrower().loanHasBecomeOverdue(this);
       }
       return isAfterDueDate;
     }
