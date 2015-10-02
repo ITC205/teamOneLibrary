@@ -24,27 +24,26 @@ import library.interfaces.hardware.IPrinter;
 import library.interfaces.hardware.IScanner;
 import library.interfaces.hardware.IScannerListener;
 
-public class BorrowUC_CTL implements ICardReaderListener, 
-									 IScannerListener, 
-									 IBorrowUIListener {
-	
-	private ICardReader reader;
-	private IScanner scanner; 
-	private IPrinter printer; 
-	private IDisplay display;
-	//private String state;
-	private int scanCount = 0;
-	private IBorrowUI ui;
-	private EBorrowState state; 
-	private IBookDAO bookDAO;
-	private IMemberDAO memberDAO;
-	private ILoanDAO loanDAO;
-	
-	private List<IBook> bookList;
-	private List<ILoan> loanList;
-	private IMember borrower;
-	
-	private JPanel previous;
+public class BorrowUC_CTL
+  implements ICardReaderListener, IScannerListener, IBorrowUIListener
+{
+  private ICardReader reader;
+  private IScanner scanner;
+  private IPrinter printer;
+  private IDisplay display;
+  //private String state;
+  private int scanCount = 0;
+  private IBorrowUI ui;
+  private EBorrowState state;
+  private IBookDAO bookDAO;
+  private IMemberDAO memberDAO;
+  private ILoanDAO loanDAO;
+
+  private List<IBook> bookList;
+  private List<ILoan> loanList;
+  private IMember borrower;
+
+  private JPanel previous;
 
 
 
@@ -54,8 +53,8 @@ public class BorrowUC_CTL implements ICardReaderListener,
 
   public BorrowUC_CTL(ICardReader reader, IScanner scanner, IPrinter printer,
                       IDisplay display, IBookDAO bookDAO, ILoanDAO loanDAO,
-                      IMemberDAO memberDAO) {
-    
+                      IMemberDAO memberDAO)
+  {
     this.display = display;
     this.reader = reader;
     this.scanner = scanner;
@@ -95,13 +94,13 @@ public void initialise()
   bookList = new ArrayList<IBook>();
   loanList = new ArrayList<ILoan>();
 }
-	
-	
-	
-	public void close() {
-		display.setDisplay(previous, "Main Menu");
-	}
-	
+
+
+
+  public void close() {
+    display.setDisplay(previous, "Main Menu");
+  }
+
 
   
   // cardSwiped by Rebecca Callow
@@ -167,7 +166,7 @@ public void initialise()
       scanner.setEnabled(false);
 
       ui.displayMemberDetails(borrower.getId(), borrower.getFirstName(), borrower.getContactPhone());
-      
+
       // Display any outstanding loans
       // Display the details of any outstanding loans
       if (existingLoans.size() > 0)
@@ -175,7 +174,7 @@ public void initialise()
         String listOfLoans = buildLoanListDisplay(existingLoans);
         ui.displayExistingLoan(listOfLoans);
       }
-      
+
       // Display any outstanding fines
       if (borrower.hasFinesPayable())
       {
@@ -198,8 +197,7 @@ public void initialise()
     }
   }
 
-	
-	
+
 	// bookScanned by Josh Kent
 	@Override
 	public void bookScanned(int barcode) {
@@ -356,6 +354,7 @@ public void initialise()
     bookList.clear();
     loanList.clear();
     borrower = null;
+    scanCount = 0;
 
     // set hardware ready for next borrower
     scanner.setEnabled(false);
@@ -365,8 +364,8 @@ public void initialise()
     display.setDisplay(previous, "Main Menu");
 	}
 
-	@Override
-	public void loansRejected() {
+  @Override
+  public void loansRejected() {
 
     if(state != EBorrowState.CONFIRMING_LOANS) {
       throw new RuntimeException("BorrowUC_CTL: loansRejected: cannot call " +
