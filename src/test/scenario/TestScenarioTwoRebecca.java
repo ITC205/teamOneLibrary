@@ -12,7 +12,6 @@ import library.daos.BookDAO;
 import library.daos.BookHelper;
 import library.daos.LoanDAO;
 import library.daos.LoanHelper;
-import library.interfaces.IBorrowUI;
 import library.interfaces.EBorrowState;
 import library.interfaces.entities.EMemberState;
 import library.interfaces.daos.IMemberDAO;
@@ -22,7 +21,6 @@ import library.interfaces.hardware.ICardReader;
 import library.interfaces.hardware.IDisplay;
 import library.interfaces.hardware.IPrinter;
 import library.interfaces.hardware.IScanner;
-import test.helper.IBorrowUIStub;
 
 // Scenario 2:
 // Member:
@@ -49,7 +47,6 @@ public class TestScenarioTwoRebecca extends TestCase
   private IMemberDAO memberDAO;
   private IBookDAO bookDAO;
   private ILoanDAO loanDAO;
-  private IBorrowUI ui;
   private BorrowUC_CTL controller;
   
   
@@ -79,7 +76,6 @@ public class TestScenarioTwoRebecca extends TestCase
     controller = new BorrowUC_CTL(mockReader, mockScanner, mockPrinter,
                       mockDisplay, bookDAO, loanDAO,
                       memberDAO);
-    ui = new IBorrowUIStub();
     
     memberDAO.getMemberByID(1).addFine(10.0f);
   }

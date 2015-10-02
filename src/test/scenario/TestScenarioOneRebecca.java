@@ -24,7 +24,6 @@ import library.interfaces.hardware.ICardReader;
 import library.interfaces.hardware.IDisplay;
 import library.interfaces.hardware.IPrinter;
 import library.interfaces.hardware.IScanner;
-import test.helper.IBorrowUIStub;
 
 
 // Scenario 1:
@@ -56,7 +55,6 @@ public class TestScenarioOneRebecca extends TestCase
   private IBookDAO bookDAO;
   private ILoanDAO loanDAO;
   
-  private IBorrowUI ui;
   private BorrowUC_CTL controller;
 
 
@@ -67,6 +65,7 @@ public class TestScenarioOneRebecca extends TestCase
   
   
   
+  // Create mock objects for IO
   protected void createMocks()
   {
     mockReader = mock(ICardReader.class);
@@ -77,18 +76,22 @@ public class TestScenarioOneRebecca extends TestCase
   
   
   
+  // Create objects for testing
   protected void setupObjects()
   {
     bookDAO = new BookDAO(new BookHelper());
     loanDAO = new LoanDAO(new LoanHelper());
     memberDAO = new MemberDAO(new MemberHelper());
+    
+    // Only one member is required for this test
     memberDAO.addMember("Bill", "Jones", "123456", "bjones@mail.com");
+    
+    // Set up controller
     controller = new BorrowUC_CTL(mockReader, mockScanner, mockPrinter,
                       mockDisplay, bookDAO, loanDAO,
                       memberDAO);
-    ui = new IBorrowUIStub();
-    setMockBorrowUI(ui);
     
+    // Create and add books to bookDAO. All are available for loan by default
     bookDAO.addBook("Tolkien", "The Two Towers", "TOL002");
     bookDAO.addBook("Aldous Huxley", "Brave New World", "HUX001");
     bookDAO.addBook("George Orwell", "1984", "ORW001");
@@ -106,19 +109,31 @@ public class TestScenarioOneRebecca extends TestCase
   
   
   
-  // Verify that Constructor and Initialise methods set the controller state as required
+  // Testing of Scenario One
   public void testScenarioOne()
   {
+    // Prepare for testing
     createMocks();
     setupObjects();
+    
+    // The member has no loans and no fines, so member state should be BORROWING_ALLOWED
     assertEquals(EMemberState.BORROWING_ALLOWED, memberDAO.getMemberByID(1).getState());
+    
+    // Verify thata controller stste is CREATED
     assertEquals(EBorrowState.CREATED, getState());
+    
+    // Initialise controller and verify that the state has changed.
     controller.initialise();
     assertEquals(EBorrowState.INITIALIZED, getState());
 
+    // Read member card. The member ID is 1
     controller.cardSwiped(1);
     
+    // The member has no current loans, and has not scanned any books, so scanCount 
+    // is initialised to 0
     assertEquals(0, getScanCount());
+    
+    // The member is not restricted, so controller state should change to SCANNING_BOOKS
     assertEquals(EBorrowState.SCANNING_BOOKS, getState());
     
     verify(mockReader).setEnabled(false);
