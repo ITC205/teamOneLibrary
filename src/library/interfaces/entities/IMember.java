@@ -41,4 +41,6 @@ public interface IMember {
 	
   public float   getTotalFines();
 
+  public boolean isRestricted();
+
 }
