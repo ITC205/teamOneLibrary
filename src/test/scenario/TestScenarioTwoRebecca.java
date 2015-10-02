@@ -22,15 +22,20 @@ import library.interfaces.hardware.IDisplay;
 import library.interfaces.hardware.IPrinter;
 import library.interfaces.hardware.IScanner;
 
-// Scenario 2:
-// Member:
-//    Has no loans
-//    Has reached fine limit
 
-// 1) Swipes card
-// 2) Clicks Cancel
-
-
+/**
+ * This class provides scenario testing for BorrowUC_CTL
+ * 
+ *  Scenario 2:
+ *  Member:
+ *    Has no loans
+ *    Has reached fine limit
+ *
+ * 1) Swipes card
+ * 2) Clicks Cancel
+ *
+ * @author  Rebecca Callow
+ */
 public class TestScenarioTwoRebecca extends TestCase
 {
   
