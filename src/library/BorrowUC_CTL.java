@@ -278,6 +278,11 @@ public void initialise()
 	// cancelled by Josh Kent
 	@Override
 	public void cancelled() {
+	  // Clear all borrow details for this session
+	  bookList.clear();
+	  loanList.clear();
+	  borrower = null;	  
+	  
 	  // Disable hardware
 	  reader.setEnabled(false);
 	  scanner.setEnabled(false);
