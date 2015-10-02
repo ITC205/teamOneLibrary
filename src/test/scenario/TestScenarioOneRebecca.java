@@ -114,10 +114,15 @@ public class TestScenarioOneRebecca extends TestCase
     verify(mockScanner).setEnabled(true);
     
     controller.bookScanned(1);
+    assertEquals(1, getScanCount());
     controller.bookScanned(2);
+    assertEquals(2, getScanCount());
     controller.bookScanned(3);
+    assertEquals(3, getScanCount());
     controller.bookScanned(4);
+    assertEquals(4, getScanCount());
     controller.bookScanned(5);
+    assertEquals(5, getScanCount());
     
     assertEquals(EBookState.AVAILABLE, bookDAO.getBookByID(1).getState());
     assertEquals(EBookState.AVAILABLE, bookDAO.getBookByID(2).getState());
@@ -127,14 +132,26 @@ public class TestScenarioOneRebecca extends TestCase
     assertEquals(EBookState.AVAILABLE, bookDAO.getBookByID(6).getState());
     
     assertEquals(EBorrowState.CONFIRMING_LOANS, getState());
+    
     assertEquals(EMemberState.BORROWING_ALLOWED, memberDAO.getMemberByID(1).getState());
     
     controller.loansRejected();
+    
+    assertEquals(EMemberState.BORROWING_ALLOWED, memberDAO.getMemberByID(1).getState());
+    
+    assertEquals(0, getScanCount());
     
     assertEquals(EBorrowState.SCANNING_BOOKS, getState());
     
     controller.bookScanned(1);
     controller.bookScanned(6);
+    
+    assertEquals(EBookState.AVAILABLE, bookDAO.getBookByID(1).getState());
+    assertEquals(EBookState.AVAILABLE, bookDAO.getBookByID(2).getState());
+    assertEquals(EBookState.AVAILABLE, bookDAO.getBookByID(3).getState());
+    assertEquals(EBookState.AVAILABLE, bookDAO.getBookByID(4).getState());
+    assertEquals(EBookState.AVAILABLE, bookDAO.getBookByID(5).getState());
+    assertEquals(EBookState.AVAILABLE, bookDAO.getBookByID(6).getState());
     
     assertEquals(EBorrowState.SCANNING_BOOKS, getState());
     
