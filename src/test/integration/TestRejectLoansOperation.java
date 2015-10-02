@@ -109,6 +109,7 @@ public class TestRejectLoansOperation
                                        books_, loans_, members_));
 
     setPrivateLoanList(controller_, new ArrayList<>());
+    setPrivateBookList(controller_, new ArrayList<>());
 
     ui_ = spy(new BorrowUC_UI(controller_));
     setPrivateUI(controller_, ui_);
@@ -311,7 +312,7 @@ public class TestRejectLoansOperation
 
 
   @Test
-  public void rejectLoan_OnePending_setDisplayBorrowingBooksCalled()
+  public void rejectLoan_DisplayCleared()
   {
     initializeController();
     setBorrower(jim);
@@ -321,25 +322,10 @@ public class TestRejectLoansOperation
 
     controller_.loansRejected();
 
-    verify(display_).setDisplay(anyObject(), anyString());
+    verify(ui_).displayPendingLoan("");
+    verify(ui_).displayScannedBookDetails("");
   }
 
-
-
-  // TODO: check this stuff!
-  @Test
-  public void rejectLoan_OnePending_setDisplayCalled()
-  {
-    initializeController();
-    setBorrower(jim);
-    setCount();
-    ILoan firstPendingLoan = addToPendingLoans(catch22);
-    setState_ConfirmingLoans();
-
-    controller_.loansRejected();
-
-    verify(display_).setDisplay((javax.swing.JPanel)ui_, "Borrow UI");
-  }
 
 
   @Test
@@ -375,7 +361,7 @@ public class TestRejectLoansOperation
   }
 
   @Test
-  public void rejectLoan_OnePending_displayLoanDetailsCalled()
+  public void rejectLoan_OnePending_displayLoanDetailsNotCalled()
   {
     initializeController();
     setBorrower(jim);
@@ -385,7 +371,7 @@ public class TestRejectLoansOperation
 
     controller_.loansRejected();
 
-    verify(ui_).displayExistingLoan(anyString());
+    verify(ui_, never()).displayExistingLoan(anyString());
   }
 
 
@@ -449,34 +435,34 @@ public class TestRejectLoansOperation
     Date due = calculateDueDate(today);
 
     assertThat(details).isEqualTo("Loan ID:  1\n" +
-                                  "Author:   Robert Graves\n" +
-                                  "Title:    I, Claudius\n" +
-                                  "Borrower: Jim Johns\n" +
-                                  "Borrowed: " + formattedDate(today) +
-                                  "\n" +
-                                  "Due Date: " + formattedDate(due) +
-                                  "\n\n" +
-                                  "Loan ID:  2\n" +
-                                  "Author:   Ian McEwan\n" +
-                                  "Title:    Atonement\n" +
-                                  "Borrower: Jim Johns\n" +
-                                  "Borrowed: " + formattedDate(today) +
-                                  "\n" +
-                                  "Due Date: " + formattedDate(due) +
-                                  "\n\n" +
-                                  "Loan ID:  3\n" +
-                                  "Author:   J.R.R. Tolkien\n" +
-                                  "Title:    The Hobbit\n" +
-                                  "Borrower: Jim Johns\n" +
-                                  "Borrowed: " + formattedDate(today) +
-                                  "\n" +
-                                  "Due Date: " + formattedDate(due));
+                                      "Author:   Robert Graves\n" +
+                                      "Title:    I, Claudius\n" +
+                                      "Borrower: Jim Johns\n" +
+                                      "Borrowed: " + formattedDate(today) +
+                                      "\n" +
+                                      "Due Date: " + formattedDate(due) +
+                                      "\n\n" +
+                                      "Loan ID:  2\n" +
+                                      "Author:   Ian McEwan\n" +
+                                      "Title:    Atonement\n" +
+                                      "Borrower: Jim Johns\n" +
+                                      "Borrowed: " + formattedDate(today) +
+                                      "\n" +
+                                      "Due Date: " + formattedDate(due) +
+                                      "\n\n" +
+                                      "Loan ID:  3\n" +
+                                      "Author:   J.R.R. Tolkien\n" +
+                                      "Title:    The Hobbit\n" +
+                                      "Borrower: Jim Johns\n" +
+                                      "Borrowed: " + formattedDate(today) +
+                                      "\n" +
+                                      "Due Date: " + formattedDate(due));
   }
 
 
 
   @Test
-  public void rejectLoan_OnePending_LoanDetailsCorrect()
+  public void rejectLoan_OnePending_LoanDetailsRemainDisplayed()
   {
     initializeController();
     setBorrower(jim);
@@ -486,16 +472,12 @@ public class TestRejectLoansOperation
 
     controller_.loansRejected();
 
-    List<ILoan> loans = jim.getLoans();
-    StringBuilder builder = new StringBuilder();
-    for (ILoan loan : loans) {
-      if (builder.length() > 0) {
-        builder.append("\n\n");
-      }
-      builder.append(loan.toString());
-    }
-    String expectedDetails = builder.toString();
-    verify(ui_).displayExistingLoan(expectedDetails);
+    verify(ui_).displayMemberDetails(1, "Jim Johns", "9123");
+    verify(ui_).displayPendingLoan("");
+    verify(ui_).displayScannedBookDetails("");
+
+    // loan details remain displayed
+    verify(ui_, never()).displayExistingLoan(anyString());
   }
 
 
@@ -521,76 +503,6 @@ public class TestRejectLoansOperation
     List<ILoan> loans = borrower.getLoans();
     int numberOfLoans = loans.size();
     assertThat(scanCount).isEqualTo(2);
-  }
-
-
-
-  @Test
-  public void rejectLoan_OnePending_OneLoan_LoanDetailsCorrect()
-  {
-    initializeController();
-    ILoan firstLoan = loans_.createLoan(jim, iClaudius);
-    loans_.commitLoan(firstLoan);
-
-    setBorrower(jim);
-    setCount();
-    ILoan firstPendingLoan = addToPendingLoans(catch22);
-    setState_ConfirmingLoans();
-
-    controller_.loansRejected();
-
-    String expectedDetails = loanDetails();
-    verify(ui_).displayExistingLoan(expectedDetails);
-  }
-
-
-
-  @Test
-  public void rejectLoan_OnePending_FourLoans_LoanDetailsCorrect()
-  {
-    initializeController();
-    ILoan firstLoan = loans_.createLoan(jim, iClaudius);
-    ILoan secondLoan = loans_.createLoan(jim, atonement);
-    ILoan thirdLoan = loans_.createLoan(jim, hobbit);
-    ILoan fourthLoan = loans_.createLoan(jim, middlemarch);
-    loans_.commitLoan(firstLoan);
-    loans_.commitLoan(secondLoan);
-    loans_.commitLoan(thirdLoan);
-    loans_.commitLoan(fourthLoan);
-
-    setBorrower(jim);
-    setCount();
-    ILoan firstPendingLoan = addToPendingLoans(catch22);
-    setState_ConfirmingLoans();
-
-    controller_.loansRejected();
-
-    String expectedDetails = loanDetails();
-    verify(ui_).displayExistingLoan(expectedDetails);
-  }
-
-
-  @Test
-  public void rejectLoan_TwoPending_OneJimTwoSam_LoanDetailsCorrect()
-  {
-    initializeController();
-    ILoan firstLoan = loans_.createLoan(jim, iClaudius);
-    ILoan secondLoan = loans_.createLoan(sam, atonement);
-    ILoan thirdLoan = loans_.createLoan(sam, hobbit);
-    loans_.commitLoan(firstLoan);
-    loans_.commitLoan(secondLoan);
-    loans_.commitLoan(thirdLoan);
-
-    setBorrower(jim);
-    setCount();
-    ILoan firstPendingLoan = addToPendingLoans(catch22);
-    ILoan secondPendingLoan = addToPendingLoans(animalFarm);
-    setState_ConfirmingLoans();
-
-    controller_.loansRejected();
-
-    String expectedDetails = loanDetails();
-    verify(ui_).displayExistingLoan(expectedDetails);
   }
 
 
