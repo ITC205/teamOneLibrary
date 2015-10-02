@@ -22,42 +22,18 @@ import library.entities.Loan;
 
 /**
  * Unit tests for Loan entity.
+ * Uses DoubleBuilder for creation of stubs & mocks, DateBuilder for all things
+ * date related and LoanReflection for checking private fields.
  *
  * @author nicholasbaldwin
  */
 public class TestLoan
 {
   // ==========================================================================
-  // Stub helpers
-  // ==========================================================================
-
-  /**
-   * Create stub Book with Mockito. Simply provides an explicitly named method
-   * to show that stubs are being used (not mocks or other fakes/doubles) :-)
-   * @return stub Book.
-   */
-  public static IBook stubBook()
-  {
-    return mock(IBook.class);
-  }
-
-
-
-  /**
-   * Create stub Member with Mockito. Simply provides an explicitly named method
-   * to show that stubs are being used (not mocks or other fakes/doubles) :-)
-   * @return stub Member.
-   */
-  public static IMember stubMember()
-  {
-    return mock(IMember.class);
-  }
-
-  // ==========================================================================
   // Constructor Testing - with stubs & LoanReflection (to check state)
   // ==========================================================================
 
-  @org.junit.Test
+  @Test
   public void createLoan()
   {
     // Given stubs for book and member
@@ -76,7 +52,7 @@ public class TestLoan
 
 
 
-  @org.junit.Test
+  @Test
   public void newLoanHasPendingState()
   {
     // Given stubs for book and member
@@ -98,7 +74,7 @@ public class TestLoan
 
 
 
-  @org.junit.Test
+  @Test
   public void createLoanWithNullBookThrows()
   {
     // Given null book and stub for member
@@ -121,7 +97,7 @@ public class TestLoan
 
 
 
-  @org.junit.Test
+  @Test
   public void createLoanWithNullBorrowerThrows()
   {
     // Given stub for book and null member
@@ -144,7 +120,7 @@ public class TestLoan
 
 
 
-  @org.junit.Test
+  @Test
   public void createLoanWithNullBorrowDateThrows()
   {
     // Given stubs for book and member
@@ -167,7 +143,7 @@ public class TestLoan
 
 
 
-  @org.junit.Test
+  @Test
   public void createLoanWithNullDueDateThrows()
   {
     // Given stubs for book and member
@@ -190,7 +166,7 @@ public class TestLoan
 
 
 
-  @org.junit.Test
+  @Test
   public void createLoanWithNullBookThrowsWithCorrectMessage()
   {
     // Given null book and stub for member
@@ -214,7 +190,7 @@ public class TestLoan
 
 
 
-  @org.junit.Test
+  @Test
   public void createLoanWithNicelyFormattedDates()
   {
     // Given stubs for book and member
@@ -245,9 +221,9 @@ public class TestLoan
   // NOTE in following tests, simply propagating ParseException as this is
   // irrelevant for these tests (and proven ok in above test)
 
-  @org.junit.Test
+  @Test
   public void createLoanWithDueDateBeforeBorrowDateThrows()
-    throws java.text.ParseException
+    throws ParseException
   {
     // Given stubs for book and member
     IBook book = stubBook();
@@ -270,9 +246,9 @@ public class TestLoan
 
 
 
-  @org.junit.Test
+  @Test
   public void createLoanWithDueDateSameAsBorrowDateThrows()
-    throws java.text.ParseException
+    throws ParseException
   {
     // Given stubs for book and member
     IBook book = stubBook();
@@ -295,9 +271,9 @@ public class TestLoan
 
 
 
-  @org.junit.Test
+  @Test
   public void createLoanWithDueDateSameAsBorrowDateThrowsWithCorrectMessage()
-    throws java.text.ParseException
+    throws ParseException
   {
     // Given stubs for book and member
     IBook book = stubBook();
@@ -324,7 +300,7 @@ public class TestLoan
   // Getters & setters testing - with stubs
   // ==========================================================================
 
-  @org.junit.Test
+  @Test
   public void getBorrowerFromLoan()
   {
     // Given stubs for book and member
@@ -345,7 +321,7 @@ public class TestLoan
 
 
 
-  @org.junit.Test
+  @Test
   public void getBorrowerFirstNameFromLoan()
   {
     // Given stubs for book and member
@@ -370,7 +346,7 @@ public class TestLoan
 
 
 
-  @org.junit.Test
+  @Test
   public void getBookFromLoan()
   {
     // Given stubs for book and member
@@ -395,7 +371,7 @@ public class TestLoan
 
 
 
-  @org.junit.Test
+  @Test
   public void getID()
   {
     // Given stubs for book and member
@@ -418,7 +394,7 @@ public class TestLoan
   // custom Loans) & LoanBuilder.dateBuilder() (for simpler date creation)
   // ==========================================================================
 
-  @org.junit.Test
+  @Test
   public void isOverDueWhenStateOverDueIsTrue()
   {
     // Given a manually set overdue loan
@@ -431,7 +407,7 @@ public class TestLoan
 
 
 
-  @org.junit.Test
+  @Test
   public void isOverDueWhenDefaultLoanIsFalse()
   {
     // Given a default loan (state is not overdue)
@@ -444,7 +420,7 @@ public class TestLoan
 
 
 
-  @org.junit.Test
+  @Test
   public void isOverDueWhenStateCurrentIsFalse()
   {
     // Given a loan with a manually set status of current
@@ -461,7 +437,7 @@ public class TestLoan
   // isCurrent() testing - with stubs & LoanBuilder
   // ==========================================================================
 
-  @org.junit.Test
+  @Test
   public void isCurrentWhenStateCurrentIsTrue()
   {
     // Given a current loan
@@ -476,7 +452,7 @@ public class TestLoan
 
 
 
-  @org.junit.Test
+  @Test
   public void isCurrentWhenStatePendingIsFalse()
   {
     // Given a current loan
@@ -491,7 +467,7 @@ public class TestLoan
 
 
 
-  @org.junit.Test
+  @Test
   public void isCurrentWhenStateOverDueIsFalse()
   {
     // Given a current loan
@@ -506,7 +482,7 @@ public class TestLoan
 
 
 
-  @org.junit.Test
+  @Test
   public void isCurrentWhenStateCompleteIsFalse()
   {
     // Given a current loan
@@ -525,7 +501,7 @@ public class TestLoan
   // checkOverDue() testing - with stubs & LoanBuilder
   // ==========================================================================
 
-  @org.junit.Test
+  @Test
   public void checkOverDueWhenLoanDueNextCenturyIsFalse()
   {
     // Given a new 100 year loan!
@@ -543,7 +519,7 @@ public class TestLoan
 
 
 
-  @org.junit.Test
+  @Test
   public void checkOverDueWhenLoanDueNextDayIsFalse()
   {
     // Given a new loan with due date 1st January
@@ -561,7 +537,7 @@ public class TestLoan
 
 
 
-  @org.junit.Test
+  @Test
   public void checkOverDueWhenLoanDueLaterSameDayIsFalse()
   {
     // Given a new loan with due date 31st December (@ 8pm)
@@ -580,7 +556,7 @@ public class TestLoan
 
 
 
-  @org.junit.Test
+  @Test
   public void checkOverDueWhenLoanDueEarlierSameDayIsFalse()
   {
     // Given a new loan with due date 31st December (@ 2:45am)
@@ -599,7 +575,7 @@ public class TestLoan
 
 
 
-  @org.junit.Test
+  @Test
   public void checkOverDueWhenLoanDuePreviousDayIsTrue()
   {
     // Given a new loan with due date 31st December
@@ -617,7 +593,7 @@ public class TestLoan
 
 
 
-  @org.junit.Test
+  @Test
   public void checkOverDueWhenLoanDuePreviousWeekIsTrue()
   {
     // Given a new loan with due date 31st December
@@ -635,7 +611,7 @@ public class TestLoan
 
 
 
-  @org.junit.Test
+  @Test
   public void checkOverDueWhenStateCurrentAndLoanNotDueLeavesStateCurrent()
   {
     // Given a new current loan with due date 31st December
@@ -659,7 +635,7 @@ public class TestLoan
 
 
 
-  @org.junit.Test
+  @Test
   public void checkOverDueWhenStateCurrentButPastDueDateSetsStateOverDue()
   {
     // Given a new current loan with due date 31st December
@@ -683,7 +659,64 @@ public class TestLoan
 
 
 
-  @org.junit.Test
+  @Test
+  public void checkOverDue_StateCurrentAndLoanNotDue_BorrowerStateAllowed()
+  {
+    // Given a new current loan with due date 31st December
+    ILoan loan = newLoan().withBorrowDate(20, 11, 2015)
+                          .withDueDate(31, 11, 2015, 0, 0, 0)
+                          .makeCurrent().build();
+
+    // When today's date is 31st December
+    Date today = dateBuilder(31, 11, 2015, 15, 45, 00);
+    // Then loan status should not be overdue
+    boolean isStateOverDue = loan.isOverDue();
+    assertThat(isStateOverDue).isFalse();
+    // thus borrower status should not be restricted
+    boolean isBorrowerRestricted = loan.getBorrower().isRestricted();
+    assertThat(isBorrowerRestricted).isFalse();
+    // and loan should not be due
+    boolean shouldSetStatusToOverDue = loan.checkOverDue(today);
+    assertThat(shouldSetStatusToOverDue).isFalse();
+
+    // Then borrower state should not be restricted now (after checkOverDue)
+    isBorrowerRestricted = loan.getBorrower().isRestricted();
+    assertThat(isBorrowerRestricted).isFalse();
+  }
+
+
+
+  @Test
+  public void checkOverDue_StateCurrentButPastDueDate_BorrowerRestricted()
+  {
+    IMember mrMock = mockMember();
+    when(mrMock.isRestricted()).thenReturn(false).thenReturn(true);
+    // Given a new current loan with due date 31st December
+    ILoan loan = newLoan().withBorrower(mrMock)
+                          .withBorrowDate(20, 11, 2015)
+                          .withDueDate(31, 11, 2015)
+                          .makeCurrent().build();
+    // When today's date is 1st January
+    Date today = dateBuilder(1, 0, 2016);
+    // and loan state is not yet overdue (check has not been run)
+    boolean isStateOverDue = loan.isOverDue();
+    assertThat(isStateOverDue).isFalse();
+    // and this borrower status should not yet be restricted
+    boolean isBorrowerRestricted = loan.getBorrower().isRestricted();
+    assertThat(isBorrowerRestricted).isFalse();
+    // but loan is actually due
+    boolean shouldSetStatusToOverDue = loan.checkOverDue(today);
+    assertThat(shouldSetStatusToOverDue).isTrue();
+    when(mockMember().isRestricted()).thenReturn(true);
+
+    // Then borrower state should now be restricted (after checkOverDue)
+    isBorrowerRestricted = loan.getBorrower().isRestricted();
+    assertThat(isBorrowerRestricted).isTrue();
+  }
+
+
+
+  @Test
   public void checkOverDueWhenStateCompleteThrows()
   {
     // Given an old loan that was completed
@@ -707,7 +740,7 @@ public class TestLoan
 
 
 
-  @org.junit.Test
+  @Test
   public void checkOverDueWhenStatePendingThrows()
   {
     // Given a pending loan
@@ -729,12 +762,11 @@ public class TestLoan
     }
   }
 
-
   // ==========================================================================
   // complete() testing - with stubs & LoanBuilder
   // ==========================================================================
 
-  @org.junit.Test
+  @Test
   public void completeWhenStateCurrentSetsStateToComplete()
   {
     // Given a new current loan with due date 31st December
@@ -754,7 +786,7 @@ public class TestLoan
 
 
 
-  @org.junit.Test
+  @Test
   public void completeWhenStateOverDueSetsStateToComplete()
   {
     // Given an overdue loan with due date 31st December
@@ -774,7 +806,7 @@ public class TestLoan
 
 
 
-  @org.junit.Test
+  @Test
   public void completeWhenStateCompleteThrows()
   {
     // Given an old loan that was completed
@@ -795,7 +827,7 @@ public class TestLoan
 
 
 
-  @org.junit.Test
+  @Test
   public void completeWhenStatePendingThrows()
   {
     // Given a pending loan
@@ -818,7 +850,7 @@ public class TestLoan
   // commit() testing - with stubs, simple mocks & LoanBuilder
   // ==========================================================================
 
-  @org.junit.Test
+  @Test
   public void commitWhenStateCurrentThrows()
   {
     // Given a current loan with due date 31st December
@@ -839,7 +871,7 @@ public class TestLoan
 
 
 
-  @org.junit.Test
+  @Test
   public void commitWhenStateOverDueThrows()
   {
     // Given an overdue loan with due date 31st December
@@ -860,7 +892,7 @@ public class TestLoan
 
 
 
-  @org.junit.Test
+  @Test
   public void commitWhenStateCompleteThrows()
   {
     // Given a complete loan
@@ -881,12 +913,12 @@ public class TestLoan
 
 
 
-  @org.junit.Test
+  @Test
   public void commitWhenStatePendingSetsId()
   {
     // Given mock Book and Member
-    IBook mockBook = mock(IBook.class);
-    IMember mockBorrower = mock(IMember.class);
+    IBook mockBook = mockBook();
+    IMember mockBorrower = mockMember();
 
     // as part of a pending loan
     ILoan loan = newLoan().withBook(mockBook)
@@ -903,9 +935,9 @@ public class TestLoan
 
 
 
-  @org.junit.Test
+  @Test
   public void commitLoanWithZeroIdThrows()
-      throws java.text.ParseException
+      throws ParseException
   {
     // Given loan using stubs for book and member
     IBook book = stubBook();
@@ -927,9 +959,9 @@ public class TestLoan
 
 
 
-  @org.junit.Test
+  @Test
   public void commitLoanWithNegativeIdThrows()
-      throws java.text.ParseException
+      throws ParseException
   {
     // Given loan using stubs for book and member
     IBook book = stubBook();
@@ -951,9 +983,9 @@ public class TestLoan
 
 
 
-  @org.junit.Test
+  @Test
   public void commitLoanWithNegativeIdThrowsWithCorrectMessage()
-      throws java.text.ParseException
+      throws ParseException
   {
     // Given loan using stubs for book and member
     IBook book = stubBook();
@@ -976,12 +1008,12 @@ public class TestLoan
 
 
 
-  @org.junit.Test
+  @Test
   public void commitWhenStatePendingSetsStateCurrent()
   {
     // Given mock Book and Member
-    IBook mockBook = mock(IBook.class);
-    IMember mockBorrower = mock(IMember.class);
+    IBook mockBook = mockBook();
+    IMember mockBorrower = mockMember();
 
     // as part of a pending loan
     ILoan loan = newLoan().withBook(mockBook)
@@ -1000,12 +1032,12 @@ public class TestLoan
 
 
 
-  @org.junit.Test
+  @Test
   public void commitWhenStatePendingCallsBookBorrow()
   {
     // Given mock Book and Member
-    IBook mockBook = mock(IBook.class);
-    IMember mockBorrower = mock(IMember.class);
+    IBook mockBook = mockBook();
+    IMember mockBorrower = mockMember();
 
     // as part of a pending loan
     ILoan loan = newLoan().withBook(mockBook)
@@ -1022,12 +1054,12 @@ public class TestLoan
 
 
 
-  @org.junit.Test
+  @Test
   public void commitWhenStatePendingCallsBorrowerAddLoan()
   {
     // Given mock Book and Member
-    IBook mockBook = mock(IBook.class);
-    IMember mockBorrower = mock(IMember.class);
+    IBook mockBook = mockBook();
+    IMember mockBorrower = mockMember();
 
     // as part of a pending loan
     ILoan loan = newLoan().withBook(mockBook)
@@ -1047,7 +1079,7 @@ public class TestLoan
   // toString() testing - with stubs & LoanBuilder
   // ==========================================================================
 
-  @org.junit.Test
+  @Test
   public void toStringWhenStatePending()
   {
     // Given stubs for book and member
@@ -1080,7 +1112,7 @@ public class TestLoan
 
 
 
-  @org.junit.Test
+  @Test
   public void toStringWhenStateCurrentAndIdSet()
   {
     // Given stubs for book and member

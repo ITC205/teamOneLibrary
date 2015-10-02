@@ -14,7 +14,6 @@ import test.unit.TestBookHelper;
  * TestBook, TestBookHelper, TestBookDAO, TestBookFamily
  * 
  * @author Josh Kent
- *
  */
 public class TestBookSuite extends TestCase
 {

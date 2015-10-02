@@ -109,6 +109,7 @@ public class TestConfirmLoansOperation
                                        books_, loans_, members_));
 
     setPrivateLoanList(controller_, new ArrayList<>());
+    setPrivateBookList(controller_, new ArrayList<>());
 
     ui_ = spy(new library.BorrowUC_UI(controller_));
     setPrivateUI(controller_, ui_);
