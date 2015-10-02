@@ -128,8 +128,7 @@ public void initialise()
     // Initialize scanCount to the number of loans already existing
     scanCount = existingLoans.size();
 
- //   if (!(borrower.hasOverDueLoans() || borrower.hasReachedLoanLimit() || borrower.hasReachedFineLimit()))
-      if (!borrower.isRestricted())
+    if (!borrower.isRestricted())
     {
       setState(EBorrowState.SCANNING_BOOKS);
       ui.setState(EBorrowState.SCANNING_BOOKS);
@@ -166,7 +165,9 @@ public void initialise()
       // Prevent scanning of books
       scanner.setEnabled(false);
 
-      ui.displayMemberDetails(borrower.getId(), borrower.getFirstName(), borrower.getContactPhone());
+      ui.displayMemberDetails(borrowerId, 
+                              borrower.getFirstName() + " " + borrower.getLastName(), 
+                              borrower.getContactPhone());
       
       // Display any outstanding loans
       // Display the details of any outstanding loans
