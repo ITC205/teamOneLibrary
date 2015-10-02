@@ -82,6 +82,7 @@ public class TestScenarioOneRebecca extends TestCase
                       mockDisplay, bookDAO, loanDAO,
                       memberDAO);
     ui = new IBorrowUIStub();
+    setMockBorrowUI(ui);
     
     bookDAO.addBook("Tolkien", "The Two Towers", "TOL002");
     bookDAO.addBook("Aldous Huxley", "Brave New World", "HUX001");
@@ -105,7 +106,12 @@ public class TestScenarioOneRebecca extends TestCase
     assertEquals(EBorrowState.INITIALIZED, getState());
 
     controller.cardSwiped(1);
+    
+    assertEquals(0, getScanCount());
     assertEquals(EBorrowState.SCANNING_BOOKS, getState());
+    
+    verify(mockReader).setEnabled(false);
+    verify(mockScanner).setEnabled(true);
     
     controller.bookScanned(1);
     controller.bookScanned(2);
@@ -171,5 +177,58 @@ public class TestScenarioOneRebecca extends TestCase
       e.printStackTrace();
     }
     return controllerState;
+  }
+  
+  
+  
+  private void setMockBorrowUI(IBorrowUI mockBorrowUI) 
+  {
+      Class<?> borrowUC_CTLClass = controller.getClass();
+      Field ui;
+      try 
+      {
+        ui = borrowUC_CTLClass.getDeclaredField("ui");
+        ui.setAccessible(true);
+        ui.set(controller, mockBorrowUI);
+      } 
+      catch (NoSuchFieldException e) 
+      {
+        e.printStackTrace();
+      } 
+      catch (SecurityException e)
+      {
+        e.printStackTrace();
+      }
+      catch (IllegalArgumentException e) 
+      {
+        e.printStackTrace();
+      } 
+      catch (IllegalAccessException e) 
+      {
+        e.printStackTrace();
+      }
+  }
+  
+  
+  
+  private int getScanCount() 
+  {
+    int controllerScanCount = 0;
+    try {
+      Class<?> borrowUC_CTLClass = controller.getClass();
+      Field scanCount = borrowUC_CTLClass.getDeclaredField("scanCount");
+      scanCount.setAccessible(true);
+      controllerScanCount = (int) scanCount.get(controller);
+      return controllerScanCount;
+    } catch (NoSuchFieldException e) {
+      e.printStackTrace();
+    } catch (SecurityException e) {
+      e.printStackTrace();
+    } catch (IllegalArgumentException e) {
+      e.printStackTrace();
+    } catch (IllegalAccessException e) {
+      e.printStackTrace();
+    }
+    return controllerScanCount;
   }
 }
