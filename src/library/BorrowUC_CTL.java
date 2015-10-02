@@ -128,7 +128,8 @@ public void initialise()
     // Initialize scanCount to the number of loans already existing
     scanCount = existingLoans.size();
 
-    if (!(borrower.hasOverDueLoans() || borrower.hasReachedLoanLimit() || borrower.hasReachedFineLimit()))
+ //   if (!(borrower.hasOverDueLoans() || borrower.hasReachedLoanLimit() || borrower.hasReachedFineLimit()))
+      if (!borrower.isRestricted())
     {
       setState(EBorrowState.SCANNING_BOOKS);
       ui.setState(EBorrowState.SCANNING_BOOKS);

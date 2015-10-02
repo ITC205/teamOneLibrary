@@ -27,6 +27,8 @@ public interface IMember {
 	
 	public void    removeLoan(ILoan loan);
 	
+  public void loanHasBecomeOverdue(ILoan loan);
+	
 	public EMemberState   getState();
 	
 	public String  getFirstName();
@@ -40,5 +42,7 @@ public interface IMember {
 	public int     getId();
 	
   public float   getTotalFines();
+
+  public boolean isRestricted();
 
 }
