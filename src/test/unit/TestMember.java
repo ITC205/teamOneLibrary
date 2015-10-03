@@ -168,6 +168,8 @@ public class TestMember extends TestCase
     validMember.addFine(1.0f);
     assertEquals(1.0f, validMember.getTotalFines());
     
+    validMember.addFine(5.0f);
+    assertEquals(6.0f, validMember.getTotalFines());
 
     try
     {
@@ -197,6 +199,7 @@ public class TestMember extends TestCase
   // maximum allowable outstanding fines
   public void testHasReachedFineLimit()
   {
+    assertEquals(validMember.getState(), EMemberState.BORROWING_ALLOWED);
     assertFalse(validMember.hasReachedFineLimit());
     validMember.addFine(20.0f);
     assertTrue(validMember.hasReachedFineLimit());
@@ -266,6 +269,7 @@ public class TestMember extends TestCase
   // when the loan limit is reached
   public void testHasReachedLoanLimit()
   {
+    assertEquals(validMember.getState(), EMemberState.BORROWING_ALLOWED);
     assertFalse(validMember.hasReachedLoanLimit());
     for (int n = 1; n <= 5; n++)
     {
@@ -287,13 +291,31 @@ public class TestMember extends TestCase
   
   // Test that Member state is updated to BORROWING_DISALLOWED if there are overdue loans
   public void testHasOverDueLoans()
-  {
- //   validMember.addLoan(mockLoan);
- //   assertFalse(validMember.hasOverDueLoans());
+  {    
+    // mockLoan is not currently overdue
+    assertFalse(validMember.hasOverDueLoans());
     
+    // Set the loan state of mockLoan to OVERDUE
     setState(ELoanState.OVERDUE);
     validMember.addLoan(mockLoan);
+    
+    // validMember should now have an overdue loan
     assertTrue(validMember.hasOverDueLoans());
+  }
+  
+  
+  
+  public void testRemoveLoan()
+  {
+    // Set the loan state of mockLoan to OVERDUE for access through Member methods
+    setState(ELoanState.OVERDUE);
+    validMember.addLoan(mockLoan);
+    
+    // validMember should now have an overdue loan
+    assertTrue(validMember.hasOverDueLoans());
+    
+    validMember.removeLoan(mockLoan);
+    assertFalse(validMember.hasOverDueLoans());
   }
   
 

@@ -247,7 +247,7 @@ public class Member
   @Override
   public void removeLoan(ILoan loan) throws IllegalArgumentException
   {
-    if (loan != null) 
+    if (loan == null) 
     {
       throw new IllegalArgumentException("Member: removeLoan: Loan cannot be null");
     }
