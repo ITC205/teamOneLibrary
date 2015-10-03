@@ -1,9 +1,15 @@
 package test.unit;
 
 import java.lang.reflect.Field;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import junit.framework.TestCase;
+import library.daos.BookDAO;
+import library.daos.LoanDAO;
 import library.entities.Loan;
+import library.entities.Book;
 import library.entities.Member;
 import library.interfaces.EBorrowState;
 import library.interfaces.entities.*;
@@ -34,8 +40,44 @@ public class TestMember extends TestCase
   
   Member validMember = new Member(validFirstName, validLastName, validContactPhone, validEmailAddress, validId);
   
-  ILoan mockLoan = mock(ILoan.class);
+  Loan mockLoan = mock(Loan.class);
+  Book mockBook = mock(Book.class);
+  BookDAO mockBookDAO = mock(BookDAO.class);
+  LoanDAO mockLoanDAO = mock(LoanDAO.class);
   ILoan loan;
+  
+  
+  
+  protected void setUp()
+  {
+
+    
+    when(mockBook.getAuthor()).thenReturn("Author1");
+    when(mockBook.getTitle()).thenReturn("Title1");
+    when(mockBook.getCallNumber()).thenReturn("ABC123");
+    when(mockBook.getState()).thenReturn(EBookState.AVAILABLE);
+    when(mockBook.getID()).thenReturn(1);
+    mockBookDAO.addBook("Author1", "Title1", "ABC123");
+    when(mockBookDAO.getBookByID(1)).thenReturn(mockBook);
+    
+    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+    Date dateBorrowed;
+    Date dueDate;
+    try {
+      dueDate = dateFormat.parse("15/10/15");
+      dateBorrowed = dateFormat.parse("01/10/15");
+      mockLoan = new Loan(mockBook, validMember, dateBorrowed, dueDate);
+      mockLoanDAO.createLoan(validMember, mockBook);
+      
+    } catch (ParseException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    when(mockLoanDAO.getLoanByID(1)).thenReturn(mockLoan);
+
+    
+    
+  }
   
   
   
@@ -50,7 +92,9 @@ public class TestMember extends TestCase
   public void testMember()
   {
     String nullFirstName = null;
+    String nullLastName = null;
     String nullContactPhone = null;
+    String nullEmailAddress = null;
     int zeroMemberId = 0;    
     
     
@@ -73,7 +117,29 @@ public class TestMember extends TestCase
     
     try
     {
+    Member memberLastNameNull = new Member(validFirstName, nullLastName, validContactPhone, validEmailAddress, validId);
+    }
+    catch (Throwable ex)
+    {
+      exception = ex;
+    }
+    assertTrue(exception instanceof IllegalArgumentException);
+    exception = null;
+    
+    try
+    {
     Member memberContactPhoneNull = new Member(validFirstName, validLastName, nullContactPhone, validEmailAddress, validId);
+    }
+    catch (Throwable ex)
+    {
+      exception = ex;
+    }
+    assertTrue(exception instanceof IllegalArgumentException);
+    exception = null;
+    
+    try
+    {
+    Member memberEmailAddressNull = new Member(validFirstName, validLastName, validContactPhone, nullEmailAddress, validId);
     }
     catch (Throwable ex)
     {
@@ -222,9 +288,36 @@ public class TestMember extends TestCase
   // Test that Member state is updated to BORROWING_DISALLOWED if there are overdue loans
   public void testHasOverDueLoans()
   {
+ //   validMember.addLoan(mockLoan);
+ //   assertFalse(validMember.hasOverDueLoans());
+    
+    setState(ELoanState.OVERDUE);
     validMember.addLoan(mockLoan);
-    assertFalse(validMember.hasOverDueLoans());
+    assertTrue(validMember.hasOverDueLoans());
   }
   
 
+  
+  private void setState(ELoanState newState) 
+  {
+      // Use reflection to access BorrowUC_CTL.state
+
+      Class<?> loanClass = mockLoan.getClass();
+      try {
+        Field state_ = loanClass.getDeclaredField("state_");
+
+      state_.setAccessible(true);
+
+      state_.set(mockLoan, newState);
+      }
+      catch (NoSuchFieldException e) {
+        e.printStackTrace();
+      } catch (SecurityException e) {
+        e.printStackTrace();
+      } catch (IllegalArgumentException e) {
+        e.printStackTrace();
+      } catch (IllegalAccessException e) {
+        e.printStackTrace();
+      }
+  }
 }

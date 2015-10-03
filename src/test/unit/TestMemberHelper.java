@@ -1,8 +1,8 @@
 package test.unit;
 
 import junit.framework.*;
-
 import library.daos.MemberHelper;
+import library.interfaces.daos.IMemberHelper;
 import library.interfaces.entities.IMember;
 
 
@@ -21,7 +21,7 @@ public class TestMemberHelper extends TestCase
   
   
   
-  MemberHelper helper = new MemberHelper();
+  IMemberHelper helper = new MemberHelper();
 
 
 
