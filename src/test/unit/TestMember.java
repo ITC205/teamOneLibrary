@@ -340,6 +340,21 @@ public class TestMember extends TestCase
     assertTrue(validMember.isRestricted());
   }
   
+  
+  
+  public void testLoanHasBecomeOverdue()
+  {
+    validMember.addLoan(mockLoan);
+    
+    assertEquals(validMember.getState(), EMemberState.BORROWING_ALLOWED);
+    
+    setState(ELoanState.OVERDUE);
+    
+    validMember.loanHasBecomeOverdue(mockLoan);
+    
+    assertEquals(validMember.getState(), EMemberState.BORROWING_DISALLOWED);
+  }
+  
 
   
   private void setState(ELoanState newState) 
