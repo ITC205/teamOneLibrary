@@ -49,10 +49,9 @@ import library.entities.Loan;
  * overdue loans).
  *
  * Member:
- *  - has 2 existing loans
- *  - both loans are overdue
- *  - has fines payable (due to overdue loans)
- *  - has not reached the fine limit
+ *  - has 5 existing loans
+ *  - all loans are current
+ *  - no fines payable
  *
  * Prior to scenario:
  *  - initialize system
@@ -62,7 +61,7 @@ import library.entities.Loan;
  *  - member swipes card
  *
  * System should:
- *  - display the member's overdue loans
+ *  - display the member's current loans
  *  - only allow the member to click cancel
  *
  * Scenario ends:
@@ -71,7 +70,7 @@ import library.entities.Loan;
  *
  * @author nicholasbaldwin
  */
-public class MemberHasOverDueLoans
+public class MemberIsAtLoanLimit
 {
   //===========================================================================
   // Fixtures
@@ -107,18 +106,24 @@ public class MemberHasOverDueLoans
   // our friendly member
   IMember jim = spy(members_.addMember("Jim", "Johns", "9123", "j@gmail.com"));
 
-  // the 2 books he borrowed a while back
+  // the 5 books he borrowed a while back
   IBook catch22 = spy(books_.addBook("Joseph Heller", "CATCH-22", "101.1 [2]"));
   IBook emma = spy(books_.addBook("Jane Austen", "Emma", "102.5"));
+  IBook scoop = spy(books_.addBook("Evelyn Waugh", "Scoop", "103.21"));
+  IBook dune = spy(books_.addBook("Frank Herbert", "Dune", "104 [21]"));
+  IBook janeEyre = spy(books_.addBook("Charlotte Bronte", "Jane Eyre", "105"));
 
-  // the 2 exisiting loans
+  // the 5 existing loans
   ILoan firstLoan;
   ILoan secondLoan;
+  ILoan thirdLoan;
+  ILoan fourthLoan;
+  ILoan fifthLoan;
 
   Date today = ignoreTime(new Date());
   Date yesterday = dateBuilder(today, -1);
   Date tomorrow = dateBuilder(today, 1);
-  Date borrowed = dateBuilder(yesterday, -(ILoan.LOAN_PERIOD));
+  Date borrowed = dateBuilder(tomorrow, -(ILoan.LOAN_PERIOD));
 
 
   public void setUpExistingLoans(IMember member) throws Exception
@@ -127,29 +132,46 @@ public class MemberHasOverDueLoans
 
     firstLoan = loans_.createLoan(member, catch22);
     secondLoan = loans_.createLoan(member, emma);
+    thirdLoan = loans_.createLoan(member, scoop);
+    fourthLoan = loans_.createLoan(member, dune);
+    fifthLoan = loans_.createLoan(member, janeEyre);
     loans_.commitLoan(firstLoan);
     loans_.commitLoan(secondLoan);
+    loans_.commitLoan(thirdLoan);
+    loans_.commitLoan(fourthLoan);
+    loans_.commitLoan(fifthLoan);
 
     setPrivateBorrowDate((Loan)firstLoan, borrowed);
-    setPrivateDueDate((Loan)firstLoan, yesterday);
+    setPrivateDueDate((Loan)firstLoan, tomorrow);
     setPrivateBorrowDate((Loan)secondLoan, borrowed);
-    setPrivateDueDate((Loan)secondLoan, yesterday);
+    setPrivateDueDate((Loan)secondLoan, tomorrow);
+    setPrivateBorrowDate((Loan)thirdLoan, borrowed);
+    setPrivateDueDate((Loan)thirdLoan, tomorrow);
+    setPrivateBorrowDate((Loan)fourthLoan, borrowed);
+    setPrivateDueDate((Loan)fourthLoan, tomorrow);
+    setPrivateBorrowDate((Loan)fifthLoan, borrowed);
+    setPrivateDueDate((Loan)fifthLoan, tomorrow);
 
     loans_.updateOverDueStatus(new Date());
 
     if (loans_.getLoanByID(1) != firstLoan ||
-        loans_.getLoanByID(2) != secondLoan)
+        loans_.getLoanByID(2) != secondLoan ||
+        loans_.getLoanByID(3) != thirdLoan ||
+        loans_.getLoanByID(4) != fourthLoan ||
+        loans_.getLoanByID(5) != fifthLoan)
     {
       throw new Exception("Loans required for scenario not setup");
     }
 
-    if (!firstLoan.isOverDue() || !secondLoan.isOverDue()) {
-      throw new Exception("Loans for scenario should have due date set " +
-                          "to yesterday");
-      }
+    if (!firstLoan.isCurrent() || !secondLoan.isCurrent() ||
+        !thirdLoan.isCurrent() || !fourthLoan.isCurrent() ||
+        !fifthLoan.isCurrent()) {
+      throw new Exception("Loans for scenario should be current with due " +
+                          "date set to tomorrow");
+    }
 
-    if(member.getLoans().size() != 2) {
-      throw new Exception("Member should have 2 loans");
+    if(member.getLoans().size() != 5) {
+      throw new Exception("Member should have 5 loans");
     }
 
     if (!member.isRestricted()) {
@@ -169,7 +191,7 @@ public class MemberHasOverDueLoans
 
 
   @Test
-  public void borrowingRestricted_MemberHasOverDueLoans_CheckResults()
+  public void borrowingRestricted_MemberIsAtLoanLimit_CheckResults()
   {
     //=========================================================================
     // Set up data
@@ -186,7 +208,7 @@ public class MemberHasOverDueLoans
     }
 
     existingLoans = jim.getLoans();
-    assertThat(existingLoans).hasSize(2);
+    assertThat(existingLoans).hasSize(5);
 
     //=========================================================================
     // Initialization
@@ -194,12 +216,18 @@ public class MemberHasOverDueLoans
 
     initializeController();
 
-    assertThat(loans_.listLoans()).hasSize(2);
+    assertThat(loans_.listLoans()).hasSize(5);
     assertThat(loans_.getLoanByID(1)).isSameAs(jim.getLoans().get(0));
     assertThat(loans_.getLoanByID(2)).isSameAs(jim.getLoans().get(1));
-    assertThat(jim.getLoans()).hasSize(2);
-    assertThat(jim.getLoans().get(0).isOverDue()).isTrue();
-    assertThat(jim.getLoans().get(1).isOverDue()).isTrue();
+    assertThat(loans_.getLoanByID(3)).isSameAs(jim.getLoans().get(2));
+    assertThat(loans_.getLoanByID(4)).isSameAs(jim.getLoans().get(3));
+    assertThat(loans_.getLoanByID(5)).isSameAs(jim.getLoans().get(4));
+    assertThat(jim.getLoans()).hasSize(5);
+    assertThat(jim.getLoans().get(0).isCurrent()).isTrue();
+    assertThat(jim.getLoans().get(1).isCurrent()).isTrue();
+    assertThat(jim.getLoans().get(2).isCurrent()).isTrue();
+    assertThat(jim.getLoans().get(3).isCurrent()).isTrue();
+    assertThat(jim.getLoans().get(4).isCurrent()).isTrue();
     assertThat(jim.isRestricted()).isTrue();
 
     //=========================================================================
@@ -218,19 +246,25 @@ public class MemberHasOverDueLoans
     // User clicks cancel
     controller_.cancelled();
 
-    assertThat(loans_.listLoans()).hasSize(2);
+    assertThat(loans_.listLoans()).hasSize(5);
     assertThat(loans_.getLoanByID(1)).isSameAs(jim.getLoans().get(0));
     assertThat(loans_.getLoanByID(2)).isSameAs(jim.getLoans().get(1));
-    assertThat(jim.getLoans()).hasSize(2);
-    assertThat(jim.getLoans().get(0).isOverDue()).isTrue();
-    assertThat(jim.getLoans().get(1).isOverDue()).isTrue();
+    assertThat(loans_.getLoanByID(3)).isSameAs(jim.getLoans().get(2));
+    assertThat(loans_.getLoanByID(4)).isSameAs(jim.getLoans().get(3));
+    assertThat(loans_.getLoanByID(5)).isSameAs(jim.getLoans().get(4));
+    assertThat(jim.getLoans()).hasSize(5);
+    assertThat(jim.getLoans().get(0).isCurrent()).isTrue();
+    assertThat(jim.getLoans().get(1).isCurrent()).isTrue();
+    assertThat(jim.getLoans().get(2).isCurrent()).isTrue();
+    assertThat(jim.getLoans().get(3).isCurrent()).isTrue();
+    assertThat(jim.getLoans().get(4).isCurrent()).isTrue();
     assertThat(jim.isRestricted()).isTrue();
   }
 
 
 
   @Test
-  public void borrowingRestricted_MemberHasOverDueLoans_CheckState()
+  public void borrowingRestricted_MemberIsAtLoanLimit_CheckState()
   {
     //=========================================================================
     // Set up data
@@ -247,7 +281,7 @@ public class MemberHasOverDueLoans
     }
 
     existingLoans = jim.getLoans();
-    assertThat(existingLoans).hasSize(2);
+    assertThat(existingLoans).hasSize(5);
 
     //=========================================================================
     // Initialization
@@ -298,7 +332,7 @@ public class MemberHasOverDueLoans
     bookList = getPrivateBookList(controller_);
     assertThat(bookList).isEmpty();
     scanCount = getPrivateCount(controller_);
-    assertThat(scanCount).isEqualTo(2);
+    assertThat(scanCount).isEqualTo(5);
 
     //-------------------------------------------------------------------------
     // User clicks cancel
@@ -318,7 +352,7 @@ public class MemberHasOverDueLoans
 
 
   @Test
-  public void borrowingRestricted_MemberHasOverDueLoans_CheckCalls()
+  public void borrowingRestricted_MemberIsAtLoanLimit_CheckCalls()
   {
     //=========================================================================
     // Set up data
@@ -335,7 +369,7 @@ public class MemberHasOverDueLoans
     }
 
     existingLoans = jim.getLoans();
-    assertThat(existingLoans).hasSize(2);
+    assertThat(existingLoans).hasSize(5);
 
     verify(jim, atLeastOnce()).addLoan(any());
 
@@ -364,20 +398,23 @@ public class MemberHasOverDueLoans
     controller_.cardSwiped(jim.getId());
 
     verify(members_, times(2)).getMemberByID(jim.getId()); // checks null first
-    verify(jim, times(3)).getLoans(); // setup invokes this
+    verify(jim, times(3)).getLoans(); // called in setup
+
     verify(jim).isRestricted();
     verify(ui_).setState(EBorrowState.BORROWING_RESTRICTED);
     verify(reader_).setEnabled(false);
     verify(scanner_, times(2)).setEnabled(false);
+
     verify(jim, times(2)).getId();
     verify(jim, atLeastOnce()).getFirstName();
     verify(jim, atLeastOnce()).getLastName();
     verify(ui_).displayMemberDetails(anyInt(), anyString(), anyString());
+
     verify(ui_).displayExistingLoan(any());
     verify(jim).hasOverDueLoans();
-    verify(ui_).displayOverDueMessage();
     verify(jim).hasReachedFineLimit();
-    verify(jim, atLeastOnce()).hasReachedLoanLimit();
+    verify(jim, atLeastOnce()).hasReachedLoanLimit(); // setup calls indirectly
+    verify(ui_).displayAtLoanLimitMessage();
     verify(ui_).displayErrorMessage(any());
 
     //-------------------------------------------------------------------------
@@ -392,7 +429,7 @@ public class MemberHasOverDueLoans
 
 
   @Test
-  public void borrowingRestricted_MemberHasOverDueLoans_CorrectMessages()
+  public void borrowingRestricted_MemberIsAtLoanLimit_CorrectMessages()
   {
     //=========================================================================
     // Set up data
@@ -409,7 +446,7 @@ public class MemberHasOverDueLoans
     }
 
     existingLoans = jim.getLoans();
-    assertThat(existingLoans).hasSize(2);
+    assertThat(existingLoans).hasSize(5);
 
     verify(jim, atLeastOnce()).addLoan(any());
 
@@ -439,8 +476,9 @@ public class MemberHasOverDueLoans
                                     "Borrowed: " +
                                     formattedDate(borrowed) + "\n" +
                                     "Due Date: " +
-                                    formattedDate(yesterday) + "\n" +
+                                    formattedDate(tomorrow) + "\n" +
                                     "\n" +
+
                                     "Loan ID:  2\n" +
                                     "Author:   Jane Austen\n" +
                                     "Title:    Emma\n" +
@@ -448,7 +486,37 @@ public class MemberHasOverDueLoans
                                     "Borrowed: " +
                                     formattedDate(borrowed) + "\n" +
                                     "Due Date: " +
-                                    formattedDate(yesterday));
+                                    formattedDate(tomorrow)+ "\n" +
+                                    "\n" +
+
+                                    "Loan ID:  3" + "\n" +
+                                    "Author:   Evelyn Waugh" + "\n" +
+                                    "Title:    Scoop" + "\n" +
+                                    "Borrower: Jim Johns" + "\n" +
+                                    "Borrowed: " +
+                                    formattedDate(borrowed) + "\n" +
+                                    "Due Date: " +
+                                    formattedDate(tomorrow)+ "\n" +
+                                    "\n" +
+
+                                    "Loan ID:  4" + "\n" +
+                                    "Author:   Frank Herbert" + "\n" +
+                                    "Title:    Dune" + "\n" +
+                                    "Borrower: Jim Johns" + "\n" +
+                                    "Borrowed: " +
+                                    formattedDate(borrowed) + "\n" +
+                                    "Due Date: " +
+                                    formattedDate(tomorrow)+ "\n" +
+                                    "\n" +
+
+                                    "Loan ID:  5" + "\n" +
+                                    "Author:   Charlotte Bronte" + "\n" +
+                                    "Title:    Jane Eyre" + "\n" +
+                                    "Borrower: Jim Johns" + "\n" +
+                                    "Borrowed: " +
+                                    formattedDate(borrowed) + "\n" +
+                                    "Due Date: " +
+                                    formattedDate(tomorrow));
     verify(ui_).displayErrorMessage("Borrowing Restricted");
 
     //-------------------------------------------------------------------------
