@@ -72,7 +72,7 @@ import library.entities.Loan;
  *
  * @author nicholasbaldwin
  */
-public class MemberIsAtLoanLimitIsRestricted
+public class MemberAtLoanLimitIsRestricted
 {
   //===========================================================================
   // Fixtures

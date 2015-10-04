@@ -11,7 +11,10 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(org.junit.runners.Suite.class)
 @SuiteClasses(
   {
-    test.scenario.MemberWithOverDueLoansIsRestricted.class
+    test.scenario.MemberAtLoanLimitIsRestricted.class,
+    test.scenario.MemberWithInvalidCardCannotAuthenticate.class,
+    test.scenario.MemberWithOverDueLoansIsRestricted.class,
+    test.scenario.MemberWithoutRestrictionsCanBorrowBook.class
   })
 
 public class TestScenarioSuiteNick

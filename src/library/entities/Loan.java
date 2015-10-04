@@ -41,10 +41,9 @@ public class Loan
    * @param borrower IMember
    * @param borrowDate Date
    * @param dueDate Date
-   * Throws an IllegalArgumentException if:
+   * @throws IllegalArgumentException if:
    *  - any of book, borrower, borrowDate, or dueDate are null
    *  - dueDate is less than borrowDate
-   *  - loanID is less than or equal to zero
    */
   public Loan(IBook book, IMember borrower, Date borrowDate, Date dueDate)
     throws IllegalArgumentException
@@ -74,17 +73,19 @@ public class Loan
   }
 
 
-  // TODO: check
+
   private void throwIfDueDateIsLessThanBorrowDate(Date borrowDate,
-                                                  Date returnDate)
+                                                  Date dueDate)
     throws IllegalArgumentException
   {
-    if (!returnDate.after(borrowDate)) {
+    if (ignoreTime(dueDate).before(ignoreTime(borrowDate))) {
       throw new IllegalArgumentException("Cannot create a new Loan when the " +
-                                         "Return Date is before or the same " +
-                                         "as the Borrowing Date.");
+                                         "Due Date is less than the Borrowing" +
+                                         " Date.");
     }
   }
+
+
 
   //===========================================================================
   // Getters & setters
@@ -133,11 +134,13 @@ public class Loan
    *  - sets the state of this Loan to CURRENT
    *  - records this Loan on Book instance
    *  - records this Loan on Member instance
-   * Throws a RuntimeException if this Loan's state is not (initially) PENDING.
    * @param id int The ID of this Loan.
+   * @throws RuntimeException if this Loan's state is not (initially) PENDING.
+   * @throws IllegalArgumentException if id is less than or equal to 0.
    */
   @Override
   public void commit(int id)
+    throws RuntimeException, IllegalArgumentException
   {
     throwIfStateNotPending();
     throwIfIDNotGreaterThanZero(id);
@@ -151,6 +154,7 @@ public class Loan
 
 
   private void throwIfStateNotPending()
+      throws RuntimeException
   {
     if (state_ != ELoanState.PENDING) {
       throw new RuntimeException("Committing a Loan that is not " +
@@ -173,13 +177,15 @@ public class Loan
 
   /**
    * Sets this Loan state to COMPLETE.
-   * Throws a RuntimeException if this Loan's state is not CURRENT or OVERDUE.
+   * @throws RuntimeException if this Loan's state is not CURRENT or OVERDUE.
    */
   @Override
   public void complete()
+    throws RuntimeException
   {
     boolean isLoanIsCurrentOrOverDue =
-        (state_ == ELoanState.CURRENT || state_ == ELoanState.OVERDUE);
+        (state_ == ELoanState.CURRENT ||
+         state_ == ELoanState.OVERDUE);
 
     if (isLoanIsCurrentOrOverDue) {
         state_ = ELoanState.COMPLETE;
@@ -220,9 +226,11 @@ public class Loan
    * time portion of the dates being compared).
    * @param currentDate Date current date.
    * @return boolean true if current date is past due date of this Loan.
+   * @throws RuntimeException if this loan is not current or overDue.
    */
   @Override
   public boolean checkOverDue(Date currentDate)
+    throws RuntimeException
   {
     boolean isLoanCurrentOrOverDue =
       (state_ == ELoanState.CURRENT || state_ == ELoanState.OVERDUE);

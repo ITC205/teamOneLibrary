@@ -41,7 +41,7 @@ public class LoanDAO
   /**
    * Creates new LoanDAO.
    * @param helper ILoanHelper The helper this DAO uses to instantiate Loans.
-   * throws IllegalArgumentException if helper is null.
+   * @throws IllegalArgumentException if helper is null.
    */
   public LoanDAO(ILoanHelper helper)
     throws IllegalArgumentException
@@ -65,7 +65,7 @@ public class LoanDAO
    * @param book IBook The book that the borrower wishes to loan.
    * @return Loan A pending loan associated with the borrower and the book,
    * with and id of zero.
-   * throws IllegalArgumentException if borrower or book is null (propagated
+   * @throws IllegalArgumentException if borrower or book is null (propagated
    * from loan constructor).
    */
   @Override
@@ -83,9 +83,13 @@ public class LoanDAO
   /**
    * Assigns the Loan a unique id and stores the Loan.
    * @param loan ILoan The Loan to be committed.
+   * @throws RuntimeException if this Loan's state is not (initially) PENDING.
+   * @throws IllegalArgumentException if id is less than or equal to 0.
+   * (propagated from Loan.commit method)
    */
   @Override
   public void commitLoan(ILoan loan)
+    throws RuntimeException, IllegalArgumentException
   {
     loan.commit(nextID_);
     loanMap_.put(nextID_, loan);
@@ -172,6 +176,8 @@ public class LoanDAO
    * status of current loans according to date.
    * @param date Date The current date, used to check if each current loan is
    * overdue.
+   * Each loan must be checked if current first, otherwise a RuntimeException
+   * will be thrown from Loan.checkOverDue method.
    */
   @Override
   public void updateOverDueStatus(Date date)
@@ -209,15 +215,13 @@ public class LoanDAO
 
   private Date ignoreTime(Date date)
   {
-    java.util.Calendar calendar = Calendar.getInstance();
+    calendar_.setTime(date);
+    calendar_.set(java.util.Calendar.HOUR_OF_DAY, 0);
+    calendar_.set(java.util.Calendar.MINUTE, 0);
+    calendar_.set(java.util.Calendar.SECOND, 0);
+    calendar_.set(java.util.Calendar.MILLISECOND, 0);
 
-    calendar.setTime(date);
-    calendar.set(java.util.Calendar.HOUR_OF_DAY, 0);
-    calendar.set(java.util.Calendar.MINUTE, 0);
-    calendar.set(java.util.Calendar.SECOND, 0);
-    calendar.set(java.util.Calendar.MILLISECOND, 0);
-
-    return calendar.getTime();
+    return calendar_.getTime();
   }
 
 

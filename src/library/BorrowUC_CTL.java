@@ -334,6 +334,7 @@ public void initialise()
 
 
 
+  // loansConfirmed by nick baldwin
 	@Override
 	public void loansConfirmed() {
 
@@ -375,7 +376,7 @@ public void initialise()
 	}
 
 
-
+  // loansRejected by nick baldwin
   @Override
   public void loansRejected() {
 

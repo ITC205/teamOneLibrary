@@ -205,7 +205,7 @@ public class TestRejectLoansOperation
   }
 
   //===========================================================================
-  // ?
+  // test operations
   //===========================================================================
 
   @Test
@@ -408,12 +408,12 @@ public class TestRejectLoansOperation
     Date due = calculateDueDate(today);
 
     assertThat(details).isEqualTo("Loan ID:  1\n" +
-                                      "Author:   Robert Graves\n" +
-                                      "Title:    I, Claudius\n" +
-                                      "Borrower: Jim Johns\n" +
-                                      "Borrowed: " + formattedDate(today) +
-                                      "\n" +
-                                      "Due Date: " + formattedDate(due));
+                                  "Author:   Robert Graves\n" +
+                                  "Title:    I, Claudius\n" +
+                                  "Borrower: Jim Johns\n" +
+                                  "Borrowed: " + formattedDate(today) +
+                                  "\n" +
+                                  "Due Date: " + formattedDate(due));
   }
 
 
@@ -435,28 +435,28 @@ public class TestRejectLoansOperation
     Date due = calculateDueDate(today);
 
     assertThat(details).isEqualTo("Loan ID:  1\n" +
-                                      "Author:   Robert Graves\n" +
-                                      "Title:    I, Claudius\n" +
-                                      "Borrower: Jim Johns\n" +
-                                      "Borrowed: " + formattedDate(today) +
-                                      "\n" +
-                                      "Due Date: " + formattedDate(due) +
-                                      "\n\n" +
-                                      "Loan ID:  2\n" +
-                                      "Author:   Ian McEwan\n" +
-                                      "Title:    Atonement\n" +
-                                      "Borrower: Jim Johns\n" +
-                                      "Borrowed: " + formattedDate(today) +
-                                      "\n" +
-                                      "Due Date: " + formattedDate(due) +
-                                      "\n\n" +
-                                      "Loan ID:  3\n" +
-                                      "Author:   J.R.R. Tolkien\n" +
-                                      "Title:    The Hobbit\n" +
-                                      "Borrower: Jim Johns\n" +
-                                      "Borrowed: " + formattedDate(today) +
-                                      "\n" +
-                                      "Due Date: " + formattedDate(due));
+                                  "Author:   Robert Graves\n" +
+                                  "Title:    I, Claudius\n" +
+                                  "Borrower: Jim Johns\n" +
+                                  "Borrowed: " + formattedDate(today) +
+                                  "\n" +
+                                  "Due Date: " + formattedDate(due) +
+                                  "\n\n" +
+                                  "Loan ID:  2\n" +
+                                  "Author:   Ian McEwan\n" +
+                                  "Title:    Atonement\n" +
+                                  "Borrower: Jim Johns\n" +
+                                  "Borrowed: " + formattedDate(today) +
+                                  "\n" +
+                                  "Due Date: " + formattedDate(due) +
+                                  "\n\n" +
+                                  "Loan ID:  3\n" +
+                                  "Author:   J.R.R. Tolkien\n" +
+                                  "Title:    The Hobbit\n" +
+                                  "Borrower: Jim Johns\n" +
+                                  "Borrowed: " + formattedDate(today) +
+                                  "\n" +
+                                  "Due Date: " + formattedDate(due));
   }
 
 
@@ -606,16 +606,7 @@ public class TestRejectLoansOperation
 
 
 
-  // TODO
-  @Test
-  public void rejectLoan_OnePending_cancelButtonCalled()
-  {
-
-  }
-
-
-
-  //helper
+  //helper for generating loan details
 
   private String loanDetails()
   {

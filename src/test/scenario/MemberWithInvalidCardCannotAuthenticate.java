@@ -67,7 +67,7 @@ import library.entities.Loan;
  *
  * @author nicholasbaldwin
  */
-public class MemberWithInvalidCardIsRestricted
+public class MemberWithInvalidCardCannotAuthenticate
 {
   //===========================================================================
   // Fixtures
@@ -122,7 +122,7 @@ public class MemberWithInvalidCardIsRestricted
 
 
     if (loans_.getLoanByID(1) != firstLoan ||
-            loans_.getLoanByID(2) != secondLoan)
+        loans_.getLoanByID(2) != secondLoan)
     {
       throw new Exception("Loans required for scenario not setup");
     }
@@ -131,8 +131,8 @@ public class MemberWithInvalidCardIsRestricted
       throw new Exception("Member should have 2 loans");
     }
 
-    if (!member.isRestricted()) {
-      throw new Exception("Member should be restricted");
+    if (member.isRestricted()) {
+      throw new Exception("Member should not be restricted");
     }
   }
 
@@ -148,7 +148,7 @@ public class MemberWithInvalidCardIsRestricted
 
 
   @Test
-  public void memberWithInvalidCardIsRestricted_CheckResults()
+  public void memberWithInvalidCardCannotAuthenticate_CheckResults()
   {
     //=========================================================================
     // Set up data
@@ -202,7 +202,7 @@ public class MemberWithInvalidCardIsRestricted
 
 
   @Test
-  public void memberWithInvalidCardIsRestricted_CheckState()
+  public void memberWithInvalidCardCannotAuthenticate_CheckState()
   {
     //=========================================================================
     // Set up data
@@ -290,7 +290,7 @@ public class MemberWithInvalidCardIsRestricted
 
 
   @Test
-  public void memberWithInvalidCardIsRestricted_CheckCalls()
+  public void memberWithInvalidCardCannotAuthenticate_CheckCalls()
   {
     //=========================================================================
     // Set up data
@@ -350,7 +350,7 @@ public class MemberWithInvalidCardIsRestricted
 
 
   @Test
-  public void memberWithInvalidCardIsRestricted_CorrectMessages()
+  public void memberWithInvalidCardCannotAuthenticate_CorrectMessages()
   {
     //=========================================================================
     // Set up data

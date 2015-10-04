@@ -7,6 +7,10 @@ import org.junit.Test;
 import static org.mockito.Mockito.*;
 import static org.assertj.core.api.Assertions.*;
 
+import static test.helper.DateBuilder.*;
+import static test.helper.DoubleBuilder.*;
+import static test.helper.LoanReflection.*;
+
 import library.interfaces.daos.ILoanHelper;
 import library.interfaces.entities.IBook;
 import library.interfaces.entities.IMember;
@@ -16,10 +20,6 @@ import library.interfaces.entities.EBookState;
 import library.daos.LoanDAO;
 import library.daos.LoanHelper;
 import library.entities.Loan;
-
-import static test.helper.DateBuilder.*;
-import static test.helper.DoubleBuilder.*;
-import static test.helper.LoanReflection.*;
 
 /**
  * Tests collaborations of Loan family - Loan, LoanHelper & LoanDAO.
@@ -277,7 +277,6 @@ public class TestLoanFamily
 
     assertThat(bobLoans).isEmpty();
   }
-
 
 
 

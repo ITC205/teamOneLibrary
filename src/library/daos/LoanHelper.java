@@ -18,12 +18,6 @@ public class LoanHelper
   implements ILoanHelper
 {
   //===========================================================================
-  // Variables
-  //===========================================================================
-
-  private final int DEFAULT_ID = 0; // new items have id of zero by default
-
-  //===========================================================================
   // Constructors
   //===========================================================================
 
@@ -45,10 +39,15 @@ public class LoanHelper
    * @param borrowDate Date The date the Loan was created.
    * @param dueDate Date The date the loan is due.
    * @return ILoan A new Loan instance, with the default ID.
+   * @throws IllegalArgumentException if:
+   *  - any of book, borrower, borrowDate, or dueDate are null
+   *  - dueDate is less than borrowDate
+   *  - (propagated from loan constructor)
    */
   @Override
   public ILoan makeLoan(IBook book, IMember borrower,
                         Date borrowDate, Date dueDate)
+    throws IllegalArgumentException
   {
     return new Loan(book, borrower, borrowDate, dueDate);
   }
