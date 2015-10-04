@@ -349,6 +349,7 @@ public void initialise()
 
     // set state
     setState(EBorrowState.COMPLETED);
+    ui.setState(EBorrowState.COMPLETED);
 
     // commit all pending loans
     for (ILoan loan : loanList) {

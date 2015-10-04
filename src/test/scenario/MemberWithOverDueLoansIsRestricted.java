@@ -170,7 +170,7 @@ public class MemberWithOverDueLoansIsRestricted
 
 
   @Test
-  public void borrowingRestricted_MemberHasOverDueLoans_CheckResults()
+  public void memberWithOverDueLoansIsRestricted_CheckResults()
   {
     //=========================================================================
     // Set up data
@@ -231,7 +231,7 @@ public class MemberWithOverDueLoansIsRestricted
 
 
   @Test
-  public void borrowingRestricted_MemberHasOverDueLoans_CheckState()
+  public void memberWithOverDueLoansIsRestricted_CheckState()
   {
     //=========================================================================
     // Set up data
@@ -319,7 +319,7 @@ public class MemberWithOverDueLoansIsRestricted
 
 
   @Test
-  public void borrowingRestricted_MemberHasOverDueLoans_CheckCalls()
+  public void memberWithOverDueLoansIsRestricted_CheckCalls()
   {
     //=========================================================================
     // Set up data
@@ -393,7 +393,7 @@ public class MemberWithOverDueLoansIsRestricted
 
 
   @Test
-  public void borrowingRestricted_MemberHasOverDueLoans_CorrectMessages()
+  public void memberWithOverDueLoansIsRestricted_CorrectMessages()
   {
     //=========================================================================
     // Set up data
