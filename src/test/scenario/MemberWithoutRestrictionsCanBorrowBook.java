@@ -81,7 +81,7 @@ import library.entities.Loan;
  *
  * @author nicholasbaldwin
  */
-public class MemberWithoutRestrictionsCanBorrowABook
+public class MemberWithoutRestrictionsCanBorrowBook
 {
   //===========================================================================
   // Fixtures
@@ -140,6 +140,7 @@ public class MemberWithoutRestrictionsCanBorrowABook
 
 
   Date today = ignoreTime(new Date());
+  Date due = dateBuilder(today, ILoan.LOAN_PERIOD);
   Date yesterday = dateBuilder(today, -1);
   Date tomorrow = dateBuilder(today, 1);
   Date borrowed = dateBuilder(yesterday, -(ILoan.LOAN_PERIOD));
@@ -207,7 +208,7 @@ public class MemberWithoutRestrictionsCanBorrowABook
 
 
   @Test
-  public void noRestrictions_MemberCanBorrowBook_CheckResults()
+  public void memberWithoutRestrictionsCanBorrowBook_CheckResults()
   {
     //=========================================================================
     // Set up data
@@ -289,14 +290,16 @@ public class MemberWithoutRestrictionsCanBorrowABook
 
     assertThat(newLoan.getBook().toString()).isEqualTo(animalFarm.toString());
     assertThat(newLoan.getBorrower().toString()).isEqualTo(jim.toString());
-    assertThat(jim.getLoans()).containsExactly(newLoan);
+
+    assertThat(jim.getLoans().size()).isEqualTo(1); // jim now has 1 loan
+    assertThat(jim.getLoans()).containsExactly(newLoan); // loan added to jim
     assertThat(jim.isRestricted()).isFalse();
   }
 
 
 
   @Test
-  public void noRestrictions_MemberCanBorrowBook_CheckState()
+  public void memberWithoutRestrictionsCanBorrowBook_CheckState()
   {
     //=========================================================================
     // Set up data
@@ -313,7 +316,7 @@ public class MemberWithoutRestrictionsCanBorrowABook
     }
 
     existingLoans = jim.getLoans();
-    assertThat(existingLoans).hasSize(2);
+    assertThat(existingLoans).isEmpty();
 
     //=========================================================================
     // Initialization
@@ -356,7 +359,7 @@ public class MemberWithoutRestrictionsCanBorrowABook
     controller_.cardSwiped(jim.getId());
 
     state = getPrivateState(controller_);
-    assertThat(state).isEqualTo(EBorrowState.BORROWING_RESTRICTED);
+    assertThat(state).isEqualTo(EBorrowState.SCANNING_BOOKS);
     borrower = getPrivateBorrower(controller_);
     assertThat(borrower.toString()).isEqualTo(jim.toString());
     loanList = getPrivateLoanList(controller_);
@@ -364,14 +367,60 @@ public class MemberWithoutRestrictionsCanBorrowABook
     bookList = getPrivateBookList(controller_);
     assertThat(bookList).isEmpty();
     scanCount = getPrivateCount(controller_);
-    assertThat(scanCount).isEqualTo(2);
+    assertThat(scanCount).isEqualTo(0);
 
     //-------------------------------------------------------------------------
-    // User clicks cancel
-    controller_.cancelled();
+    // User scans book
+    controller_.bookScanned(animalFarm.getID());
 
     state = getPrivateState(controller_);
-    assertThat(state).isEqualTo(EBorrowState.CANCELLED);
+    assertThat(state).isEqualTo(EBorrowState.SCANNING_BOOKS);
+    borrower = getPrivateBorrower(controller_);
+    assertThat(borrower.toString()).isEqualTo(jim.toString());
+    loanList = getPrivateLoanList(controller_);
+    assertThat(loanList).hasSize(1);
+    assertThat(loanList.get(0).toString()).contains("Loan ID:  0\n" +
+                                                        "Author:   George " +
+                                                        "Orwell\n" +
+                                                        "Title:    Animal " +
+                                                        "Farm\n" +
+                                                        "Borrower: Jim " +
+                                                        "Johns\n" +
+                                                        "Borrowed: ");
+    bookList = getPrivateBookList(controller_);
+    assertThat(bookList.get(0).toString()).isEqualTo(animalFarm.toString());
+    scanCount = getPrivateCount(controller_);
+    assertThat(scanCount).isEqualTo(1);
+
+    //-------------------------------------------------------------------------
+    // User completes pending loan
+    controller_.scansCompleted();
+
+    state = getPrivateState(controller_);
+    assertThat(state).isEqualTo(EBorrowState.CONFIRMING_LOANS);
+    borrower = getPrivateBorrower(controller_);
+    assertThat(borrower.toString()).isEqualTo(jim.toString());
+    assertThat(loanList).hasSize(1);
+    assertThat(loanList.get(0).toString()).contains("Loan ID:  0\n" +
+                                                    "Author:   George " +
+                                                    "Orwell\n" +
+                                                    "Title:    Animal " +
+                                                    "Farm\n" +
+                                                    "Borrower: Jim " +
+                                                    "Johns\n" +
+                                                    "Borrowed: ");
+    bookList = getPrivateBookList(controller_);
+    assertThat(bookList.get(0).toString()).isEqualTo(animalFarm.toString());
+    scanCount = getPrivateCount(controller_);
+    assertThat(scanCount).isEqualTo(1);
+
+
+    //-------------------------------------------------------------------------
+    // User confirms pending loan
+    controller_.loansConfirmed();
+
+    state = getPrivateState(controller_);
+    assertThat(state).isEqualTo(EBorrowState.COMPLETED);
     borrower = getPrivateBorrower(controller_);
     assertThat(borrower).isNull();
     loanList = getPrivateLoanList(controller_);
@@ -384,7 +433,7 @@ public class MemberWithoutRestrictionsCanBorrowABook
 
 
   @Test
-  public void noRestrictions_MemberCanBorrowBook_CheckCalls()
+  public void memberWithoutRestrictionsCanBorrowBook_CheckCalls()
   {
     //=========================================================================
     // Set up data
@@ -401,9 +450,7 @@ public class MemberWithoutRestrictionsCanBorrowABook
     }
 
     existingLoans = jim.getLoans();
-    assertThat(existingLoans).hasSize(2);
-
-    verify(jim, atLeastOnce()).addLoan(any());
+    assertThat(existingLoans).isEmpty();
 
     //=========================================================================
     // Initialization
@@ -430,35 +477,50 @@ public class MemberWithoutRestrictionsCanBorrowABook
     controller_.cardSwiped(jim.getId());
 
     verify(members_, times(2)).getMemberByID(jim.getId()); // checks null first
-    verify(jim, times(3)).getLoans(); // setup invokes this
-    verify(jim).isRestricted();
-    verify(ui_).setState(EBorrowState.BORROWING_RESTRICTED);
+    verify(jim, times(2)).getLoans();
+
+    verify(ui_).setState(EBorrowState.SCANNING_BOOKS);
     verify(reader_).setEnabled(false);
-    verify(scanner_, times(2)).setEnabled(false);
+    verify(scanner_).setEnabled(true);
     verify(jim, times(2)).getId();
-    verify(jim, atLeastOnce()).getFirstName();
-    verify(jim, atLeastOnce()).getLastName();
     verify(ui_).displayMemberDetails(anyInt(), anyString(), anyString());
-    verify(ui_).displayExistingLoan(any());
-    verify(jim).hasOverDueLoans();
-    verify(ui_).displayOverDueMessage();
-    verify(jim).hasReachedFineLimit();
-    verify(jim, atLeastOnce()).hasReachedLoanLimit();
-    verify(ui_).displayErrorMessage(any());
+    verify(ui_).displayScannedBookDetails("");
+    verify(ui_).displayPendingLoan("");
 
     //-------------------------------------------------------------------------
-    // User clicks cancel
-    controller_.cancelled();
+    // User scans book
+    controller_.bookScanned(animalFarm.getID());
 
+    verify(ui_).displayErrorMessage("");
+    verify(loans_, times(6)).createLoan(any(), any()); //setup creates 5
+    verify(ui_, times(2)).displayScannedBookDetails(anyString());
+    verify(ui_, times(2)).displayPendingLoan(anyString());
+
+    //-------------------------------------------------------------------------
+    // User completes pending loan
+    controller_.scansCompleted();
+
+    verify(ui_).setState(EBorrowState.CONFIRMING_LOANS);
     verify(reader_, times(2)).setEnabled(false);
+    verify(scanner_, times(2)).setEnabled(false);
+    verify(ui_).displayConfirmingLoan(anyString());
+
+    //-------------------------------------------------------------------------
+    // User confirms pending loan
+    controller_.loansConfirmed();
+
+    verify(ui_).setState(EBorrowState.COMPLETED);
+    verify(loans_, times(6)).commitLoan(any()); // setup commits 5
+    verify(printer_).print(any());
+
     verify(scanner_, times(3)).setEnabled(false);
-    verify(ui_).setState(EBorrowState.CANCELLED);
+    verify(reader_, times(3)).setEnabled(false);
     verify(display_, times(2)).setDisplay(any(), anyString());
   }
 
 
   @Test
-  public void noRestrictions_MemberCanBorrowBook_CorrectMessages()
+  public void memberWithoutRestrictionsCanBorrowBook_CorrectMessages()
   {
     //=========================================================================
     // Set up data
@@ -475,9 +537,7 @@ public class MemberWithoutRestrictionsCanBorrowABook
     }
 
     existingLoans = jim.getLoans();
-    assertThat(existingLoans).hasSize(2);
-
-    verify(jim, atLeastOnce()).addLoan(any());
+    assertThat(existingLoans).isEmpty();
 
     //=========================================================================
     // Initialization
@@ -498,29 +558,45 @@ public class MemberWithoutRestrictionsCanBorrowABook
     controller_.cardSwiped(jim.getId());
 
     verify(ui_).displayMemberDetails(1, "Jim Johns", "9123");
-    verify(ui_).displayExistingLoan("Loan ID:  1\n" +
-                                        "Author:   Joseph Heller\n" +
-                                        "Title:    CATCH-22\n" +
-                                        "Borrower: Jim Johns\n" +
-                                        "Borrowed: " +
-                                        formattedDate(borrowed) + "\n" +
-                                        "Due Date: " +
-                                        formattedDate(yesterday) + "\n" +
-                                        "\n" +
-                                        "Loan ID:  2\n" +
-                                        "Author:   Jane Austen\n" +
-                                        "Title:    Emma\n" +
-                                        "Borrower: Jim Johns\n" +
-                                        "Borrowed: " +
-                                        formattedDate(borrowed) + "\n" +
-                                        "Due Date: " +
-                                        formattedDate(yesterday));
-    verify(ui_).displayErrorMessage("Borrowing Restricted");
 
     //-------------------------------------------------------------------------
-    // User clicks cancel
-    controller_.cancelled();
+    // User scans book
+    controller_.bookScanned(animalFarm.getID());
 
+    verify(ui_).displayPendingLoan("Loan ID:  0\n" +
+                                   "Author:   George Orwell\n" +
+                                   "Title:    Animal Farm\n" +
+                                   "Borrower: Jim Johns\n" +
+                                   "Borrowed: " +
+                                   formattedDate(today) + "\n" +
+                                   "Due Date: " +
+                                   formattedDate(due));
+
+    //-------------------------------------------------------------------------
+    // User completes pending loan
+    controller_.scansCompleted();
+
+    verify(ui_).displayConfirmingLoan("Loan ID:  0\n" +
+                                      "Author:   George Orwell\n" +
+                                      "Title:    Animal Farm\n" +
+                                      "Borrower: Jim Johns\n" +
+                                      "Borrowed: " +
+                                      formattedDate(today) + "\n" +
+                                      "Due Date: " +
+                                      formattedDate(due));
+
+    //-------------------------------------------------------------------------
+    // User confirms pending loan
+    controller_.loansConfirmed();
+
+    verify(printer_).print("Loan ID:  6\n" +
+                           "Author:   George Orwell\n" +
+                           "Title:    Animal Farm\n" +
+                           "Borrower: Jim Johns\n" +
+                           "Borrowed: " +
+                           formattedDate(today) + "\n" +
+                           "Due Date: " +
+                           formattedDate(due));
   }
 
 }
