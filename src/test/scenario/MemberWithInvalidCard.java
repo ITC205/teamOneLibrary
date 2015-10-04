@@ -61,6 +61,7 @@ import library.entities.Loan;
  *  - only allow the member to swipe the card again or click cancel
  *
  * Scenario ends (on cancel):
+ *  - member clicks cancel
  *  - Main Menu is displayed
  *  - no changes/additions to system state
  *

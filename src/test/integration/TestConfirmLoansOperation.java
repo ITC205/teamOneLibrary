@@ -86,7 +86,7 @@ public class TestConfirmLoansOperation
   IBook emma = spy(books_.addBook("Jane Austen", "Emma", "102.5"));
   IBook scoop = spy(books_.addBook("Evelyn Waugh", "Scoop", "103.21"));
   IBook dune = spy(books_.addBook("Frank Herbert", "Dune", "104 [21]"));
-  IBook janeEyre = spy(books_.addBook("Charlotte Brontë", "Jane Eyre", "105"));
+  IBook janeEyre = spy(books_.addBook("Charlotte Bronte", "Jane Eyre", "105"));
   IBook animalFarm = spy(books_.addBook("George Orwell", "Animal Farm", "106"));
   IBook ulysses = spy(books_.addBook("James Joyce", "Ulysses", "107.345"));
   IBook onTheRoad = spy(books_.addBook("Jack Kerouac", "On the Road", "108.1"));

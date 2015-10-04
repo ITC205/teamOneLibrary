@@ -42,8 +42,9 @@ import library.daos.MemberHelper;
 import library.entities.Loan;
 
 /**
- * When a member has overdue loans, the system sets state to 'borrowing
- * restricted' which displays member and loan information only.
+ * When a member has overdue loans, and tries to borrow more books, the system
+ * sets state to 'borrowing restricted' which displays member and loan
+ * information only.
  *
  * See UAT: Member cannot scan or borrow books when status is restricted (due to
  * overdue loans).
@@ -51,7 +52,6 @@ import library.entities.Loan;
  * Member:
  *  - has 2 existing loans
  *  - both loans are overdue
- *  - has fines payable (due to overdue loans)
  *  - has not reached the fine limit
  *
  * Prior to scenario:
@@ -62,10 +62,11 @@ import library.entities.Loan;
  *  - member swipes card
  *
  * System should:
- *  - display the member's overdue loans
+ *  - display the member's details & overdue loans
  *  - only allow the member to click cancel
  *
  * Scenario ends:
+ *  - member clicks cancel
  *  - Main Menu is displayed
  *  - no changes/additions to system state
  *
