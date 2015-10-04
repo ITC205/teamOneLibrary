@@ -1,7 +1,6 @@
 package test.suite;
 
 import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 /**
@@ -12,7 +11,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(org.junit.runners.Suite.class)
 @SuiteClasses(
   {
-    test.scenario.RestrictedOverDueLoans.class
+    test.scenario.MemberHasOverDueLoans.class
   })
 
 public class TestScenarioSuiteNick

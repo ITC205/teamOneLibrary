@@ -42,7 +42,11 @@ import library.daos.MemberHelper;
 import library.entities.Loan;
 
 /**
- * Test a simple Borrowing Restricted scenario
+ * When a member has overdue loans, the system sets state to 'borrowing
+ * restricted' which displays member and loan information only.
+ *
+ * See UAT: Member cannot scan or borrow books when status is restricted (due to
+ * overdue loans).
  *
  * Member:
  *  - has 2 existing loans
@@ -54,10 +58,12 @@ import library.entities.Loan;
  *  - initialize system
  *  - setup existing loans
  *
- * Scenario starts
+ * Scenario starts:
  *  - member swipes card
- *  - display shows overdue loans
- *  - member clicks cancel
+ *
+ * System should:
+ *  - display the member's overdue loans
+ *  - only allow the member to click cancel
  *
  * Scenario ends:
  *  - Main Menu is displayed
@@ -65,7 +71,7 @@ import library.entities.Loan;
  *
  * @author nicholasbaldwin
  */
-public class RestrictedOverDueLoans
+public class MemberHasOverDueLoans
 {
   //===========================================================================
   // Fixtures
@@ -109,14 +115,14 @@ public class RestrictedOverDueLoans
   ILoan firstLoan;
   ILoan secondLoan;
 
+  Date today = ignoreTime(new Date());
+  Date yesterday = dateBuilder(today, -1);
+  Date borrowed = dateBuilder(yesterday, -(ILoan.LOAN_PERIOD));
+
 
   public void setUpExistingLoans(IMember member) throws Exception
   {
     loans_ = spy(new LoanDAO(loanHelper_));
-
-    Date today = ignoreTime(new Date());
-    Date yesterday = dateBuilder(today, -1);
-    Date borrowed = dateBuilder(yesterday, -(ILoan.LOAN_PERIOD));
 
     firstLoan = loans_.createLoan(member, catch22);
     secondLoan = loans_.createLoan(member, emma);
@@ -130,19 +136,21 @@ public class RestrictedOverDueLoans
 
     loans_.updateOverDueStatus(new Date());
 
-    if (loans_.getLoanByID(1) != firstLoan || loans_.getLoanByID(2) != secondLoan)
+    if (loans_.getLoanByID(1) != firstLoan ||
+        loans_.getLoanByID(2) != secondLoan)
     {
       throw new Exception("Loans required for scenario not setup");
     }
 
     if (!firstLoan.isOverDue() || !firstLoan.isOverDue()) {
-      throw new Exception("Loans for scenario should have due date set to yesterday");
+      throw new Exception("Loans for scenario should have due date set " +
+                          "to yesterday");
       }
 
     if (!member.isRestricted()) {
       throw new Exception("Member should be restricted");
     }
-    }
+  }
 
 
   public void initializeController()
@@ -374,6 +382,70 @@ public class RestrictedOverDueLoans
   }
 
 
+  @Test
+  public void borrowingRestricted_MemberHasOverDueLoans_CorrectMessages()
+  {
+    //=========================================================================
+    // Set up data
+    //=========================================================================
 
+    existingLoans = jim.getLoans();
+    assertThat(existingLoans).isEmpty();
+
+    try {
+      setUpExistingLoans(jim);
+    }
+    catch (Exception exception) {
+      fail(exception.getMessage());
+    }
+
+    existingLoans = jim.getLoans();
+    assertThat(existingLoans).hasSize(2);
+
+    verify(jim, atLeastOnce()).addLoan(any());
+
+    //=========================================================================
+    // Initialization
+    //=========================================================================
+
+    initializeController();
+
+    //=========================================================================
+    // User interaction in scenario starts here
+    //=========================================================================
+
+    //-------------------------------------------------------------------------
+    // User clicks Borrow
+    controller_.initialise();
+
+    //-------------------------------------------------------------------------
+    // User swipes card
+    controller_.cardSwiped(jim.getId());
+
+    verify(ui_).displayMemberDetails(1, "Jim Johns", "9123");
+    verify(ui_).displayExistingLoan("Loan ID:  1\n" +
+                                    "Author:   Joseph Heller\n" +
+                                    "Title:    CATCH-22\n" +
+                                    "Borrower: Jim Johns\n" +
+                                    "Borrowed: " +
+                                    formattedDate(borrowed) + "\n" +
+                                    "Due Date: " +
+                                    formattedDate(yesterday) + "\n" +
+                                    "\n" +
+                                    "Loan ID:  2\n" +
+                                    "Author:   Jane Austen\n" +
+                                    "Title:    Emma\n" +
+                                    "Borrower: Jim Johns\n" +
+                                    "Borrowed: " +
+                                    formattedDate(borrowed) + "\n" +
+                                    "Due Date: " +
+                                    formattedDate(yesterday));
+    verify(ui_).displayErrorMessage("Borrowing Restricted");
+
+    //-------------------------------------------------------------------------
+    // User clicks cancel
+    controller_.cancelled();
+
+  }
 
 }
