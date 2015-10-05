@@ -17,8 +17,6 @@ public interface IMember {
 	
 	public boolean hasReachedFineLimit();
 	
-	public float   getFineAmount();
-	
 	public void    addFine(float fine);
 
 	public void    payFine(float payment);
@@ -28,6 +26,8 @@ public interface IMember {
 	public List<ILoan> getLoans();
 	
 	public void    removeLoan(ILoan loan);
+	
+  public void loanHasBecomeOverdue(ILoan loan);
 	
 	public EMemberState   getState();
 	
@@ -39,7 +39,10 @@ public interface IMember {
 	
 	public String  getEmailAddress();
 	
-	public int     getID();
+	public int     getId();
 	
+  public float   getTotalFines();
+
+  public boolean isRestricted();
 
 }

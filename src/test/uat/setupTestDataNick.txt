@@ -1,0 +1,60 @@
+ private void setupTestData()
+  {
+    IBook catch22 = bookDAO.addBook("Joseph Heller", "CATCH-22", "101.1 [2]");
+    IBook emma = bookDAO.addBook("Jane Austen", "Emma", "102.5");
+    IBook scoop = bookDAO.addBook("Evelyn Waugh", "Scoop", "103.21");
+    IBook dune = bookDAO.addBook("Frank Herbert", "Dune", "104 [21]");
+    IBook janeEyre = bookDAO.addBook("Charlotte Bronte", "Jane Eyre", "105");
+    IBook animalFarm = bookDAO.addBook("George Orwell", "Animal Farm", "106");
+    IBook ulysses = bookDAO.addBook("James Joyce", "Ulysses", "107.345");
+    IBook onTheRoad = bookDAO.addBook("Jack Kerouac", "On the Road", "108.1");
+    IBook dracula = bookDAO.addBook("Bram Stoker", "Dracula", "109.1 [21]");
+    IBook middlemarch = bookDAO.addBook("George Eliot", "Middlemarch", "110");
+    IBook hobbit = bookDAO.addBook("J.R.R. Tolkien", "The Hobbit", "111.23");
+    IBook atonement = bookDAO.addBook("Ian McEwan", "Atonement", "112 [22]");
+    IBook iClaudius = bookDAO.addBook("Robert Graves", "I, Claudius", "113");
+
+    IMember jim = memberDAO.addMember("Jim", "Johns", "9123", "j@gmail.com");
+    IMember sam = memberDAO.addMember("Sam", "Malone", "8124", "sam@hoo.com");
+    IMember jill = memberDAO.addMember("Jill", "Hill", "7125", "j@mail.com");
+    IMember bob = memberDAO.addMember("Bob", "Dylan", "6126", "b@dylan.com");
+    IMember eric = memberDAO.addMember("Eric", "Idle", "5127", "ei@life.com");
+
+    // set up Jim with 3 loans that are 'overDue'
+    ILoan jimFirstLoan = loanDAO.createLoan(jim, catch22);
+    ILoan jimSecondLoan = loanDAO.createLoan(jim, emma);
+    ILoan jimThirdLoan = loanDAO.createLoan(jim, scoop);
+    loanDAO.commitLoan(jimFirstLoan);
+    loanDAO.commitLoan(jimSecondLoan);
+    loanDAO.commitLoan(jimThirdLoan);
+    Calendar calendar = Calendar.getInstance();
+    Date now = calendar.getTime();
+    calendar.setTime(now);
+    calendar.add(Calendar.DATE, ILoan.LOAN_PERIOD * 2);
+    Date afterDueDate = calendar.getTime();
+    loanDAO.updateOverDueStatus(afterDueDate);
+
+    // set up Sam with 5 current loans
+    ILoan samFirstLoan = loanDAO.createLoan(sam, dune);
+    ILoan samSecondLoan = loanDAO.createLoan(sam, janeEyre);
+    ILoan samThirdLoan = loanDAO.createLoan(sam, animalFarm);
+    ILoan samFourthLoan = loanDAO.createLoan(sam, ulysses);
+    ILoan samFifthLoan = loanDAO.createLoan(sam, onTheRoad);
+    loanDAO.commitLoan(samFirstLoan);
+    loanDAO.commitLoan(samSecondLoan);
+    loanDAO.commitLoan(samThirdLoan);
+    loanDAO.commitLoan(samFourthLoan);
+    loanDAO.commitLoan(samFifthLoan);
+
+    // set up Jill with 3 current loans
+    ILoan jillFirstLoan = loanDAO.createLoan(jill, dracula);
+    ILoan jillSecondLoan = loanDAO.createLoan(jill, middlemarch);
+    ILoan jillThirdLoan = loanDAO.createLoan(jill, hobbit);
+    loanDAO.commitLoan(jillFirstLoan);
+    loanDAO.commitLoan(jillSecondLoan);
+    loanDAO.commitLoan(jillThirdLoan);
+
+    // bob has no loans - nothing to setup
+
+    // eric has no loans - nothing to setup
+  }
