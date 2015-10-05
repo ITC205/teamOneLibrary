@@ -221,6 +221,26 @@ public class TestConfirmLoansOperation
   //===========================================================================
 
   @Test
+  public void confirmLoan_OnePending_NoLoans_SingleCommittedLoan()
+  {
+    initializeController();
+    setBorrower(jim);
+    setCount();
+    ILoan firstPendingLoan = addToPendingLoans(catch22);
+    setState_ConfirmingLoans();
+    List<ILoan> pendingLoans = getPrivateLoanList(controller_);
+    assertThat(pendingLoans).hasSize(1);
+    assertThat(loans_.listLoans().isEmpty());
+
+    controller_.loansConfirmed();
+
+    assertThat(pendingLoans).isEmpty();
+    assertThat(loans_.listLoans()).hasSize(1);
+  }
+
+
+
+  @Test
   public void confirmLoan_OnePending_NoLoans_PendingBecomesCommitted()
   {
     initializeController();
@@ -239,6 +259,42 @@ public class TestConfirmLoansOperation
     ILoan firstCommittedLoan = loans_.getLoanByID(1);
     assertThat(firstPendingLoan).isSameAs(firstCommittedLoan);
     assertThat(firstPendingLoan.getID()).isEqualTo(1); // not 0
+  }
+
+
+
+  @Test
+  public void confirmLoan_OnePending_NoLoans_BorrowerHasLoan()
+  {
+    initializeController();
+    setBorrower(jim);
+    setCount();
+    ILoan firstPendingLoan = addToPendingLoans(catch22);
+    setState_ConfirmingLoans();
+
+    controller_.loansConfirmed();
+
+    ILoan firstCommittedLoan = loans_.getLoanByID(1);
+    assertThat(firstPendingLoan).isSameAs(firstCommittedLoan);
+    assertThat(jim.getLoans()).containsExactly(firstCommittedLoan);
+    assertThat(jim.getLoans()).containsExactly(firstPendingLoan);
+  }
+
+
+
+  @Test
+  public void confirmLoan_OnePending_NoLoans_BookBecomesOnLoan()
+  {
+    initializeController();
+    setBorrower(jim);
+    setCount();
+    ILoan firstPendingLoan = addToPendingLoans(catch22);
+    setState_ConfirmingLoans();
+    assertThat(catch22.getState()).isEqualTo(EBookState.AVAILABLE);
+
+    controller_.loansConfirmed();
+
+    assertThat(catch22.getState()).isEqualTo(EBookState.ON_LOAN);
   }
 
 
