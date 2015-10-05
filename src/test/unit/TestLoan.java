@@ -184,7 +184,7 @@ public class TestLoan
     // Then exception should be thrown
     catch (Exception exception) {
       assertThat(exception).hasMessage("Cannot create a new Loan with a " +
-                                       "null Book.");
+                                           "null Book.");
     }
   }
 
@@ -218,20 +218,59 @@ public class TestLoan
   }
 
 
-  // NOTE in following tests, simply propagating ParseException as this is
-  // irrelevant for these tests (and proven ok in above test)
+
+  @Test
+  public void createLoanWithDateBuilder()
+  {
+    // Given stubs for book and member
+    IBook book = stubBook();
+    IMember borrower = stubMember();
+
+    // with same dates as in previous test (using formatted dates) - this time
+    // using the DateBuilder heper
+    Date borrowDate = dateBuilder(17, 8, 2015);
+    Date dueDate = dateBuilder(18, 8, 2015);
+
+    // When create a loan
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate);
+
+    // Then loan is instantiated, and a valid ILoan instance
+    assertThat(loan).isInstanceOf(ILoan.class);
+  }
+
+
+
+  @Test
+  public void createLoanWithDueDateSameAsBorrowDate()
+  {
+    // Given stubs for book and member
+    IBook book = stubBook();
+    IMember borrower = stubMember();
+    // valid borrow date
+    Date borrowDate = dateBuilder(17, 8, 2015);
+    // and dueDate is same the borrowDate
+    Date dueDate = dateBuilder(17, 8, 2015);
+
+    // When create a loan
+
+    ILoan loan = new Loan(book, borrower, borrowDate, dueDate);
+
+    // Then loan is instantiated, and a valid ILoan instance
+    assertThat(loan).isInstanceOf(ILoan.class);
+  }
+
+
 
   @Test
   public void createLoanWithDueDateBeforeBorrowDateThrows()
-    throws ParseException
   {
     // Given stubs for book and member
     IBook book = stubBook();
     IMember borrower = stubMember();
-    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-    Date borrowDate = dateFormat.parse("17/09/2015");
-    // and dueDate is before the borrowDate
-    Date dueDate = dateFormat.parse("16/09/2015");
+    // valid borrow date
+    Date borrowDate = dateBuilder(17, 8, 2015);
+    // but dueDate is before the borrowDate
+    Date dueDate = dateBuilder(16, 8, 2015);
 
     // When create a loan
     try {
@@ -247,41 +286,15 @@ public class TestLoan
 
 
   @Test
-  public void createLoanWithDueDateSameAsBorrowDateThrows()
-    throws ParseException
+  public void createLoanWithDueDateBeforeBorrowDateThrowsWithCorrectMessage()
   {
     // Given stubs for book and member
     IBook book = stubBook();
     IMember borrower = stubMember();
-    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-    Date borrowDate = dateFormat.parse("17/09/2015");
-    // dueDate is same as the borrowDate
-    Date dueDate = dateFormat.parse("17/09/2015");
-
-    // When create a loan
-    try {
-      ILoan loan = new Loan(book, borrower, borrowDate, dueDate);
-    }
-
-    // Then exception should be thrown
-    catch (Exception exception) {
-      assertThat(exception).isInstanceOf(IllegalArgumentException.class);
-    }
-  }
-
-
-
-  @Test
-  public void createLoanWithDueDateSameAsBorrowDateThrowsWithCorrectMessage()
-    throws ParseException
-  {
-    // Given stubs for book and member
-    IBook book = stubBook();
-    IMember borrower = stubMember();
-    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-    Date borrowDate = dateFormat.parse("17/09/2015");
-    // dueDate is same the borrowDate
-    Date dueDate = dateFormat.parse("17/09/2015");
+    // valid borrow date
+    Date borrowDate = dateBuilder(17, 8, 2015);
+    // but dueDate is before the borrowDate
+    Date dueDate = dateBuilder(16, 8, 2015);
 
     // When create a loan
     try {
@@ -291,8 +304,8 @@ public class TestLoan
     // Then exception should be thrown
     catch (Exception exception) {
       assertThat(exception).hasMessage("Cannot create a new Loan when the " +
-                                       "Return Date is before or the same as " +
-                                       "the Borrowing Date.");
+                                       "Due Date is less than the Borrowing " +
+                                       "Date.");
     }
   }
 
@@ -937,7 +950,6 @@ public class TestLoan
 
   @Test
   public void commitLoanWithZeroIdThrows()
-      throws ParseException
   {
     // Given loan using stubs for book and member
     IBook book = stubBook();
@@ -961,7 +973,6 @@ public class TestLoan
 
   @Test
   public void commitLoanWithNegativeIdThrows()
-      throws ParseException
   {
     // Given loan using stubs for book and member
     IBook book = stubBook();

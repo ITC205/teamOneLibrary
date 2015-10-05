@@ -86,7 +86,7 @@ public class TestRejectLoansOperation
   IBook emma = spy(books_.addBook("Jane Austen", "Emma", "102.5"));
   IBook scoop = spy(books_.addBook("Evelyn Waugh", "Scoop", "103.21"));
   IBook dune = spy(books_.addBook("Frank Herbert", "Dune", "104 [21]"));
-  IBook janeEyre = spy(books_.addBook("Charlotte Brontë", "Jane Eyre", "105"));
+  IBook janeEyre = spy(books_.addBook("Charlotte Bronte", "Jane Eyre", "105"));
   IBook animalFarm = spy(books_.addBook("George Orwell", "Animal Farm", "106"));
   IBook ulysses = spy(books_.addBook("James Joyce", "Ulysses", "107.345"));
   IBook onTheRoad = spy(books_.addBook("Jack Kerouac", "On the Road", "108.1"));
@@ -205,7 +205,7 @@ public class TestRejectLoansOperation
   }
 
   //===========================================================================
-  // ?
+  // test operations
   //===========================================================================
 
   @Test
@@ -408,12 +408,12 @@ public class TestRejectLoansOperation
     Date due = calculateDueDate(today);
 
     assertThat(details).isEqualTo("Loan ID:  1\n" +
-                                      "Author:   Robert Graves\n" +
-                                      "Title:    I, Claudius\n" +
-                                      "Borrower: Jim Johns\n" +
-                                      "Borrowed: " + formattedDate(today) +
-                                      "\n" +
-                                      "Due Date: " + formattedDate(due));
+                                  "Author:   Robert Graves\n" +
+                                  "Title:    I, Claudius\n" +
+                                  "Borrower: Jim Johns\n" +
+                                  "Borrowed: " + formattedDate(today) +
+                                  "\n" +
+                                  "Due Date: " + formattedDate(due));
   }
 
 
@@ -435,28 +435,28 @@ public class TestRejectLoansOperation
     Date due = calculateDueDate(today);
 
     assertThat(details).isEqualTo("Loan ID:  1\n" +
-                                      "Author:   Robert Graves\n" +
-                                      "Title:    I, Claudius\n" +
-                                      "Borrower: Jim Johns\n" +
-                                      "Borrowed: " + formattedDate(today) +
-                                      "\n" +
-                                      "Due Date: " + formattedDate(due) +
-                                      "\n\n" +
-                                      "Loan ID:  2\n" +
-                                      "Author:   Ian McEwan\n" +
-                                      "Title:    Atonement\n" +
-                                      "Borrower: Jim Johns\n" +
-                                      "Borrowed: " + formattedDate(today) +
-                                      "\n" +
-                                      "Due Date: " + formattedDate(due) +
-                                      "\n\n" +
-                                      "Loan ID:  3\n" +
-                                      "Author:   J.R.R. Tolkien\n" +
-                                      "Title:    The Hobbit\n" +
-                                      "Borrower: Jim Johns\n" +
-                                      "Borrowed: " + formattedDate(today) +
-                                      "\n" +
-                                      "Due Date: " + formattedDate(due));
+                                  "Author:   Robert Graves\n" +
+                                  "Title:    I, Claudius\n" +
+                                  "Borrower: Jim Johns\n" +
+                                  "Borrowed: " + formattedDate(today) +
+                                  "\n" +
+                                  "Due Date: " + formattedDate(due) +
+                                  "\n\n" +
+                                  "Loan ID:  2\n" +
+                                  "Author:   Ian McEwan\n" +
+                                  "Title:    Atonement\n" +
+                                  "Borrower: Jim Johns\n" +
+                                  "Borrowed: " + formattedDate(today) +
+                                  "\n" +
+                                  "Due Date: " + formattedDate(due) +
+                                  "\n\n" +
+                                  "Loan ID:  3\n" +
+                                  "Author:   J.R.R. Tolkien\n" +
+                                  "Title:    The Hobbit\n" +
+                                  "Borrower: Jim Johns\n" +
+                                  "Borrowed: " + formattedDate(today) +
+                                  "\n" +
+                                  "Due Date: " + formattedDate(due));
   }
 
 
@@ -606,16 +606,7 @@ public class TestRejectLoansOperation
 
 
 
-  // TODO
-  @Test
-  public void rejectLoan_OnePending_cancelButtonCalled()
-  {
-
-  }
-
-
-
-  //helper
+  //helper for generating loan details
 
   private String loanDetails()
   {

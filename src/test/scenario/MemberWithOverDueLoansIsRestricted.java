@@ -42,30 +42,37 @@ import library.daos.MemberHelper;
 import library.entities.Loan;
 
 /**
- * Test a simple Borrowing Restricted scenario
+ * When a member has overdue loans, and tries to borrow more books, the system
+ * sets state to 'borrowing restricted' which displays member and loan
+ * information only.
+ *
+ * See UAT: Member cannot scan or borrow books when status is restricted (due to
+ * overdue loans).
  *
  * Member:
  *  - has 2 existing loans
  *  - both loans are overdue
- *  - has fines payable (due to overdue loans)
  *  - has not reached the fine limit
  *
  * Prior to scenario:
  *  - initialize system
  *  - setup existing loans
  *
- * Scenario starts
+ * Scenario starts:
  *  - member swipes card
- *  - display shows overdue loans
- *  - member clicks cancel
+ *
+ * System should:
+ *  - display the member's details & overdue loans
+ *  - only allow the member to click cancel
  *
  * Scenario ends:
+ *  - member clicks cancel
  *  - Main Menu is displayed
  *  - no changes/additions to system state
  *
  * @author nicholasbaldwin
  */
-public class RestrictedOverDueLoans
+public class MemberWithOverDueLoansIsRestricted
 {
   //===========================================================================
   // Fixtures
@@ -109,14 +116,15 @@ public class RestrictedOverDueLoans
   ILoan firstLoan;
   ILoan secondLoan;
 
+  Date today = ignoreTime(new Date());
+  Date yesterday = dateBuilder(today, -1);
+  Date tomorrow = dateBuilder(today, 1);
+  Date borrowed = dateBuilder(yesterday, -(ILoan.LOAN_PERIOD));
+
 
   public void setUpExistingLoans(IMember member) throws Exception
   {
     loans_ = spy(new LoanDAO(loanHelper_));
-
-    Date today = ignoreTime(new Date());
-    Date yesterday = dateBuilder(today, -1);
-    Date borrowed = dateBuilder(yesterday, -(ILoan.LOAN_PERIOD));
 
     firstLoan = loans_.createLoan(member, catch22);
     secondLoan = loans_.createLoan(member, emma);
@@ -130,19 +138,25 @@ public class RestrictedOverDueLoans
 
     loans_.updateOverDueStatus(new Date());
 
-    if (loans_.getLoanByID(1) != firstLoan || loans_.getLoanByID(2) != secondLoan)
+    if (loans_.getLoanByID(1) != firstLoan ||
+        loans_.getLoanByID(2) != secondLoan)
     {
       throw new Exception("Loans required for scenario not setup");
     }
 
-    if (!firstLoan.isOverDue() || !firstLoan.isOverDue()) {
-      throw new Exception("Loans for scenario should have due date set to yesterday");
+    if (!firstLoan.isOverDue() || !secondLoan.isOverDue()) {
+      throw new Exception("Loans for scenario should have due date set " +
+                          "to yesterday");
       }
+
+    if(member.getLoans().size() != 2) {
+      throw new Exception("Member should have 2 loans");
+    }
 
     if (!member.isRestricted()) {
       throw new Exception("Member should be restricted");
     }
-    }
+  }
 
 
   public void initializeController()
@@ -156,7 +170,7 @@ public class RestrictedOverDueLoans
 
 
   @Test
-  public void borrowingRestricted_MemberHasOverDueLoans_CheckResults()
+  public void memberWithOverDueLoansIsRestricted_CheckResults()
   {
     //=========================================================================
     // Set up data
@@ -184,6 +198,8 @@ public class RestrictedOverDueLoans
     assertThat(loans_.listLoans()).hasSize(2);
     assertThat(loans_.getLoanByID(1)).isSameAs(jim.getLoans().get(0));
     assertThat(loans_.getLoanByID(2)).isSameAs(jim.getLoans().get(1));
+    assertThat(jim.getLoans()).hasSize(2);
+    assertThat(jim.getLoans().get(0).isOverDue()).isTrue();
     assertThat(jim.getLoans().get(1).isOverDue()).isTrue();
     assertThat(jim.isRestricted()).isTrue();
 
@@ -206,6 +222,8 @@ public class RestrictedOverDueLoans
     assertThat(loans_.listLoans()).hasSize(2);
     assertThat(loans_.getLoanByID(1)).isSameAs(jim.getLoans().get(0));
     assertThat(loans_.getLoanByID(2)).isSameAs(jim.getLoans().get(1));
+    assertThat(jim.getLoans()).hasSize(2);
+    assertThat(jim.getLoans().get(0).isOverDue()).isTrue();
     assertThat(jim.getLoans().get(1).isOverDue()).isTrue();
     assertThat(jim.isRestricted()).isTrue();
   }
@@ -213,7 +231,7 @@ public class RestrictedOverDueLoans
 
 
   @Test
-  public void borrowingRestricted_MemberHasOverDueLoans_CheckState()
+  public void memberWithOverDueLoansIsRestricted_CheckState()
   {
     //=========================================================================
     // Set up data
@@ -301,7 +319,7 @@ public class RestrictedOverDueLoans
 
 
   @Test
-  public void borrowingRestricted_MemberHasOverDueLoans_CheckCalls()
+  public void memberWithOverDueLoansIsRestricted_CheckCalls()
   {
     //=========================================================================
     // Set up data
@@ -347,7 +365,7 @@ public class RestrictedOverDueLoans
     controller_.cardSwiped(jim.getId());
 
     verify(members_, times(2)).getMemberByID(jim.getId()); // checks null first
-    verify(jim, times(2)).getLoans();
+    verify(jim, times(3)).getLoans(); // setup invokes this
     verify(jim).isRestricted();
     verify(ui_).setState(EBorrowState.BORROWING_RESTRICTED);
     verify(reader_).setEnabled(false);
@@ -374,6 +392,70 @@ public class RestrictedOverDueLoans
   }
 
 
+  @Test
+  public void memberWithOverDueLoansIsRestricted_CorrectMessages()
+  {
+    //=========================================================================
+    // Set up data
+    //=========================================================================
 
+    existingLoans = jim.getLoans();
+    assertThat(existingLoans).isEmpty();
+
+    try {
+      setUpExistingLoans(jim);
+    }
+    catch (Exception exception) {
+      fail(exception.getMessage());
+    }
+
+    existingLoans = jim.getLoans();
+    assertThat(existingLoans).hasSize(2);
+
+    verify(jim, atLeastOnce()).addLoan(any());
+
+    //=========================================================================
+    // Initialization
+    //=========================================================================
+
+    initializeController();
+
+    //=========================================================================
+    // User interaction in scenario starts here
+    //=========================================================================
+
+    //-------------------------------------------------------------------------
+    // User clicks Borrow
+    controller_.initialise();
+
+    //-------------------------------------------------------------------------
+    // User swipes card
+    controller_.cardSwiped(jim.getId());
+
+    verify(ui_).displayMemberDetails(1, "Jim Johns", "9123");
+    verify(ui_).displayExistingLoan("Loan ID:  1\n" +
+                                    "Author:   Joseph Heller\n" +
+                                    "Title:    CATCH-22\n" +
+                                    "Borrower: Jim Johns\n" +
+                                    "Borrowed: " +
+                                    formattedDate(borrowed) + "\n" +
+                                    "Due Date: " +
+                                    formattedDate(yesterday) + "\n" +
+                                    "\n" +
+                                    "Loan ID:  2\n" +
+                                    "Author:   Jane Austen\n" +
+                                    "Title:    Emma\n" +
+                                    "Borrower: Jim Johns\n" +
+                                    "Borrowed: " +
+                                    formattedDate(borrowed) + "\n" +
+                                    "Due Date: " +
+                                    formattedDate(yesterday));
+    verify(ui_).displayErrorMessage("Borrowing Restricted");
+
+    //-------------------------------------------------------------------------
+    // User clicks cancel
+    controller_.cancelled();
+
+  }
 
 }

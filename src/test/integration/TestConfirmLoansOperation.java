@@ -86,7 +86,7 @@ public class TestConfirmLoansOperation
   IBook emma = spy(books_.addBook("Jane Austen", "Emma", "102.5"));
   IBook scoop = spy(books_.addBook("Evelyn Waugh", "Scoop", "103.21"));
   IBook dune = spy(books_.addBook("Frank Herbert", "Dune", "104 [21]"));
-  IBook janeEyre = spy(books_.addBook("Charlotte Brontë", "Jane Eyre", "105"));
+  IBook janeEyre = spy(books_.addBook("Charlotte Bronte", "Jane Eyre", "105"));
   IBook animalFarm = spy(books_.addBook("George Orwell", "Animal Farm", "106"));
   IBook ulysses = spy(books_.addBook("James Joyce", "Ulysses", "107.345"));
   IBook onTheRoad = spy(books_.addBook("Jack Kerouac", "On the Road", "108.1"));
@@ -217,7 +217,7 @@ public class TestConfirmLoansOperation
   }
 
   //===========================================================================
-  // ?
+  // test operations
   //===========================================================================
 
   @Test
@@ -286,7 +286,7 @@ public class TestConfirmLoansOperation
 
 
   @Test
-  public void confirmLoan_OneBook_EmptyLibrary_CorrectCallsMade()
+  public void confirmLoan_OneBook_EmptyLibrary_LoanDAOCalledCorrectly()
   {
     initializeController();
     setState_ConfirmingLoans();
@@ -299,15 +299,137 @@ public class TestConfirmLoansOperation
 
     controller_.loansConfirmed();
 
-    verify(loans_).commitLoan(anyObject());
+    verify(loans_).commitLoan(firstLoan);
+  }
+
+
+  @Test
+  public void confirmLoan_OneBook_EmptyLibrary_LoanCalledCorrectly()
+  {
+    initializeController();
+    setState_ConfirmingLoans();
+    ILoan firstLoan = spy(loans_.createLoan(jim, catch22));
+    List<ILoan> pendingLoans = new ArrayList<>();
+    pendingLoans.add(firstLoan);
+    assertThat(loans_.listLoans()).isEmpty();
+    assertThat(firstLoan.getID()).isEqualTo(0);
+    setPrivateLoanList(controller_, pendingLoans);
+
+    controller_.loansConfirmed();
+
     verify(firstLoan).commit(anyInt());
+  }
+
+
+  @Test
+  public void confirmLoan_OneBook_EmptyLibrary_BorrowerCalledCorrectly()
+  {
+    initializeController();
+    setState_ConfirmingLoans();
+    ILoan firstLoan = spy(loans_.createLoan(jim, catch22));
+    List<ILoan> pendingLoans = new ArrayList<>();
+    pendingLoans.add(firstLoan);
+    assertThat(loans_.listLoans()).isEmpty();
+    assertThat(firstLoan.getID()).isEqualTo(0);
+    setPrivateLoanList(controller_, pendingLoans);
+
+    controller_.loansConfirmed();
+
     verify(jim).addLoan(firstLoan);
+  }
+
+
+
+  @Test
+  public void confirmLoan_OneBook_EmptyLibrary_BookCalledCorrectly()
+  {
+    initializeController();
+    setState_ConfirmingLoans();
+    ILoan firstLoan = spy(loans_.createLoan(jim, catch22));
+    List<ILoan> pendingLoans = new ArrayList<>();
+    pendingLoans.add(firstLoan);
+    assertThat(loans_.listLoans()).isEmpty();
+    assertThat(firstLoan.getID()).isEqualTo(0);
+    setPrivateLoanList(controller_, pendingLoans);
+
+    controller_.loansConfirmed();
+
     verify(catch22).borrow(firstLoan);
+  }
+
+
+  @Test
+  public void confirmLoan_OneBook_EmptyLibrary_PrinterCalledCorrectly()
+  {
+    initializeController();
+    setState_ConfirmingLoans();
+    ILoan firstLoan = spy(loans_.createLoan(jim, catch22));
+    List<ILoan> pendingLoans = new ArrayList<>();
+    pendingLoans.add(firstLoan);
+    assertThat(loans_.listLoans()).isEmpty();
+    assertThat(firstLoan.getID()).isEqualTo(0);
+    setPrivateLoanList(controller_, pendingLoans);
+
+    controller_.loansConfirmed();
+
     verify(printer_).print(anyString());
+  }
+
+
+
+  @Test
+  public void confirmLoan_OneBook_EmptyLibrary_ScannerCalledCorrectly()
+  {
+    initializeController();
+    setState_ConfirmingLoans();
+    ILoan firstLoan = spy(loans_.createLoan(jim, catch22));
+    List<ILoan> pendingLoans = new ArrayList<>();
+    pendingLoans.add(firstLoan);
+    assertThat(loans_.listLoans()).isEmpty();
+    assertThat(firstLoan.getID()).isEqualTo(0);
+    setPrivateLoanList(controller_, pendingLoans);
+
+    controller_.loansConfirmed();
+
     verify(scanner_).setEnabled(false);
+  }
+
+
+  @Test
+  public void confirmLoan_OneBook_EmptyLibrary_ReaderCalledCorrectly()
+  {
+    initializeController();
+    setState_ConfirmingLoans();
+    ILoan firstLoan = spy(loans_.createLoan(jim, catch22));
+    List<ILoan> pendingLoans = new ArrayList<>();
+    pendingLoans.add(firstLoan);
+    assertThat(loans_.listLoans()).isEmpty();
+    assertThat(firstLoan.getID()).isEqualTo(0);
+    setPrivateLoanList(controller_, pendingLoans);
+
+    controller_.loansConfirmed();
+
     verify(reader_).setEnabled(false);
+  }
+
+
+  @Test
+  public void confirmLoan_OneBook_EmptyLibrary_DisplayCalledCorrectly()
+  {
+    initializeController();
+    setState_ConfirmingLoans();
+    ILoan firstLoan = spy(loans_.createLoan(jim, catch22));
+    List<ILoan> pendingLoans = new ArrayList<>();
+    pendingLoans.add(firstLoan);
+    assertThat(loans_.listLoans()).isEmpty();
+    assertThat(firstLoan.getID()).isEqualTo(0);
+    setPrivateLoanList(controller_, pendingLoans);
+
+    controller_.loansConfirmed();
+
     verify(display_).setDisplay(any(), anyString());
   }
+
 
 
   @Test
