@@ -8,7 +8,7 @@ package test.suite;
   {
     test.suite.TestLoanSuite.class,
     test.suite.TestBookSuite.class,
-    test.unit.TestSuiteMemberFamily.class
+    test.suite.TestSuiteMemberFamily.class
 
   })
 public class TestThreeFamiliesSuite
