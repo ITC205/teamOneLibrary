@@ -353,13 +353,23 @@ public void initialise()
     ui.setState(EBorrowState.COMPLETED);
 
     // commit all pending loans
-    for (ILoan loan : loanList) {
-      loanDAO.commitLoan(loan);
-    }
+    try {
+      for (ILoan loan : loanList) {
+        loanDAO.commitLoan(loan);
+      }
 
-    // print loans details
-    String loanDetails = buildLoanListDisplay(loanList);
-    printer.print(loanDetails);
+      // print loans details
+      String loanDetails = buildLoanListDisplay(loanList);
+      printer.print(loanDetails);
+    }
+    catch (IllegalArgumentException exception) {
+      // not sure how if/how you wanted this handled Jim... so...
+      throw new IllegalArgumentException(exception.getMessage());
+    }
+    catch (RuntimeException exception) {
+      // not sure how if/how you wanted this handled Jim... so...
+      throw new RuntimeException(exception.getMessage());
+    }
 
     // clear lists of scanned books & loans and borrower
     bookList.clear();
